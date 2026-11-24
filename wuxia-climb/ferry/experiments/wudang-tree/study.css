@@ -1,4 +1,4 @@
-@import url("art-library/support.css");
+@import url("art-library/support.css?v=2");
 :root{color-scheme:dark;--gold:#eac98d;--cream:#f7e9d0;--paper:#ebddbd;--ink:#30271d;--serif:"Songti TC","STSong","PMingLiU",serif;--parchment:linear-gradient(#eed9b3,#ead1a6);font:15px/1.55 "PingFang TC","Microsoft JhengHei",sans-serif}
 *{box-sizing:border-box}body{margin:0;color:var(--cream);min-height:100svh;background:linear-gradient(140deg,#0c211ce8,#152d26ab 60%,#081914df),var(--art-journey-cloth) center/380px}
 header,footer{display:flex;align-items:center;gap:18px;padding:8px max(16px,calc((100vw - 1120px)/2));background:#35271e var(--art-journey-cloth) center/580px;border-block:2px ridge #907344}
