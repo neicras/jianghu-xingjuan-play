@@ -1,4 +1,4 @@
-import {newJourney,gift,enter,finishFight} from './journey.js?branch=1';
+import {newJourney,gift,enter,finishFight,receive,train,leave} from './journey.js?v=1124f';
 
 export const frames=[
  ['gift','餞行席'],['map','江湖路線'],['fight','比武出招'],['reward','戰後所得'],
@@ -10,9 +10,10 @@ export const frames=[
 // Fixed examples used only by the frame viewer. Build rooms with the same
 // entry and reward functions as a run, then allow normal interaction in memory.
 export function reviewJourney(id,sample){
- // Seed 23 draws all three rank bands through the ordinary fifth-station reward.
+ // Seed 176 draws all three rank bands through the ordinary fifth-station reward.
  const mixed=id==='books'&&sample==='grades';
- const s=newJourney(mixed?23:sample==='cave'?2618:2401),r=s.route;
+ const stepLesson=id==='books'&&sample==='steps';
+ const s=newJourney(stepLesson?40:mixed?176:sample==='cave'?2618:2401),r=s.route;
  if(id==='gift')return s;
  gift(s,'sword');
  s.gold=32;s.xp=16;s.bag=['金創藥'];s.relics.push('竹編護臂');
@@ -25,7 +26,12 @@ export function reviewJourney(id,sample){
   r.path=[0,1,1,0,0,1,1,0];r.floor=8;
   enter(s,1);return s;
  }
- if(mixed)s.wins=2;
+ if(stepLesson){
+  enter(s,0);s.bout.phase='won';finishFight(s);
+  receive(s,'八卦步');train(s,'八卦步');leave(s);
+  enter(s,0);s.bout.phase='won';finishFight(s);return s;
+ }
+ if(mixed){s.wins=2;r.bookTables=2}
  const floor=mixed?5:{shop:6,story:2,inn:4,refine:4,school:3,won:15,lost:5}[id]||1;
  r.floor=floor-1;r.path=Array(r.floor).fill(0);r.hp=31;
  if(id==='map'){r.floor=1;r.path=[0];r.last='橋頭比武已過，前路在渡口分岔。';return s}

@@ -1,13 +1,13 @@
 import {objectImage} from './trail-hud.js';
-import {cardFace} from "./card-face.js";
-import {arts, branches, ranks, effect} from "./catalogue.js";
-import {learned, ready, refineCost, trainingChance, attemptFee, gateOdds, combinedOdds, percent} from "./rules.js";
+import {cardFace} from "./card-face.js?v=1124f";
+import {arts, branches, ranks, effect} from "./catalogue.js?v=1124f";
+import {learned, ready, refineCost, trainingChance, attemptFee, gateOdds, combinedOdds, percent} from "./rules.js?v=1124f";
 import {descriptions} from "./annotations.js";
 
-import {collection,estimate,collate} from "./manuscripts.js";
-import {moveNames} from "./rehearsal.js";
-import {chapters,qualities} from "./manuscripts.js";
-import {shelves} from "./book-view.js";
+import {collection,estimate,collate} from "./manuscripts.js?v=1124f";
+import {moveNames} from "./rehearsal.js?v=1124f";
+import {chapters,qualities} from "./manuscripts.js?v=1124f";
+import {shelves} from "./book-view.js?v=1124f";
 import {sigil,sealFrame} from "./emblems.js";
 
 const grades=[9,8,7,6,5,4,3,2,1];

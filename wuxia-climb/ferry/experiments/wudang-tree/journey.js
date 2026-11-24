@@ -1,19 +1,33 @@
-import {fresh,win,take,study,rehearse,equip,ready,deck,archiveCopy} from './rules.js?branch=1';
-import {startBout} from './combat.js?branch=1';
-import {arts,byName} from './catalogue.js';
-import {collection,estimate,rollCopy} from './manuscripts.js';
+import {duels,patterns,openingMoves} from './encounter-tables.js?v=1124f';
+import {companionFor} from './book-pairings.js?v=1124f';
+import {balance} from './balance-settings.js?v=1124f';
+import {fresh,win,take,study,rehearse,equip,ready,deck,archiveCopy} from './rules.js?v=1124f';
+import {startBout} from './combat.js?v=1124f';
+import {arts,byName} from './catalogue.js?v=1124f';
+import {collection,estimate,rollCopy} from './manuscripts.js?v=1124f';
 
 export const road=[
- ['fighter'],['fighter','cache','inn'],['school','pair','guard'],['inn','school'],['elite1'],
- ['cache','pair','school','inn','cave'],['school','inn','guard'],['guard','cache','pair','banner'],['inn','school'],['elite2'],
+ ['fighter'],['fighter','cache','inn'],['school','pair','guard'],['inn','school'],['elite1','bypass'],
+ ['cache','pair','school','inn','cave'],['school','inn','guard'],['guard','cache','pair','banner'],['inn','school'],['elite2','bypass'],
  ['guard','cache','school','pair'],['school','pair','inn'],['fighter','school','cache'],['inn','guard'],['boss']
 ];
 export const rooms={
  fighter:'橋頭比武',guard:'鐵衣守擂',pair:'雙人合擊',inn:'客棧',school:'師門',cache:'山道貨郎',
- banner:'巡山旗主',cave:'山洞遺鏢',elite1:'鐵衣堂主',elite2:'雙煞把關',boss:'守壇劍宗'
+ bypass:'繞過擂台',trio:'三人截路',banner:'巡山旗主',cave:'山洞遺鏢',elite1:'鐵衣堂主',elite2:'雙煞把關',boss:'守壇劍宗'
 };
 export const bagCapacity=3;
-export const roomName=(type,floor)=>type==='cache'&&floor===2?'江湖偶遇':rooms[type];
+const ordinaryRooms=['fighter','guard','pair'];
+export function roomName(type,floor){
+ if(floor>1&&ordinaryRooms.includes(type))return '江湖比武';
+ return type==='cache'&&floor===2?'江湖偶遇':rooms[type];
+}
+// A road commits to its opponents independently of card draws, shopping and practice.
+function opponents(r){
+ const pool=r.floor===2?['guard','pair','pair']:r.floor<5?['guard','pair','pair','trio']:r.floor<10?['guard','pair','trio']:['pair','trio','trio'];
+ let h=(r.worldSeed??r.seed)^Math.imul(r.floor,0x9e3779b1);
+ h=Math.imul(h^(h>>>16),0x85ebca6b);h=Math.imul(h^(h>>>13),0xc2b2ae35);
+ return pool[((h^(h>>>16))>>>0)%pool.length];
+}
 export const defaultCurriculum=Object.freeze({offer:5,keep:2,schoolLoans:2});
 export const teachers=Object.freeze({sword:'白虹劍法',palm:'武當綿掌'});
 export const mentorBasics=Object.freeze({sword:'連環劍',palm:'橫劍當胸'});
@@ -24,13 +38,13 @@ export function newJourney(seed=Date.now(),curriculum=defaultCurriculum){
     !Number.isInteger(schoolLoans)||schoolLoans<0||schoolLoans>7)throw Error('無效的研習設定');
  let openingSeed=seed>>>0;
  const s=fresh(()=>((openingSeed=(Math.imul(openingSeed,1664525)+1013904223)>>>0)/4294967296));
- s.route={curriculum:{offer,keep,schoolLoans},floor:0,phase:'gift',path:[],hp:40,maxHp:40,seed:seed>>>0,last:'',free:null};
+ s.route={curriculum:{offer,keep,schoolLoans},floor:0,phase:'gift',bookTables:0,path:[],worldSeed:seed>>>0,hp:balance.startingHp,maxHp:balance.startingHp,seed:seed>>>0,last:'',free:null};
  prepareJourney(s);s.wins=0;s.xp=0;s.rewards={};return s;
 }
 function random(s){const r=s.route;r.seed=(Math.imul(1664525,r.seed)+1013904223)>>>0;return r.seed/4294967296}
 export function gift(s,id){
  const r=s.route;if(r.phase!=='gift'||!(['health','xp'].includes(id)||Object.hasOwn(teachers,id)))return false;
- if(id==='health'){r.maxHp+=6;r.hp=r.maxHp}else if(id==='xp')s.xp+=12;
+ if(id==='health'){r.maxHp+=balance.healthGift;r.hp=r.maxHp}else if(id==='xp')s.xp+=balance.xpGift;
  else{
   const name=teachers[id];s.learned.push(name);equip(s,byName.get(name));
   s.stars.push(name,mentorBasics[id]+'0');
@@ -41,33 +55,34 @@ export function gift(s,id){
 }
 // Lane indices from the original journey retain their rooms and connections.
 const trails=[
- [[0,1,2]], [[0,1],[1,2],[2]], [[0],[0,1],[1]], [[0],[0]],
- [[0,1,2,3,4]], [[0],[1],[1,2],[2],[1,2]], [[0],[0,1,3],[1,2,3]], [[0,1],[1],[1],[0,1]], [[0],[0]],
- [[0,1,2,3]], [[0],[1],[1,2],[2]], [[0,1],[1],[1,2]], [[0],[0,1],[1]], [[0],[0]]
+ [[0,1,2]], [[0,1],[1,2],[2]], [[0],[0,1],[1]], [[0,1],[0,1]],
+ [[0,1,2,3,4],[0,1,2,3,4]], [[0],[1],[1,2],[2],[1,2]], [[0],[0,1,3],[1,2,3]], [[0,1],[1],[1],[0,1]], [[0,1],[0,1]],
+ [[0,1,2,3],[0,1,2,3]], [[0],[1],[1,2],[2]], [[0,1],[1],[1,2]], [[0],[0,1],[1]], [[0],[0]]
 ];
 export function linked(floor,from,to){
  if(floor===1)return to===0;
  return trails[floor-2]?.[from??0]?.includes(to)??false;
 }
-const duels={
- fighter:[0],guard:[1],pair:[2],
- banner:[2,[['巡山旗主',47,3,[[8,1,0],[5,2,0],[0,0,6]]],['前哨',10,0,[[5,1,0]]],['後哨',9,0,[[4,1,0]]]]],
- elite1:[1,[['鐵衣堂主',78,9,[[8,1,0],[0,0,7],[6,2,0]]]]],
- elite2:[2,[['青煞',46,0,[[7,1,0],[4,2,0]]],['白煞',42,4,[[0,0,5],[9,1,0]]]]],
- boss:[0,[['守壇劍宗',110,8,[[12,1,0],[7,2,0],[0,0,10],[19,1,0]]]]]
-};
-// Each pattern is announced throughout the player's turn and resolved on 收勢.
-const patterns={
- '蒙眼刺客':[[7,1,0,'wound'],[0,0,6,'disrupt'],[5,2,0,'wound']],
- '鐵衣客':[[0,0,0,'charge'],[7,2,0],[0,0,6,'counter'],[15,1,0]],
- '鐵衣堂主':[[0,0,8,'counter'],[15,1,0],[0,0,0,'charge'],[10,2,0,'wound']],
- '前哨':[[5,1,0],[4,2,0,'wound']],'後哨':[[0,0,0,'feint'],[7,1,0]],
- '青煞':[[9,1,0,'wound'],[6,2,0]],'白煞':[[0,0,0,'feint'],[8,1,0],[0,0,4,'disrupt']],
- '守壇劍宗':[[13,1,0],[0,0,0,'charge'],[8,3,0],[0,0,8,'counter'],[18,1,0,'wound']]
-};
+// Nearest reachable marked fight. The player may still take another fork.
+export function nextBookFight(r){
+ let previous=[r.path.at(-1)];
+ for(let floor=r.floor+1;floor<=road.length;floor++){
+  const lanes=road[floor-1].map((_,i)=>i).filter(i=>previous.some(from=>linked(floor,from,i)));
+  for(const lane of lanes){
+   const node=road[floor-1][lane];
+   if(!duels[node])continue;
+   const kind=floor>1&&ordinaryRooms.includes(node)?opponents({...r,floor}):node;
+   return {floor,kind,name:roomName(node,floor)};
+  }
+  previous=lanes;
+ }
+ return null;
+}
 export function prepareJourney(s){
  // Keep an already-dealt reward on its original terms until the player leaves.
  if(!s.route.curriculum&&s.route.phase!=='reward')s.route.curriculum={...defaultCurriculum};
+ s.route.bookTables??=s.wins;
+ s.route.worldSeed??=s.route.seed;
  s.relics??=[];s.bag??=[];
  if(s.route.phase==='cache')prepareStop(s);
  const b=s.bout;
@@ -76,7 +91,7 @@ export function prepareJourney(s){
  b.relics=[...s.relics];
  for(const e of b.foes){
   if(!e.scout&&patterns[e.name])e.moves=patterns[e.name];
-  if(e.name==='蒙眼刺客'&&s.route.floor===1)e.moves=[[7,1,0,'wound'],[0,0,4,'disrupt'],[4,2,0,'wound']];
+  if(e.name==='蒙眼刺客'&&s.route.floor===1)e.moves=openingMoves;
   if(e.openings){e.exposed=1;delete e.openings}
  }
  b.strength??=Number(s.relics.includes('青鋼劍'));
@@ -85,6 +100,8 @@ export function prepareJourney(s){
  delete b.dodge;b.tactics=2;
 }
 export const wares={
+ '鐵衣令':{grade:'精良',kind:'信物',source:'鐵衣擂',tile:2,text:'堂主授你搶先手的訣竅。每場首回合多 1 點內力；打斷蓄勁，下回合再多 1 點。'},
+ '雙煞令':{grade:'精良',kind:'信物',source:'雙煞擂',tile:4,text:'看破雙煞交手的空隙。此後每場比武帶 2 點勁力，每擊多打 2 點。'},
  '青鋼劍':{grade:'普通',kind:'裝備',source:'戰後選裝',tile:0,text:'每場比武帶 1 點勁力，每擊多打 1 點。'},
  '竹編護臂':{grade:'普通',kind:'裝備',source:'戰後選裝',tile:1,text:'每場比武帶 1 點守勁，每張護體招式多得 1 點護體。'},
  '銅護腕':{grade:'普通',kind:'裝備',source:'守關獎勵',tile:2,text:'每場比武開場獲得 6 點護體。'},
@@ -105,17 +122,18 @@ export function buyMedicine(s,name){
 // Roll once on victory. A separate stream keeps rewards stable through reloads,
  // inspections and training, without consuming the six rehearsal dice.
 function victoryLoot(s,enemySeed){
- const r=s.route,first=r.floor===1,gate=r.floor===5||r.floor===10||road[r.floor-1][r.path.at(-1)]==='banner';
- const kind=road[r.floor-1][r.path.at(-1)], hard=kind==='pair'||kind==='guard';
+ const r=s.route,first=r.floor===1;
+ const kind=r.encounter??road[r.floor-1][r.path.at(-1)],gate=['elite1','elite2','banner'].includes(kind);
+ const hard=['pair','guard','trio'].includes(kind);
  let seed=(enemySeed^Math.imul(r.floor,0x9e3779b1))>>>0;
  const roll=()=>{seed=(Math.imul(1664525,seed)+1013904223)>>>0;return seed/4294967296};
  const range=(lo,hi)=>lo+Math.floor(roll()*(hi-lo+1));
  const gold=gate?range(13,19):hard?range(8,13):range(5,9);
  const xp=gate?range(14,19):hard?range(8,12):range(5,9);
- const books=first||gate||r.missedBooks||roll()<(hard?.82:.65);
- const gear=first||gate||roll()<(hard?.55:.25);
- const medicine=roll()<(gate?.8:hard?.6:.45)?(roll()<.6?'金創藥':'軟筋散'):null;
- return {gold,xp,books:Boolean(books),gear,medicine,elite:gate};
+ const books=first||gate||r.missedBooks||roll()<(hard?balance.hardBookChance:balance.normalBookChance);
+ const gear=first||gate||roll()<(hard?balance.hardGearChance:balance.normalGearChance);
+ const medicine=roll()<(gate?balance.eliteDrugChance:hard?balance.hardDrugChance:balance.normalDrugChance)?(roll()<.6?'金創藥':'軟筋散'):null;
+ return {gold:Math.round(gold*balance.goldScale),xp:Math.round(xp*balance.xpScale),books:Boolean(books),gear,medicine,elite:gate};
 }
 export function spoils(s){
  const r=s.route;
@@ -176,13 +194,16 @@ export function enter(s,lane){
  const r=s.route,floor=r.floor+1;
  if(r.phase!=='map'||!Number.isInteger(lane)||!road[floor-1]?.[lane]||!linked(floor,r.path.at(-1),lane))return false;
  const id=road[floor-1][lane];r.floor=floor;r.path.push(lane);r.free=null;r.last='';r.tookRelic=false;r.tookItem=false;delete r.loot;delete r.purchases;delete r.stop;
- if(duels[id])beginEncounter(s,id);
+ delete r.encounter;
+ if(id==='bypass'){r.phase='map';r.last='你沿擂台後的小徑繞行，保住氣血，放棄了這一擂的信物。'}
+ else if(duels[id])beginEncounter(s,floor>1&&ordinaryRooms.includes(id)?opponents(r):id);
  else if(id==='cave'){r.phase='cache';r.stop={story:'cave',finds:[]}}
  else{r.phase=id;if(id==='cache')prepareStop(s)}
  return true;
 }
 function beginEncounter(s,id){
   const r=s.route,floor=r.floor;
+  r.encounter=id;
   const [profile,enemies]=duels[id];
   const b=startBout(s,profile,Math.floor(random(s)*4294967296));b.maxHp=r.maxHp;b.hp=r.hp;
   if(enemies)b.foes=enemies.map(([name,hp,block,moves])=>({name,hp,maxHp:hp,block,moves}));
@@ -193,8 +214,22 @@ function beginEncounter(s,id){
   }
   if(id==='elite1'||id==='boss')b.foes[0].reads={};
   if(id==='boss')b.foes[0].sealsBreath=true;
-  if(floor===1){b.foes[0].hp=b.foes[0].maxHp=34}
-  s.bout=b;prepareJourney(s);if(s.relics.includes('銅護腕'))b.block+=6;r.phase='fight';
+  if(floor===1){b.foes[0].hp=b.foes[0].maxHp=balance.openingEnemyHp}
+  const scale={elite1:balance.elite1HpScale,elite2:balance.elite2HpScale,boss:balance.bossHpScale}[id];
+  if(scale!==undefined&&scale!==1)for(const foe of b.foes)foe.hp=foe.maxHp=Math.max(1,Math.round(foe.maxHp*scale));
+  s.bout=b;prepareJourney(s);
+  if(s.relics.includes('鐵衣令'))b.energy++;
+  if(s.relics.includes('雙煞令'))b.strength+=2;
+  if(id==='pair'){
+   const front=b.foes[0];
+   front.moves=front.moves.map(([damage,hits,...rest])=>[damage+(hits?balance.vanguardHitBonus:0),hits,...rest]);
+   front.maxHp+=balance.vanguardHpBonus;front.hp=front.maxHp;
+  }
+  if(ordinaryRooms.includes(id)||id==='trio'){
+   const extra=Math.floor(floor/5);
+   if(extra)for(const e of b.foes)e.moves=e.moves.map(([damage,hits,...rest])=>[damage+(hits?extra:0),hits,...rest]);
+  }
+  if(s.relics.includes('銅護腕'))b.block+=balance.braceletBlock;r.phase='fight';
 }
 export const caveRisk=count=>(count+1)*25;
 export function exploreCave(s,choice){
@@ -221,7 +256,7 @@ export function finishFight(s){
  const r=s.route,b=s.bout;if(r.phase!=='fight'||!['won','lost'].includes(b?.phase))return false;
  r.hp=b.hp;
  if(b.phase==='lost'){r.phase='lost';r.last=b.log.join(' ');delete s.bout;return true}
- if(s.relics.includes('藥葫蘆'))r.hp=Math.min(r.maxHp,r.hp+4);
+ if(s.relics.includes('藥葫蘆'))r.hp=Math.min(r.maxHp,r.hp+balance.gourdHeal);
  delete s.bout;
  if(r.floor===15){s.wins++;r.phase='won';return true}
  r.pickedBooks=[];r.practiceBooks=[];r.free=null;
@@ -231,19 +266,25 @@ export function finishFight(s){
   r.last='你逼開鐵衣客，帶著行囊脫身。這一仗只得歷練，先前收好的抄本仍在。';
   r.phase='reward';return true;
  }
- if(s.wins===0){s.offer=s.offer.map(n=>n==='武當太和功'?'八卦步':n);
-  s.finds['八卦步']=[2,2,2,2,2,1];s.drawInfo['八卦步']={kind:'opening'};
+ r.loot=victoryLoot(s,b.seed);
+ if(s.wins===0){
   const count=r.curriculum?.offer??3;
-  s.offer=[...s.offer,'武當長拳','武當鐵布衫'].slice(0,count);
+  const palm=nextBookFight(r)?.kind==='guard'&&!s.learned.includes('武當綿掌')?'武當綿掌':'武當長拳';
+  s.offer=['武當丹劍','八卦步','拂塵功',palm,'武當鐵布衫'].slice(0,count);
+  s.finds={'武當丹劍':s.finds['武當丹劍'],'八卦步':[2,2,2,2,2,1],'拂塵功':[2,2,2,1,2,2]};
+  s.drawInfo=Object.fromEntries(s.offer.map(name=>[name,{kind:'opening'}]));
   for(const name of s.offer)if(!s.finds[name]){
    s.finds[name]=rollCopy(()=>random(s));s.drawInfo[name]={kind:'opening'};
   }
   s.wins=1;s.rewards={gold:false,xp:false,ticket:false}}
- else win(s,()=>random(s));
- r.loot=victoryLoot(s,b.seed);
+ else win(s,()=>random(s),r.loot.books&&r.bookTables===1?companionFor(s):null);
+ if(r.loot.books&&s.offer.length)r.bookTables++;
  if(!r.loot.books){s.offer=[];s.finds={};s.drawInfo={}}
  r.missedBooks=!r.loot.books;
- if(r.floor===5||r.floor===10)s.rewards.ticket=false;
+ const token={elite1:'鐵衣令',elite2:'雙煞令'}[r.encounter??road[r.floor-1][r.path.at(-1)]];
+ if(token){s.rewards.ticket=false;if(!s.relics.includes(token))s.relics.push(token);
+  r.last='守擂得勝，獲贈'+token+'。'+wares[token].text+'另可挑一件守關信物。';
+ }
  r.phase='reward';return true;
 }
 export function receive(s,name){
@@ -272,7 +313,7 @@ export function train(s,name){
 }
 export function rest(s,choice){
  const r=s.route;if(r.phase!=='inn')return false;
- if(choice==='heal'){const n=Math.min(r.maxHp-r.hp,Math.ceil(r.maxHp*.3));r.hp+=n;r.last='在客棧歇了一晚，回復 '+n+' 氣血。'}
+ if(choice==='heal'){const n=Math.min(r.maxHp-r.hp,Math.ceil(r.maxHp*balance.innHealFraction));r.hp+=n;r.last='在客棧歇了一晚，回復 '+n+' 氣血。'}
  else if(choice==='casebook'){s.xp+=4;r.last='你替郎中把散亂的醫案按年排好，聽他講了一夜舊事，得 4 點歷練。'}
  else if(choice.startsWith('refine:')){
   const id=choice.slice(7);
@@ -321,7 +362,7 @@ function prepareStop(s){
   return selected;
  };
  const names=[...pick('裝備',2),...pick('信物',1),'金創藥','軟筋散'];
- r.stop={sharedMedicine:true,stock:Object.fromEntries(names.map(n=>{const [min,max]=marketRanges[n];return [n,min+roll(max-min+1)]}))};
+ r.stop={sharedMedicine:true,stock:Object.fromEntries(names.map(n=>{const [min,max]=marketRanges[n];return [n,Math.round((min+roll(max-min+1))*balance.marketPriceScale)]}))};
 }
 export function storyAt(s){prepareStop(s);return stories[s.route.stop.story]}
 export function storyLimit(s,c){

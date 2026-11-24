@@ -1,4 +1,4 @@
-import {chapters,qualities,collection} from './manuscripts.js';
+import {chapters,qualities,collection} from './manuscripts.js?v=1124f';
 import {editionInfo} from './editions.js';
 
 export function shelves(s,a){

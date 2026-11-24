@@ -1,5 +1,6 @@
-import {arts, basics, byName} from "./catalogue.js";
-import {collection,collate,estimate,withCopy,deal,xpPerWin,pageOdds} from "./manuscripts.js";
+import {balance} from './balance-settings.js?v=1124f';
+import {arts, basics, byName} from "./catalogue.js?v=1124f";
+import {collection,collate,estimate,withCopy,deal,xpPerWin,pageOdds} from "./manuscripts.js?v=1124f";
 import {acquisition} from "./editions.js";
 export const purse=8, fee=24;
 export function fresh(rng=Math.random){
@@ -47,7 +48,7 @@ export function gateOdds(s,a,sections=collate(collection(s,a.name)),grounded=!a.
   const odds=hasNoviceFoundation(s,a,grounded)?foundationPageOdds:pageOdds;
   return sections.map((q,i)=>{
     const needsFoundation=!grounded&&(i===2||i===5);
-    const base=Math.round(odds[q]*(needsFoundation ? .72 : 1));
+    const base=Math.round(odds[q]*(needsFoundation ? balance.foundationMultiplier : 1));
     return Math.min(100,base+10*(s.gateNotes?.[a.name]?.[i]||0));
   });
 }
@@ -118,7 +119,7 @@ export function claimReward(s,key){
   s.rewards[key]=true;
   return true;
 }
-export function win(s,rng=Math.random){
+export function win(s,rng=Math.random,companion=null){
   s.wins++;s.claimed=null;s.before=null;s.drawInfo={};
   s.rewards={xp:false,gold:false};
   if(rng()<.25)s.rewards.ticket=false;
@@ -126,7 +127,12 @@ export function win(s,rng=Math.random){
   const offered=[];
   const focus=focusDrop(s);
   if(focus){offered.push(focus);s.drawInfo[focus.name]={kind:'focus'}}
-  while(offered.length<(s.route?.curriculum?.offer??3)){
+  const count=s.route?.curriculum?.offer??3;
+  const partner=pool.find(a=>a.name===companion);
+  if(partner&&!offered.includes(partner)&&offered.length<count){
+    offered.push(partner);s.drawInfo[partner.name]={kind:'companion'};
+  }
+  while(offered.length<count){
     const candidates=pool.filter(a=>!offered.includes(a));
     if(!candidates.length)break;
     const total=candidates.reduce((n,a)=>n+weight(s,a),0);

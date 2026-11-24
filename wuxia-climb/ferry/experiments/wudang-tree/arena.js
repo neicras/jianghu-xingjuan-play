@@ -1,8 +1,8 @@
 import {supportArt} from './art-library/support-files.js';
 import {activeStates,glyph} from './vocabulary.js';
-import {cardFace} from './card-face.js';
-import {byName} from './catalogue.js';
-import {encounters,forecast,intent,price,readPenalty} from './combat.js?branch=1';
+import {cardFace} from './card-face.js?v=1124f';
+import {byName} from './catalogue.js?v=1124f';
+import {encounters,forecast,intent,price,readPenalty} from './combat.js?v=1124f';
 import {drawScene,loadScene,DURATION} from '../../altar-duel/scene.js?fixedLight=1';
 import {frame,neutral} from '../../altar-duel/action-frame.js';
 

@@ -215,3 +215,15 @@ body:is(.at-market,.studying)>header.journey-rail{display:none}
  .book-reader :is(.illustrated-leaf,.contents-leaf){height:100%;box-sizing:border-box;padding-block:4px;overflow-y:auto;overscroll-behavior:contain}
  .book-reader .leaf-print{flex:none;height:31%}
 }
+.pair-bookmark{position:absolute;left:2%;top:17%;padding:.45em .28em .8em;writing-mode:vertical-rl;background:#375954;color:#fff1c7;clip-path:polygon(0 0,100% 0,100% 100%,50% 91%,0 100%);font:700 clamp(11px,1.2vw,18px)/1 var(--serif);letter-spacing:.12em;pointer-events:none}
+.book-reader .bout-margins{flex:none;margin-top:.35em}
+.book-reader .bout-margins p{font:500 clamp(13px,min(1.55cqw,3.4cqh),21px)/1.35 var(--serif);margin:.16em 0 .45em}
+.book-reader .bout-margins b{display:block;color:#843a29}
+.reader-actions .practice-tag{align-self:center;min-width:0;text-align:center;font:600 clamp(12px,1.55cqw,21px)/1.2 var(--serif);color:#ffe4ad}
+.practice-tag b{white-space:nowrap}
+@media(orientation:landscape) and (max-height:480px){
+ .book-reader:has(.bout-margins) .spread{width:min(94cqw,223cqh);height:84cqh}
+ .book-reader:has(.bout-margins) .illustrated-leaf{display:block}
+ .book-reader:has(.bout-margins) .leaf-print{float:right;width:31%;height:24%;margin:0 0 2% 3%}
+ .book-reader .bout-margins{clear:both}
+}

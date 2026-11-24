@@ -1,24 +1,24 @@
 import {trailTools,wallet,objectImage} from './trail-hud.js';
-import {cover} from './bound-book.js';
-import {atlas} from './route-scroll.js?branch=1';
+import {cover} from './bound-book.js?v=1124f';
+import {atlas} from './route-scroll.js?v=1124f';
 import {supportArt} from './art-library/support-files.js?branch=1';
-import {newJourney,gift,enter,finishFight,receive,train,rest,leave,prepareJourney,lessons,drill,goods,spoils,pack,useItem,wares,apothecary,buyMedicine,purchaseLimit,bagCapacity,exploreCave,caveRisk,escort,storyAt,storyLimit,marketRanges,stockAt,buyAtStall} from './journey.js?branch=1';
-import {play,endRound,settleChoice} from './combat.js?branch=1';
-import {manual,navigateRegister} from './manual.js';
-import {editionSheet} from './book-view.js';
-import {arena,paintBout,animateBout,pileSheet} from './arena.js?branch=1';
-import {displayBookDialog} from './rewards-view.js?branch=1';
-import {rehearsalResult} from './rehearsal.js';
-import {deck,picksLeft,attemptFee,claimReward,trainingChance,ready,equip} from './rules.js';
-import {estimate,reroll} from './manuscripts.js';
-import {frames,reviewJourney} from './review-frames.js?branch=1';
+import {newJourney,gift,enter,finishFight,receive,train,rest,leave,prepareJourney,lessons,drill,goods,spoils,pack,useItem,wares,apothecary,buyMedicine,purchaseLimit,bagCapacity,exploreCave,caveRisk,escort,storyAt,storyLimit,marketRanges,stockAt,buyAtStall} from './journey.js?v=1124f';
+import {play,endRound,settleChoice} from './combat.js?v=1124f';
+import {manual,navigateRegister} from './manual.js?v=1124f';
+import {editionSheet} from './book-view.js?v=1124f';
+import {arena,paintBout,animateBout,pileSheet} from './arena.js?v=1124f';
+import {displayBookDialog} from './rewards-view.js?v=1124f';
+import {rehearsalResult} from './rehearsal.js?v=1124f';
+import {deck,picksLeft,attemptFee,claimReward,trainingChance,ready,equip} from './rules.js?v=1124f';
+import {estimate,reroll} from './manuscripts.js?v=1124f';
+import {frames,reviewJourney} from './review-frames.js?v=1124f';
 import {descriptions} from './annotations.js';
-import {effect,byName} from './catalogue.js';
+import {effect,byName} from './catalogue.js?v=1124f';
 import {keywords,statuses,marked,glyph} from './vocabulary.js';
-import {cardFace} from './card-face.js';
+import {cardFace} from './card-face.js?v=1124f';
 
-import {merchant} from './merchant.js';
-import {departure,rewardPile,gearOffers,ending} from './journey-plates.js?branch=1';
+import {merchant} from './merchant.js?v=1124f';
+import {departure,rewardPile,gearOffers,ending} from './journey-plates.js?v=1124f';
 let heldWare=null, seat='sword';
 
 const key='wudang-journey-15-v1',$=id=>document.getElementById(id);
@@ -33,10 +33,10 @@ if(preview==='fight'&&['counter','kill','survive','break','short'].includes(temp
  if(!response.ok)throw Error('未能載入攻守試招');
  const drill=(await response.json())[tempo];
  if(drill){s=drill.s;s.bout.log=['對手是'+drill.target+'。你可以先出《'+drill.attack+'》，或者《'+drill.guard+'》。']}
-}else if(preview==='fight'&&['1','5','10','15'].includes(gate)){
+}else if((preview==='fight'&&['1','5','10','15'].includes(gate))||(preview==='map'&&['5','10'].includes(gate))){
  const response=await fetch(new URL('./gate-drills.json',import.meta.url));
  if(!response.ok)throw Error('未能載入關口試招');
- s=(await response.json()).snapshots[gate];
+ const drills=await response.json();s=(preview==='map'?drills.approaches:drills.snapshots)[gate];
 }
 if(!preview)try{const saved=JSON.parse(localStorage.getItem(key));if(saved?.route)s=saved}catch{}
 prepareJourney(s);

@@ -1,11 +1,8 @@
+import {balance} from './balance-settings.js?v=1124f';
 // A bout snapshots this exact library deck, including refinement of individual copies.
-import {byName,hasKeyword} from './catalogue.js';
-import {deck} from './rules.js';
-const profiles=[
- {title:'橋頭試劍',enemies:[['蒙眼刺客',32,0,[[7,1,0],[0,0,6],[5,2,0]]]]},
- {title:'鐵衣守擂',enemies:[['鐵衣客',38,9,[[9,1,0],[0,0,10],[13,1,0]]]]},
- {title:'雙人合擊',enemies:[['前哨',19,0,[[4,1,0],[3,2,0]]],['後哨',22,3,[[0,0,5],[6,1,0]]]]}
-];
+import {byName,hasKeyword} from './catalogue.js?v=1124f';
+import {deck} from './rules.js?v=1124f';
+import {profiles} from './encounter-tables.js?v=1124f';
 export const encounters=profiles.map(p=>p.title);
 export function intent(b,e){
  if(e.rallies&&b.foes.some(f=>f.scout&&f.hp<=0))return [0,0,0,'rally'];
@@ -23,8 +20,12 @@ function injury(b,name,pile){
 export function forecast(b,e){
  const [,hits,guard,stance]=intent(b,e);
  if(stance==='rally')return '鳴哨增援 · 喚來 '+b.foes.filter(f=>f.scout&&f.hp<=0).length+' 名哨兵。旗主本回合停手，新兵下回合才出招。';
- if(stance==='charge'&&e.pressure>=8)return '蓄勁已被打斷 · 本回合不會出手。';
- if(stance==='charge')return '蓄勁中 · 再打掉 '+Math.max(0,8-(e.pressure||0))+' 氣血可破招。下次每擊 +5'+(e.sealsBreath?'，並令你氣短、抽到《岔氣》':'')+'。';
+ if(stance==='charge'&&e.name==='鐵衣客'&&guard){
+  const left=Math.max(0,8-(e.pressure||0));
+  return (left?'再打掉 '+left+' 氣血可打斷蓄勁，否則下次每擊 +5。':'蓄勁已被打斷。')+'收勢時他仍添 '+guard+' 護體。';
+ }
+ if(stance==='charge'&&e.pressure>=8)return e.sealsBreath?'封脈劍勢已被打斷。劍宗接下來兩回合露出破綻。':'蓄勁已被打斷 · 本回合不會出手。';
+ if(stance==='charge')return '蓄勁中 · 再打掉 '+Math.max(0,8-(e.pressure||0))+' 氣血可破招。下次每擊 +5'+(e.sealsBreath?'，並令你氣短、抽到《岔氣》。若打斷，劍宗接下來兩回合露出破綻':'')+'。';
  if(stance==='counter')return '聽勁反打 · 此時每打中他一下，他便還手 3 點。收勢後他得 '+guard+' 護體。';
  if(stance==='feint')return '虛晃一招 · 令你露出破綻，下回合受擊加重一半。';
  if(stance==='disrupt')return '截脈 · 下回合你會氣短，並抽到一張《岔氣》。'+(guard?'對手得 '+guard+' 護體。':'');
@@ -62,15 +63,19 @@ export function startBout(s,profile=0,seed=Date.now()){
  openTurn(b);return b;
 }
 function openTurn(b){
- b.turn++;b.energy=3+b.nextEnergy+(b.powers.元始先天功?1:0);b.nextEnergy=0;
+ b.turn++;b.energy=balance.energyPerTurn+b.nextEnergy+(b.powers.元始先天功?1:0);b.nextEnergy=0;
  b.block=(b.carry?b.block:0)+(b.powers.元始先天功||0);b.carry=false;
+ b.lastTurnStep=Boolean(b.seen?.身法);
  b.seen={};b.retain=[];b.attacks=0;b.riposte=0;b.onBlock=0;b.cleanDraw=0;b.aura=0;b.yinyang=false;b.triad=false;b.savedBlock=b.blocked||0;b.blocked=0;
- draw(b,5+b.nextDraw);b.nextDraw=0;
+ draw(b,balance.drawPerTurn+b.nextDraw);b.nextDraw=0;
 }
 const branch=a=>a.branch==='輕功'?'身法':a.branch;
+export const canLinkStep=b=>Boolean(b.seen?.身法||b.lastTurnStep);
 export function price(b,c){
  if(hasKeyword(c,'無法打出'))return c.name==='劍傷'&&b.relics?.includes('針灸匣')?0:Infinity;
- const a=byName.get(c.name);return Math.max(0,a.cost-(b.discount[branch(a)]||0));
+ const a=byName.get(c.name);
+ const linkedStep=c.name==='遊身八卦掌'&&canLinkStep(b)?1:0;
+ return Math.max(0,a.cost-(b.discount[branch(a)]||0)-linkedStep);
 }
 export const readPenalty=(enemy,name)=>Math.min(3,enemy?.reads?.[name]||0);
 function harm(e,n,bypass=false){
@@ -143,7 +148,8 @@ export function play(b,id,onMove){
  if(family==='劍法'&&prev===2)b.block+=p.三才劍陣||0;
 
  switch(name){
- case '武當太和功':case '一字混元樁':case '武當混元功':case '純陽無極功':case '元始先天功':
+ case '武當太和功':blockFromCard(3);p[name]=v;break;
+ case '一字混元樁':case '武當混元功':case '純陽無極功':case '元始先天功':
  case '三才劍陣':case '陰陽周天法':case '三華聚頂':case '純陽劍意':
   p[name]=v;break;
  case '抱元守一':blockFromCard(v);b.nextEnergy++;break;
@@ -167,20 +173,20 @@ export function play(b,id,onMove){
  case '武當長拳':hit(v+Math.min(4,b.savedBlock));blockFromCard(1);break;
  case '追風雲環掌':case '連環劍':hit(v,2);break;
  case '武當綿掌':case '先天少陽劍氣':hit(v,1,{pierce:true});break;
- case '遊身八卦掌':hit(v);if(b.seen.身法)draw(b,1);break;
+ case '遊身八卦掌':hit(v);if(canLinkStep(b))draw(b,1);break;
  case '太乙逍遙掌':hit(v);b.discount.身法=1;break;
  case '玄功神拳':hit(v+2*b.hand.filter(x=>byName.get(x.name).branch==='內功').length);break;
  case '武當純陽拳':hit(v);b.palmBonus+=3;break;
  case '紫陽正氣拳':hit(v);blockFromCard(6);break;
  case '太極拳':hit(v+Math.min(8,b.savedBlock));break;
- case '武當丹劍':hit(b.seen.護體?v:6);break;
+ case '武當丹劍':hit(b.seen.護體||b.seen.軟兵?v:6);break;
  case '武當逍遙劍':hit(v);if(b.hand.length)b.pending='可留';break;
  case '白虹劍法':hit(v+(prev?3:0),2);break;
  case '太乙玄門劍':hit(v);b.discount.內功=1;break;
  case '真武遊龍劍':hit(v,3);break;
  case '太極劍法':hit(v);blockFromCard(6);break;
  case '無極劍式':hit(v+3*prev);break;
- case '拂塵功':hit(v);blockFromCard(3);break;
+ case '拂塵功':{const surrounded=living(b).length>=2;hit(v);blockFromCard(surrounded?6:3);break}
  case '武當鐵拂塵':e.block=Math.max(0,e.block-v);hit(4);break;
  case '兩儀拂塵功':{const defended=e.block>0;hit(v);if(defended)draw(b,1);break}
  case '老君拂塵功':blockFromCard(v);e.weaken=(e.weaken||0)+2;break;
@@ -202,8 +208,11 @@ export function play(b,id,onMove){
  const permanent=hasKeyword(c,'運功');
  (permanent||hasKeyword(c,'消耗')?b.exhaust:b.discard).push(c);
  const damage=priorHP-b.foes.reduce((n,f)=>n+f.hp,0);b.log=['使出《'+name+'》。'+(attacked||damage?'對手失去 '+damage+' 氣血。':'')+(b.block>oldBlock?'護體增加 '+(b.block-oldBlock)+'。':'')];
+ if(hasKeyword(c,'穿勁')&&e.block>0)b.log.push('勁力穿過護體，'+e.name+'仍有 '+e.block+' 點護體。');
  if(attacked&&b.attacks%3===0&&b.relics?.includes('三才玉環'))b.log.push('三才玉環生效，守勁增加 1。');
  if(attacked&&recognized)b.log.push(e.name+'已認得《'+name+'》，此招每擊減去 '+recognized+' 點力道。');
+ if(name==='遊身八卦掌'&&canLinkStep(b))b.log.push('循著步勢出掌，此掌少耗內力，並可補牌。');
+ if(name==='武當丹劍'&&b.seen.軟兵)b.log.push('趁拂塵架開對手，丹劍順勢刺入。');
  if(name==='踏浪步')b.log.push(e.name+'露出破綻 '+e.exposed+' 回合，受攻擊時傷害增加一半。');
  if(counters)b.log.push('對手反打 '+counters+' 次，'+(reflected?'你失去 '+reflected+' 氣血。':'護體盡數擋下。'));
  scatterScouts(b);
@@ -226,7 +235,10 @@ export function endRound(b,onMove){
    }
    b.log.push('旗主鳴哨，'+arrived.join('、')+'趕到。新兵本回合只站位。');
   }
-  if(stance==='charge'){const broken=e.pressure>=8;if(!broken){
+  if(stance==='charge'){const broken=e.pressure>=8;
+   if(broken&&e.sealsBreath)e.exposed=Math.max(e.exposed||0,3);
+   if(broken&&b.relics?.includes('鐵衣令')){b.nextEnergy++;b.log.push('鐵衣令：你截住來勢，下回合多 1 點內力。')}
+   if(!broken){
    e.force=(e.force||0)+5;
    if(e.sealsBreath){disrupted=true;injury(b,'岔氣',b.draw);b.log.push('劍宗封住氣口，《岔氣》置於抽牌堆頂。')}
   }b.log.push(e.name+(broken?'被你打斷，這一口勁沒能蓄成。':'蓄勁已成，下次每擊加重 5 點。'))}
