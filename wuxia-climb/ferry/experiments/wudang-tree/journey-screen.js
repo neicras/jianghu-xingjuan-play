@@ -1,6 +1,6 @@
 import {trailTools,wallet,objectImage} from './trail-hud.js';
 import {cover} from './bound-book.js?v=1124f';
-import {atlas} from './route-scroll.js?v=1124f';
+import {atlas} from './route-scroll.js?map2';
 import {supportArt} from './art-library/support-files.js?branch=1';
 import {newJourney,gift,enter,finishFight,receive,train,rest,leave,prepareJourney,lessons,drill,goods,spoils,pack,useItem,wares,apothecary,buyMedicine,purchaseLimit,bagCapacity,exploreCave,caveRisk,escort,storyAt,storyLimit,marketRanges,stockAt,buyAtStall} from './journey.js?v=1124f';
 import {play,endRound,settleChoice} from './combat.js?v=1124f';
@@ -51,12 +51,23 @@ $('book-choice').addEventListener('toggle',event=>{
  const page=note.closest('.spread-pages');
  if(page)page.scrollTop+=note.getBoundingClientRect().top-page.getBoundingClientRect().top-6;
 },true);
-function locateTrail(root){
+function locateTrail(root,floor){
  const trail=root.querySelector('.trail-window');
- const stop=trail?.querySelector('.available')||trail?.querySelector('.here');
- if(!stop||!portraitPhone.matches)return;
- trail.scrollTop+=stop.getBoundingClientRect().top-trail.getBoundingClientRect().top-trail.clientHeight*.25;
+ if(!trail)return;
+ const stop=floor?trail.querySelector('[data-floor="'+floor+'"]'):trail.querySelector('.available,.here');
+ if(!stop)return;
+ const box=stop.getBoundingClientRect(),view=trail.getBoundingClientRect();
+ if(portraitPhone.matches)trail.scrollTop+=box.top-view.top-trail.clientHeight*.16;
+ else trail.scrollLeft+=box.left-view.left-trail.clientWidth*.16;
 }
+document.addEventListener('click',event=>{
+ const tab=event.target.closest('[data-map-region]');
+ if(tab)locateTrail(tab.closest('.route-scroll'),tab.dataset.mapRegion);
+ const route=event.target.closest('.route-scroll');
+ if(route)for(const details of route.querySelectorAll('.map-tools details[open]')){
+  if(!details.contains(event.target))details.open=false;
+ }
+});
 portraitPhone.addEventListener('change',()=>requestAnimationFrame(()=>locateTrail($('folio').open?$('folio'):$('room'))));
 function modal(content){
  const folio=$('folio'),pages=$('pages');pages.innerHTML=content;
@@ -298,7 +309,7 @@ document.addEventListener('click',async e=>{
  if(action==='preview'){modal('<div class="full-card">'+cardFace(byName.get(v),s.stars.includes(v))+'</div>');return}
  if(action==='record'){modal(rehearsalResult(byName.get(v),s.lastPractice));return}
  if(action==='toggle'&&['map','inn','school','reward','cache'].includes(r.phase))equip(s,byName.get(v));
- if(action==='map'){modal('<div class="route-heading"><h2>十五站行程</h2>'+btn('restartPrompt','重新開局')+'</div>'+atlas(r));return}
+ if(action==='map'){modal(atlas(r));return}
  if(action==='restartPrompt'){
   modal('<h2>從頭再走一次？</h2><p>你會回到啟程前，重新選一份餞行禮。今次行程的氣血、牌組和行囊會重新開始計算。</p>'+btn('continueRun','繼續這一局','primary')+' '+btn('restart','從頭開始'));
   $('pages').querySelector('[data-action="continueRun"]').focus();return
