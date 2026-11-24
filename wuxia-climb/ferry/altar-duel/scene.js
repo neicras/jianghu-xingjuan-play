@@ -262,15 +262,29 @@ export function drawScene(ctx, resources, t, view = 0, duel = null) {
   actors.sort((a, b) => a.d - b.d);
   for (const p of actors) resources.lighting?.castShadow(ctx, p);
   for (const p of actors) shadow(ctx, p);
-  for (const p of actors) stance(ctx, p, (p.step===0 && duel?.idle?.[p.id]) || images[p.id], m, resources.lighting?.cel(p));
+  for (const p of actors) stance(ctx, p, (p.step===0 && duel?.idle?.[p.id]) || images[p.id], m, resources.lighting?.cel?.(p));
   // Spark at the defender's actual painted blade, anchored to the contact pose.
   const age = duel ? duel.flashAge : t - 3.75;
   if (foe && age >= 0 && age < 0.23) {
     const weapon = (duel?.source === "assassin" ? foe : hero).blade;
     const tip = duel ? weapon[1] : foe.blade[1];
-    const [x, y] = tip;
+    let [x,y]=tip;
+    ctx.save();
+    if(duel?.contactBlade){
+      const edged=duel.contactBlade==="hero"?hero:foe;
+      const other=edged===hero?foe:hero;
+      const [a,b]=edged.blade,dx=b[0]-a[0],dy=b[1]-a[1];
+      // Keep the flare on the inked blade, nearest the other weapon's tip.
+      const u=clamp(((other.blade[1][0]-a[0])*dx+(other.blade[1][1]-a[1])*dy)/(dx*dx+dy*dy||1),.18,1);
+      x=a[0]+dx*u;y=a[1]+dy*u;
+      const life=Math.max(0,1-age/.16);
+      ctx.globalAlpha=(duel.partialParry ? .55 : 1)*life;
+      ctx.strokeStyle="#fff1be";ctx.lineWidth=2.6*life;
+      ctx.beginPath();ctx.moveTo(a[0]+dx*.14,a[1]+dy*.14);ctx.lineTo(...b);ctx.stroke();
+    }
     for (let i = 0; i < 7; i++) spark(ctx, x, y, age, i);
     if (age < 0.055) dot(ctx, x, y, 4 * (1 - age / 0.055), "#fff3c3");
+    ctx.restore();
   }
   ctx.restore();
   if(landscape){

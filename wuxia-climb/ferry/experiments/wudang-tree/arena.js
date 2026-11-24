@@ -3,15 +3,16 @@ import {activeStates,glyph} from './vocabulary.js';
 import {cardFace} from './card-face.js';
 import {byName} from './catalogue.js';
 import {encounters,forecast,intent,price,readPenalty} from './combat.js';
-import {drawScene,loadScene,DURATION} from '../../altar-duel/scene.js';
+import {drawScene,loadScene,DURATION} from '../../altar-duel/scene.js?fixedLight=1';
 import {frame,neutral} from '../../altar-duel/action-frame.js';
 
 import {idleCel} from './idle.js';
-import {scenery} from './environments.js';
+import {fixedLight} from './lighting/fixed.js';
+import {scenery,stages} from './environments.js';
 
 const library=new URL('./art-library/',import.meta.url);
 const actorsByName=new Map();
-let release,resources;
+let release;
 
 async function readJson(url){
  const response=await fetch(url);
@@ -26,30 +27,37 @@ async function actor(name){
    if(!entry)throw Error('角色圖錄缺少 '+name);
    const dir=new URL('elements/characters/'+entry.id+'/'+entry.revision+'/',library);
    const spec=await readJson(new URL('actor.json',dir));
-   return {...spec,id:entry.id,file:new URL(spec.file,dir).href};
+   return {...spec,id:entry.id,revision:entry.revision,file:new URL(spec.file,dir).href};
   })().catch(error=>{actorsByName.delete(name);throw error});
   actorsByName.set(name,pending);
  }
  return actorsByName.get(name);
 }
-const spriteCache=new Map();
-async function battleScene(foes){
- resources??=Promise.all([actor('斗篷客'),actor('蒙眼刺客')])
-  .then(([traveller,assassin])=>loadScene(undefined,{traveller,assassin},{court:supportArt('court'),lanterns:supportArt('lanterns')}))
-  .catch(error=>{resources=null;throw error});
- const base=await resources;
- const actors={...base.m.actors},images={...base.images};
- await Promise.all(foes.filter(e=>e.name!=='蒙眼刺客').map(async e=>{
-  const spec=await actor(e.name);
-  actors[e.name]=spec;
-  if(!spriteCache.has(e.name)){
-   const image=new Image();
-   image.src=spec.file;
-   spriteCache.set(e.name,image.decode().then(()=>image).catch(error=>{spriteCache.delete(e.name);throw error}));
-  }
-  images[e.name]=await spriteCache.get(e.name);
+let currentScene;
+async function loadBattle(foes,stage,lit){
+ const names=['斗篷客',...new Set(foes.map(e=>e.name))];
+ const cast=await Promise.all(names.map(async name=>{
+  const spec=await actor(name);
+  return lit?{...spec,file:new URL('./lighting/fixed/'+stage+'/'+spec.id+'-'+spec.revision+'.webp',import.meta.url).href}:spec;
  }));
- return {m:{...base.m,actors},images};
+ const [traveller,first,...others]=cast;
+ const scene=await loadScene(undefined,{traveller,assassin:first},{court:supportArt('court'),lanterns:supportArt('lanterns')});
+ scene.m.actors[names[1]]=first;scene.images[names[1]]=scene.images.assassin;
+ await Promise.all(others.map(async(spec,i)=>{
+  const image=new Image();image.src=spec.file;await image.decode();
+  scene.m.actors[names[i+2]]=spec;scene.images[names[i+2]]=image;
+ }));
+ if(lit)scene.lighting=fixedLight(stage,scene);
+ return scene;
+}
+function battleScene(foes,stage){
+ const key=JSON.stringify([stage,...foes.map(e=>e.name)]);
+ if(currentScene?.key!==key){
+  const pending=loadBattle(foes,stage,true).catch(()=>loadBattle(foes,stage,false));
+  currentScene={key,pending};
+  pending.catch(()=>{if(currentScene?.pending===pending)currentScene=null});
+ }
+ return currentScene.pending;
 }
 const piles={draw:'抽牌堆',discard:'棄牌堆',exhaust:'消耗堆'};
 function pileButton(b,id,btn){
@@ -153,7 +161,8 @@ export async function paintBout(b,action,playback=false){
  const canvas=document.querySelector('.arena-stage canvas');if(!canvas)return;
  const token={};paintings.set(canvas,token);
  try{
-  const [cast,environment]=await Promise.all([battleScene(b.foes),scenery(b.environment)]);
+  const stage=Object.hasOwn(stages,b.environment)?b.environment:'court';
+  const [cast,environment]=await Promise.all([battleScene(b.foes,stage),scenery(stage).catch(()=>null)]);
   const res={...cast,scenery:environment};
   if(!canvas.isConnected)return;
   const ctx=canvas.getContext('2d'),reduce=matchMedia('(prefers-reduced-motion: reduce)');
@@ -176,6 +185,19 @@ export async function paintBout(b,action,playback=false){
     const u=progress%1;
     const pose=move?frame({...move,seconds:beat/1000},still ? (u<.38?0:u<.75 ? .46 : 1) : u):{...neutral};
     if(move?.who==='foe'&&move.kind==='strike'&&move.absorbed&&u>=.34&&u<(move.lost ? .50 : .74))pose.traveller[0]=4;
+    if(move){
+     // A block is a contact event. Raising guard in advance has no impact flash.
+     const parried=move.kind==='strike'&&move.absorbed>0&&!move.dodge;
+     if(!parried||still)pose.flashAge=-1;
+     else {
+      const opponent=b.foes[move.index].name;
+      const foeBlade=!['鐵衣客','鐵衣堂主','後哨'].includes(opponent);
+      const heroBlade=move.who==='foe'||byName.get(move.name)?.branch==='劍法'||move.name==='順勢還擊';
+      pose.contactBlade=move.who==='foe'?'hero':foeBlade?'foe':heroBlade?'hero':null;
+      if(!pose.contactBlade)pose.flashAge=-1;
+      pose.partialParry=move.lost>0;
+     }
+    }
     const clock=still?0:now/1000;
     const focus=move?.index??b.target;
     const order=b.foes.map((e,i)=>i).sort((a,c)=>Number(c===focus)-Number(a===focus));
@@ -188,7 +210,7 @@ export async function paintBout(b,action,playback=false){
       track[1]+=(i===1?142:-54)*(1-reach);
       track[2]+=i===1?-98:8;
      }
-     const id=enemy.name==='蒙眼刺客'?'assassin':enemy.name;
+     const id=enemy.name;
      if(!still&&(!move||!active))pose.idle[id]=idleCel(res.images[id],res.m.actors[id].id,clock+.7+i);
      return {id,track};
     });

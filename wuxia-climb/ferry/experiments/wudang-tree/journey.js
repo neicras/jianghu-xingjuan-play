@@ -68,6 +68,7 @@ export function prepareJourney(s){
  s.relics??=[];s.bag??=[];
  if(s.route.phase==='cache')prepareStop(s);
  const b=s.bout;
+ if(b)b.environment??=s.route.floor<=4?'wharf':s.route.floor<=9?'bamboo':'court';
  if(!b||b.tactics===2)return;
  b.relics=[...s.relics];
  for(const e of b.foes){
