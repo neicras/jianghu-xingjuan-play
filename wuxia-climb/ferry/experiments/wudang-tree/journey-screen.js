@@ -27,7 +27,13 @@ const preview=frames.some(([id])=>id===requestedFrame)?requestedFrame:null;
 const record=preview?()=>{}:(await import('./journey-log.js')).record;
 let s=preview?reviewJourney(preview,new URLSearchParams(location.search).get('sample')):newJourney(),animating=false,reading=preview==='tree',fromBooks=false,selected='武當丹劍';
 const gate=new URLSearchParams(location.search).get('gate');
-if(preview==='fight'&&['1','5','10','15'].includes(gate)){
+const tempo=new URLSearchParams(location.search).get('tempo');
+if(preview==='fight'&&['counter','kill','survive','break','short'].includes(tempo)){
+ const response=await fetch(new URL('./tempo-drills.json',import.meta.url));
+ if(!response.ok)throw Error('未能載入攻守試招');
+ const drill=(await response.json())[tempo];
+ if(drill){s=drill.s;s.bout.log=['對手是'+drill.target+'。你可以先出《'+drill.attack+'》，或者《'+drill.guard+'》。']}
+}else if(preview==='fight'&&['1','5','10','15'].includes(gate)){
  const response=await fetch(new URL('./gate-drills.json',import.meta.url));
  if(!response.ok)throw Error('未能載入關口試招');
  s=(await response.json()).snapshots[gate];

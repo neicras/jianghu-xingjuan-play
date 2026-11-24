@@ -16,6 +16,7 @@ export const bagCapacity=3;
 export const roomName=(type,floor)=>type==='cache'&&floor===2?'江湖偶遇':rooms[type];
 export const defaultCurriculum=Object.freeze({offer:5,keep:2,schoolLoans:2});
 export const teachers=Object.freeze({sword:'白虹劍法',palm:'武當綿掌'});
+export const mentorBasics=Object.freeze({sword:'連環劍',palm:'橫劍當胸'});
 export const fieldPractice=s=>s.route.practiceBooks??(s.route.free?[s.route.free]:[]);
 export function newJourney(seed=Date.now(),curriculum=defaultCurriculum){
  const {offer,keep,schoolLoans}=curriculum;
@@ -32,7 +33,8 @@ export function gift(s,id){
  if(id==='health'){r.maxHp+=6;r.hp=r.maxHp}else if(id==='xp')s.xp+=12;
  else{
   const name=teachers[id];s.learned.push(name);equip(s,byName.get(name));
-  r.last='臨行拜師，已學成《'+name+'》，招式已入牌組。';
+  s.stars.push(name,mentorBasics[id]+'0');
+  r.last='師父指點完畢，《'+name+'》和一張《'+mentorBasics[id]+'》都已精練。';
  }
  if(!s.relics.includes('劍穗'))s.relics.push('劍穗');
  r.phase='map';return true;

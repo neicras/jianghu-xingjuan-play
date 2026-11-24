@@ -1,6 +1,6 @@
 import {supportArt} from './art-library/support-files.js';
 // These rooms use real journey state. The artwork carries no labels or quantities.
-import {teachers, wares, spoils, fieldPractice, bagCapacity} from './journey.js?branch=1';
+import {teachers, mentorBasics, wares, spoils, fieldPractice, bagCapacity} from './journey.js?branch=1';
 import {byName,effect} from './catalogue.js';
 import {pickedBooks,picksLeft,rewardAmount,trainingChance} from './rules.js';
 
@@ -10,7 +10,7 @@ const escape=text=>String(text??'').replaceAll('&','&amp;').replaceAll('<','&lt;
 const hosts={health:'服養元丹',xp:'聽師兄談武',sword:'拜師學劍',palm:'拜師學掌'};
 export function departure(selected,btn){
  const id=Object.hasOwn(hosts,selected)?selected:'sword', tech=byName.get(teachers[id]);
- const notes=tech?effect(tech)+' 啟程即學會，加入本輪牌組。':id==='health'?'氣血上限增加 6 點，啟程時氣血全滿。':'獲得 12 點歷練，可留待回師門請益。';
+ const notes=tech?effect(tech,true)+' 師父親授精練版。牌組中一張《'+mentorBasics[id]+'》也升至精練。':id==='health'?'氣血上限增加 6 點，啟程時氣血全滿。':'獲得 12 點歷練，可留待回師門請益。';
  const seats=Object.entries(hosts).map(([k,label])=>'<button class="jp-seat" data-action="seat/'+k+'" aria-pressed="'+(k===id)+'">'+art('host-'+k)+'<span>'+label+'</span></button>').join('');
  return '<section class="jp-room jp-depart"><h2>臨行贈禮</h2><div class="jp-seats">'+seats+'</div><div class="jp-foot"><div class="jp-slip"><b>'+(teachers[id]||hosts[id])+'</b><p>'+notes+'</p></div>'+btn('gift/'+id,'啟程','jp-press')+'</div></section>';
 }
