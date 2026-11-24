@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#201a29"><title>焚天壇 · 試燈</title><link rel="stylesheet" href="studio.css"></head>
+<body><main><header><h1>焚天壇<span>試燈</span></h1><a href="../journey.html">返回行卷</a></header>
+<div class="bench">
+<section class="stage" aria-label="同一場交手的燈光比較"><canvas id="stage" width="960" height="600" aria-label="斗篷客與蒙眼刺客於焚天壇交手"></canvas><div class="transport"><button id="pause" disabled>暫停</button><button id="strike" disabled>定格看劍</button></div></section>
+<aside>
+<div class="choices" role="group" aria-label="光照"><button data-mode="original" aria-pressed="false">原畫</button><button data-mode="lantern" aria-pressed="true">提燈</button><button data-mode="moon" aria-pressed="false">月照</button></div>
+<label for="light">移動光源</label><input id="light" type="range" min="0" max="100" value="22" aria-label="光源左右位置"><div class="ends"><span>左側</span><span>右側</span></div>
+<div class="detail"><figure><canvas id="plain" width="332" height="240"></canvas><figcaption>原畫</figcaption></figure><figure><canvas id="lit" width="332" height="240"></canvas><figcaption id="caption">提燈</figcaption></figure></div>
+<p id="tip" role="status">正在展開畫卷…</p>
+<a class="clip-link" href="comparison.mp4">睇十秒對照片</a>
+</aside></div></main><script type="module" src="studio.js"></script></body></html>

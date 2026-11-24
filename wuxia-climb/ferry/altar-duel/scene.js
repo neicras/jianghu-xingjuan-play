@@ -128,7 +128,7 @@ function shadow(ctx, p) {
   ctx.fillRect(-1, -1, 2, 2);
   ctx.restore();
 }
-function stance(ctx, p, img, m) {
+function stance(ctx, p, img, m, tile) {
   const [w, h] = m.cell,
     [cols] = m.grid;
   ctx.save();
@@ -136,9 +136,9 @@ function stance(ctx, p, img, m) {
   ctx.rotate(p.lean || 0);
   ctx.scale(p.scale, p.scale);
   ctx.drawImage(
-    img,
-    (p.step % cols) * w,
-    Math.floor(p.step / cols) * h,
+    tile ?? img,
+    tile ? 0 : (p.step % cols) * w,
+    tile ? 0 : Math.floor(p.step / cols) * h,
     w,
     h,
     -m.pivot[0],
@@ -220,6 +220,7 @@ export function drawScene(ctx, resources, t, view = 0, duel = null) {
       span + 0.15,
     );
   }
+  resources.lighting?.ground(ctx, t, cam);
   if(landscape)landscape.midground(ctx,phase,cam);
   else {
   // Ash stays upstage; the nearer actors obscure it when they cross.
@@ -259,8 +260,9 @@ export function drawScene(ctx, resources, t, view = 0, duel = null) {
   const foe = foes[0];
   const actors = [hero, ...foes];
   actors.sort((a, b) => a.d - b.d);
+  for (const p of actors) resources.lighting?.castShadow(ctx, p);
   for (const p of actors) shadow(ctx, p);
-  for (const p of actors) stance(ctx, p, (p.step===0 && duel?.idle?.[p.id]) || images[p.id], m);
+  for (const p of actors) stance(ctx, p, (p.step===0 && duel?.idle?.[p.id]) || images[p.id], m, resources.lighting?.cel(p));
   // Spark at the defender's actual painted blade, anchored to the contact pose.
   const age = duel ? duel.flashAge : t - 3.75;
   if (foe && age >= 0 && age < 0.23) {
