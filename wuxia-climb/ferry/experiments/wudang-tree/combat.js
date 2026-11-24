@@ -158,13 +158,13 @@ export function play(b,id,onMove){
  case '太乙九宮步':draw(b,v);if(b.hand.length)b.pending='可留';break;
  case '上天梯':b.nextEnergy++;b.nextDraw+=v;break;
  case '凌雲飛渡':e.weak=(e.weak||0)+2;draw(b,v);break;
- case '武當鐵布衫':blockFromCard(v);b.riposte=Math.max(b.riposte,6);break;
+ case '武當鐵布衫':blockFromCard(v);b.riposte=Math.max(b.riposte,living(b).length>1?8:4);break;
  case '橫劍當胸':blockFromCard(v);break;
  case '雲床九練':blockFromCard(v);b.carry=true;break;
  case '五氣朝元功':blockFromCard(v);b.cleanDraw++;break;
- case '無極勁':blockFromCard(v);b.riposte=6;break;
+ case '無極勁':blockFromCard(v);b.riposte=Math.max(b.riposte,6);break;
  case '真武蕩魔陣':b.aura+=v;break;
- case '武當長拳':hit(v+Math.min(6,b.savedBlock));blockFromCard(2);break;
+ case '武當長拳':hit(v+Math.min(4,b.savedBlock));blockFromCard(1);break;
  case '追風雲環掌':case '連環劍':hit(v,2);break;
  case '武當綿掌':case '先天少陽劍氣':hit(v,1,{pierce:true});break;
  case '遊身八卦掌':hit(v);if(b.seen.身法)draw(b,1);break;
@@ -175,7 +175,7 @@ export function play(b,id,onMove){
  case '太極拳':hit(v+Math.min(8,b.savedBlock));break;
  case '武當丹劍':hit(b.seen.護體?v:6);break;
  case '武當逍遙劍':hit(v);if(b.hand.length)b.pending='可留';break;
- case '白虹劍法':hit(v+(prev?2:0),2);break;
+ case '白虹劍法':hit(v+(prev?3:0),2);break;
  case '太乙玄門劍':hit(v);b.discount.內功=1;break;
  case '真武遊龍劍':hit(v,3);break;
  case '太極劍法':hit(v);blockFromCard(6);break;

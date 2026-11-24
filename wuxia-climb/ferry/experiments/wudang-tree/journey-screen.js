@@ -150,7 +150,7 @@ function caveRoom(){
   '只剩最深處的一袋。洞壁上的人影晃了一下，伸手之前，你得想清楚。',
   '三個暗袋都空了。你把鏢囊擱回原處。'];
  const choices=[!n&&btn('cave/coins','<strong>拾起四文便走</strong><small>安全離開</small>'),
-  n<3&&btn('cave/search','<strong>'+(n?'再搜一袋':'打開鏢囊')+'</strong><small>'+caveRisk(n)+'% 遇上追兵</small>'),
+  n<3&&btn('cave/search','<strong>'+(n?'再搜一袋':'打開鏢囊')+'</strong><small>'+caveRisk(n)+'% 遇上追兵，突圍只得歷練</small>'),
   btn('leave',n?'帶著抄本離開':'悄悄離開')].filter(Boolean).join('');
  const books=finds.map((f,i)=>btn('caveBook/'+i,'第'+'一二三'[i]+'冊 · '+f.name,'found-copy')).join('');
  return '<section class="jp-room jp-event cave-room" style="--scene:url('+scene+');--cave-portrait:url('+portrait+')"><div><h2>山洞遺鏢</h2><p>'+lines[n]+'</p>'+choices+(n?'<aside>翻閱所得　'+books+'</aside>':'')+'</div></section>';

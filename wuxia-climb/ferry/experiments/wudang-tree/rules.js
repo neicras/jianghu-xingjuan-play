@@ -102,7 +102,10 @@ function focusDrop(s){
 }
 function weight(s,a){
   const gap=a.parent&&!s.learned.includes(a.parent);
-  return (gap?Math.pow(.68,9-a.rank):5) * (collection(s,a.name).length?2:1);
+  const owned=collection(s,a.name).length>0;
+  let copyWeight=owned?2:1;
+  if(s.route&&owned)copyWeight=s.learned.includes(a.name)?0.5:3;
+  return (gap?Math.pow(.68,9-a.rank):5)*copyWeight;
 }
 export const band=a=>a.rank>=7?'下三品':a.rank>=4?'中三品':'上三品';
 export const rewardAmount=(s,key)=>s.route?.loot?.[key]??({xp:xpPerWin,gold:purse,ticket:1})[key];

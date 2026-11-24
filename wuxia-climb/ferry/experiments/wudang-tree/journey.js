@@ -50,7 +50,7 @@ export function linked(floor,from,to){
 const duels={
  fighter:[0],guard:[1],pair:[2],
  banner:[2,[['巡山旗主',47,3,[[8,1,0],[5,2,0],[0,0,6]]],['前哨',10,0,[[5,1,0]]],['後哨',9,0,[[4,1,0]]]]],
- elite1:[1,[['鐵衣堂主',71,7,[[8,1,0],[0,0,7],[6,2,0]]]]],
+ elite1:[1,[['鐵衣堂主',78,9,[[8,1,0],[0,0,7],[6,2,0]]]]],
  elite2:[2,[['青煞',46,0,[[7,1,0],[4,2,0]]],['白煞',42,4,[[0,0,5],[9,1,0]]]]],
  boss:[0,[['守壇劍宗',110,8,[[12,1,0],[7,2,0],[0,0,10],[19,1,0]]]]]
 };
@@ -58,7 +58,7 @@ const duels={
 const patterns={
  '蒙眼刺客':[[7,1,0,'wound'],[0,0,6,'disrupt'],[5,2,0,'wound']],
  '鐵衣客':[[0,0,0,'charge'],[7,2,0],[0,0,6,'counter'],[15,1,0]],
- '鐵衣堂主':[[0,0,7,'counter'],[15,1,0],[0,0,0,'charge'],[9,2,0,'wound']],
+ '鐵衣堂主':[[0,0,8,'counter'],[15,1,0],[0,0,0,'charge'],[10,2,0,'wound']],
  '前哨':[[5,1,0],[4,2,0,'wound']],'後哨':[[0,0,0,'feint'],[7,1,0]],
  '青煞':[[9,1,0,'wound'],[6,2,0]],'白煞':[[0,0,0,'feint'],[8,1,0],[0,0,4,'disrupt']],
  '守壇劍宗':[[13,1,0],[0,0,0,'charge'],[8,3,0],[0,0,8,'counter'],[18,1,0,'wound']]
@@ -220,6 +220,12 @@ export function finishFight(s){
  delete s.bout;
  if(r.floor===15){s.wins++;r.phase='won';return true}
  r.pickedBooks=[];r.practiceBooks=[];r.free=null;
+ if(r.stop?.story==='cave'){
+  s.wins++;s.offer=[];s.finds={};s.drawInfo={};s.claimed=null;s.rewards={xp:false};
+  r.loot={gold:0,xp:4,books:false,gear:false,medicine:null,elite:false};
+  r.last='你逼開鐵衣客，帶著行囊脫身。這一仗只得歷練，先前收好的抄本仍在。';
+  r.phase='reward';return true;
+ }
  if(s.wins===0){s.offer=s.offer.map(n=>n==='武當太和功'?'八卦步':n);
   s.finds['八卦步']=[2,2,2,2,2,1];s.drawInfo['八卦步']={kind:'opening'};
   const count=r.curriculum?.offer??3;
@@ -288,7 +294,7 @@ const stories={
 export const marketRanges={
  '青鋼劍':[12,19],'竹編護臂':[10,16],'銅護腕':[13,20],
  '三才玉環':[20,30],'藥葫蘆':[15,23],'針灸匣':[11,17],
- '金創藥':[4,7],'軟筋散':[8,11]
+ '金創藥':[8,12],'軟筋散':[6,10]
 };
 function prepareStop(s){
  const r=s.route;if(r.stop)return;
