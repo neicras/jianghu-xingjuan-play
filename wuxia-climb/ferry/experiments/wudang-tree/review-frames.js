@@ -1,4 +1,4 @@
-import {newJourney,gift,enter,finishFight} from './journey.js';
+import {newJourney,gift,enter,finishFight} from './journey.js?branch=1';
 
 export const frames=[
  ['gift','餞行席'],['map','江湖路線'],['fight','比武出招'],['reward','戰後所得'],
@@ -12,10 +12,15 @@ export const frames=[
 export function reviewJourney(id,sample){
  // Seed 23 draws all three rank bands through the ordinary fifth-station reward.
  const mixed=id==='books'&&sample==='grades';
- const s=newJourney(mixed?23:2401),r=s.route;
+ const s=newJourney(mixed?23:sample==='cave'?2618:2401),r=s.route;
  if(id==='gift')return s;
  gift(s,'sword');
  s.gold=32;s.xp=16;s.bag=['金創藥'];s.relics.push('竹編護臂');
+ if((id==='fight'&&sample==='banner')||(id==='story'&&sample==='cave')){
+  const banner=sample==='banner';
+  r.path=banner?[0,1,1,0,0,1,1]:[0,0,0,0,0];r.floor=r.path.length;s.wins=3;
+  enter(s,banner?3:4);return s;
+ }
  if(mixed)s.wins=2;
  const floor=mixed?5:{shop:6,story:2,inn:4,refine:4,school:3,won:15,lost:5}[id]||1;
  r.floor=floor-1;r.path=Array(r.floor).fill(0);r.hp=31;

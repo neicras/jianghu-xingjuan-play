@@ -2,7 +2,7 @@ import {supportArt} from './art-library/support-files.js';
 import {activeStates,glyph} from './vocabulary.js';
 import {cardFace} from './card-face.js';
 import {byName} from './catalogue.js';
-import {encounters,forecast,intent,price,readPenalty} from './combat.js';
+import {encounters,forecast,intent,price,readPenalty} from './combat.js?branch=1';
 import {drawScene,loadScene,DURATION} from '../../altar-duel/scene.js?fixedLight=1';
 import {frame,neutral} from '../../altar-duel/action-frame.js';
 
@@ -23,7 +23,8 @@ async function actor(name){
  if(!actorsByName.has(name)){
   const pending=(async()=>{
    release??=readJson(new URL('release.json',library)).catch(error=>{release=null;throw error});
-   const entry=(await release).characters.find(c=>c.name===name);
+   const artName=name==='巡山旗主'?'鐵衣堂主':name;
+   const entry=(await release).characters.find(c=>c.name===artName);
    if(!entry)throw Error('角色圖錄缺少 '+name);
    const dir=new URL('elements/characters/'+entry.id+'/'+entry.revision+'/',library);
    const spec=await readJson(new URL('actor.json',dir));
@@ -87,8 +88,8 @@ export function arena(state,btn){
  const foes=b.foes.map((e,i)=>{
   const [,hits,guard,stance]=intent(b,e);
   const intentIcon=stance==='counter'?'counter':hits>1?'multi':hits?'attack':guard?'guard':'waiting';
-  const status=[...activeStates(e),e.reads?glyph('read')+'識招':'',e.force?'蓄勁 +'+e.force:''].filter(Boolean).join(' · ');
-  return btn('target/'+i,plaque(e.name,e)+(status?'<small>'+status+'</small>':'')+'<small class="intent-scroll">'+(e.hp<=0?'退場':glyph(intentIcon)+forecast(b,e))+'</small>',i===b.target?'aim':'',e.hp<=0||b.phase!=='playing');
+  const status=[...activeStates(e),e.rallies?'旗主倒下，兩哨撤退':'',e.reads?glyph('read')+'識招':'',e.force?'蓄勁 +'+e.force:''].filter(Boolean).join(' · ');
+  return btn('target/'+i,plaque(e.name,e)+(status?'<small>'+status+'</small>':'')+'<small class="intent-scroll">'+(e.hp<=0?(e.fled?'已逃走':'退場'):glyph(intentIcon)+forecast(b,e))+'</small>',i===b.target?'aim':'',e.hp<=0||b.phase!=='playing');
  }).join('');
  const effects=activeStates(b).concat(Object.keys(b.powers),b.retain.length?"留牌 "+b.retain.length:[]);
  if(b.relics?.includes('劍穗')&&!b.attacks)effects.push('劍穗 · 首張攻擊每擊 +2');
@@ -207,8 +208,9 @@ export async function paintBout(b,action,playback=false){
      const track=[...(active?pose.assassin:neutral.assassin)];
      if(b.foes.length>1){
       const reach=move&&active&&move.kind==='strike'?Math.sin(Math.PI*u):0;
-      track[1]+=(i===1?142:-54)*(1-reach);
-      track[2]+=i===1?-98:8;
+      const offsets=b.foes.length===3?[[-150,6],[15,-130],[190,15]]:[[-54,8],[142,-98]];
+      track[1]+=offsets[i][0]*(1-reach);
+      track[2]+=offsets[i][1];
      }
      const id=enemy.name;
      if(!still&&(!move||!active))pose.idle[id]=idleCel(res.images[id],res.m.actors[id].id,clock+.7+i);

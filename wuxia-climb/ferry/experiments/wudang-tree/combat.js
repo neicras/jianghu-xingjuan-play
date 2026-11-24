@@ -7,7 +7,9 @@ const profiles=[
  {title:'雙人合擊',enemies:[['前哨',19,0,[[4,1,0],[3,2,0]]],['後哨',22,3,[[0,0,5],[6,1,0]]]]}
 ];
 export const encounters=profiles.map(p=>p.title);
-export function intent(b,e){return e.moves[(b.turn-1)%e.moves.length]}
+export function intent(b,e){
+ if(e.rallies&&b.foes.some(f=>f.scout&&f.hp<=0))return [0,0,0,'rally'];
+ return e.moves[(b.turn-1)%e.moves.length]}
 function attackValue(base,attacker,target){
  return Math.floor((base+(attacker.strength||0))*(attacker.weak?0.75:1)*(target.exposed?1.5:1));
 }
@@ -20,6 +22,7 @@ function injury(b,name,pile){
 }
 export function forecast(b,e){
  const [,hits,guard,stance]=intent(b,e);
+ if(stance==='rally')return '鳴哨增援 · 喚來 '+b.foes.filter(f=>f.scout&&f.hp<=0).length+' 名哨兵。旗主本回合停手，新兵下回合才出招。';
  if(stance==='charge'&&e.pressure>=8)return '蓄勁已被打斷 · 本回合不會出手。';
  if(stance==='charge')return '蓄勁中 · 再打掉 '+Math.max(0,8-(e.pressure||0))+' 氣血可破招。下次每擊 +5'+(e.sealsBreath?'，並令你氣短、抽到《岔氣》':'')+'。';
  if(stance==='counter')return '聽勁反打 · 此時每打中他一下，他便還手 3 點。收勢後他得 '+guard+' 護體。';
@@ -30,6 +33,12 @@ export function forecast(b,e){
  return '將攻 '+(primary!==damage&&hits>1?primary+'、'+damage:primary+(hits>1?' × '+hits:''))+(guard?'，再得 '+guard+' 護體':'')+(stance==='wound'?' · 每一擊穿過護體，添一張《劍傷》入棄牌堆。':'');
 }
 const living=b=>b.foes.filter(e=>e.hp>0);
+function scatterScouts(b){
+ if(!b.foes.some(e=>e.rallies&&e.hp<=0))return;
+ const remaining=living(b).filter(e=>e.scout);
+ for(const e of remaining){e.hp=0;e.fled=true}
+ if(remaining.length)b.log.push('旗主倒下，'+remaining.map(e=>e.name).join('、')+'棄旗逃走。');
+}
 function shuffle(b,cards){
  for(let i=cards.length-1;i>0;i--){
   b.seed=(Math.imul(b.seed,1664525)+1013904223)>>>0;
@@ -197,6 +206,7 @@ export function play(b,id,onMove){
  if(attacked&&recognized)b.log.push(e.name+'已認得《'+name+'》，此招每擊減去 '+recognized+' 點力道。');
  if(name==='踏浪步')b.log.push(e.name+'露出破綻 '+e.exposed+' 回合，受攻擊時傷害增加一半。');
  if(counters)b.log.push('對手反打 '+counters+' 次，'+(reflected?'你失去 '+reflected+' 氣血。':'護體盡數擋下。'));
+ scatterScouts(b);
  if(!b.hp){b.phase='lost';b.pending=null}
  else if(!living(b).length){b.phase='won';b.pending=null}
  else if(e.hp<=0)b.target=b.foes.findIndex(f=>f.hp>0);
@@ -206,7 +216,16 @@ export function endRound(b,onMove){
  if(b.phase!=='playing'||b.pending)return false;
  const oldHP=b.hp;b.log=[];let feinted=false,disrupted=false;
  for(const e of living(b)){
+  if(!b.hp||e.hp<=0)break;
   const [,hits,guard,stance]=intent(b,e);
+  if(stance==='rally'){
+   const arrived=[];
+   for(const [i,slot] of b.foes.entries())if(slot.scout&&slot.hp<=0){
+    b.foes[i]={name:slot.name,scout:true,hp:slot.maxHp,maxHp:slot.maxHp,block:0,moves:slot.moves};
+    arrived.push(slot.name);
+   }
+   b.log.push('旗主鳴哨，'+arrived.join('、')+'趕到。新兵本回合只站位。');
+  }
   if(stance==='charge'){const broken=e.pressure>=8;if(!broken){
    e.force=(e.force||0)+5;
    if(e.sealsBreath){disrupted=true;injury(b,'岔氣',b.draw);b.log.push('劍宗封住氣口，《岔氣》置於抽牌堆頂。')}
@@ -214,7 +233,7 @@ export function endRound(b,onMove){
   if(stance==='disrupt'){disrupted=true;injury(b,'岔氣',b.draw);b.log.push(e.name+'截住氣脈，《岔氣》置於抽牌堆頂。')}
   if(stance==='feint'){feinted=true;b.log.push(e.name+'虛晃一招，你下回合露出破綻。')}
   e.block+=guard;if(guard)b.log.push(e.name+'架勢穩固，護體增加 '+guard+'。');
-  if(!hits||guard)contact(b,onMove,e,{who:'foe',kind:'guard',name:guard?'架勢護身':'變招',gained:guard});
+  if(!hits||guard)contact(b,onMove,e,{who:'foe',kind:'guard',name:stance==='rally'?'鳴哨增援':guard?'架勢護身':'變招',gained:guard});
   for(let j=0;j<hits&&b.hp>0&&e.hp>0;j++){
    const damage=Math.max(0,incoming(b,e)-(e.weaken||0));e.weaken=0;
    const blocked=Math.min(b.block,damage);b.block-=blocked;b.blocked+=blocked;
@@ -228,6 +247,7 @@ export function endRound(b,onMove){
     b.log.push('你擋盡來招，順勢還擊。'+e.name+'失去 '+(before-e.hp)+' 氣血。');b.riposte=0
    }
   }
+  scatterScouts(b);
   if(hits)e.force=0;
   e.weak=Math.max(0,(e.weak||0)-1);e.exposed=Math.max(0,(e.exposed||0)-1);e.pressure=0;
  }

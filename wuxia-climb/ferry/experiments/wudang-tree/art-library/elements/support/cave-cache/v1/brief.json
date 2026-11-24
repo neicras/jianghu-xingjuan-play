@@ -1,0 +1,10 @@
+{
+  "id": "cave-cache",
+  "name": "山洞遺鏢",
+  "revision": "v1",
+  "category": "場景",
+  "use": "江湖偶遇 · 竹關鏢囊",
+  "file": "artwork.webp",
+  "method": "依拳館遭遇的套色風格生成洞口場景",
+  "direction": "manual-ink/v1"
+}

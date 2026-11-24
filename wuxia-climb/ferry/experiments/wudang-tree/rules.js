@@ -25,14 +25,18 @@ export function take(s,name){
   if(!picksLeft(s)||picked.includes(name)||!s.offer.includes(name))return false;
   if(!s.finds[name])return false;
   s.before=collection(s,name);
-  const incoming=s.finds[name], kept=mergedCopies(s,byName.get(name),incoming);
-  s.editions??={};
-  const previous=s.editions[name]||[];
-  s.editions[name]=kept.map(copy=>copy===incoming?acquisition(s,name):previous[s.before.indexOf(copy)]||{kind:'old'});
-  s.books[name]=kept;
+  archiveCopy(s,name,s.finds[name],acquisition(s,name));
   if(s.route)s.route.pickedBooks=[...picked,name];
   s.claimed=name;
   return true;
+}
+export function archiveCopy(s,name,incoming,source){
+  const owned=collection(s,name),kept=mergedCopies(s,byName.get(name),incoming);
+  s.editions??={};
+  const previous=s.editions[name]||[];
+  s.editions[name]=kept.map(copy=>copy===incoming?source:previous[owned.indexOf(copy)]||{kind:'old'});
+  s.books[name]=kept;
+  return kept;
 }
 // On the journey a grounded novice can work through gaps in grades nine to seven.
 const foundationPageOdds=[80,94,100];

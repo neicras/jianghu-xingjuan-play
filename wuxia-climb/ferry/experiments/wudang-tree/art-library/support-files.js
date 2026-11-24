@@ -129,6 +129,7 @@ const paths={
  "open-manuscript": "elements/support/open-manuscript/v1/artwork.webp",
  "binding-sound": "elements/support/binding-sound/v1/artwork.webp",
  "binding-worn": "elements/support/binding-worn/v1/artwork.webp",
- "binding-torn": "elements/support/binding-torn/v1/artwork.webp"
+ "binding-torn": "elements/support/binding-torn/v1/artwork.webp",
+ "cave-cache": "elements/support/cave-cache/v1/artwork.webp"
 };
 export function supportArt(id){if(!Object.hasOwn(paths,id))throw Error("未知素材 "+id);return new URL(paths[id],import.meta.url).href}

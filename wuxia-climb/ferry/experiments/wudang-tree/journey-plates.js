@@ -1,6 +1,6 @@
 import {supportArt} from './art-library/support-files.js';
 // These rooms use real journey state. The artwork carries no labels or quantities.
-import {teachers, wares, spoils, fieldPractice, bagCapacity} from './journey.js';
+import {teachers, wares, spoils, fieldPractice, bagCapacity} from './journey.js?branch=1';
 import {byName,effect} from './catalogue.js';
 import {pickedBooks,picksLeft,rewardAmount,trainingChance} from './rules.js';
 
@@ -32,7 +32,7 @@ export function rewardPile(s,btn){
  const books=!s.offer.length?'':btn('books',art('manuals')+'<span>'+(left?'挑選秘笈 · 尚可取 '+left+' 冊':'已取 '+picked.length+' 冊')+'</span>','jp-find jp-manuals',!left);
  const learn=practice.map(n=>btn('train/'+n,'試演《'+n+'》 · '+trainingChance(s,byName.get(n))+'%','jp-study')).join('');
  const unclaimed=left||available.length||Object.values(s.rewards).includes(false);
- const message=escape(r.last)||([5,10].includes(r.floor)?'守關得勝，可挑一件守關信物。':!s.offer.length?'這回沒尋到抄本。下一場比武得勝，便可再挑秘笈。':'點選想帶走的戰利品。');
+ const message=escape(r.last)||((r.loot?.elite||[5,10].includes(r.floor))?'守關得勝，可挑一件守關信物。':!s.offer.length?'這回沒尋到抄本。下一場比武得勝，便可再挑秘笈。':'點選想帶走的戰利品。');
  return '<section class="jp-room jp-loot"><h2>戰後所得</h2><div class="jp-takings">'+resources+'</div>'+books+'<div class="jp-drops">'+bundles+'</div><div class="jp-drug">'+(drug?btn(s.bag.length>=bagCapacity?'swap/'+drug:'pack/'+drug,ware(drug)+'<span>'+drug+(s.bag.length>=bagCapacity?' · 換藥':'')+'</span>','jp-find'):'')+'</div><div class="jp-foot"><div class="jp-slip" aria-live="polite"><p>'+message+'</p>'+learn+'</div>'+btn('leave',unclaimed?'留下餘物上路':'繼續上路','jp-press')+'</div></section>';
 }
 export function gearOffers(s,index,btn){

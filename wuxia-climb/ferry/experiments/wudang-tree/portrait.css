@@ -226,3 +226,31 @@
   #folio[open]>form button {min-height:32px}
   #folio .full-card .print {width:min(32vw,44dvh)}
 }
+
+.map-seal .party-size {
+ position:absolute;right:-2px;top:0;min-width:1.35em;border-radius:50%;padding:1px 2px;
+ color:#ffebbd;background:#392a38;font:bold 11px/1.2 Georgia,serif;text-align:center;
+}
+.cave-room {background-position:42% 30%}
+.cave-room aside {margin-top:.65em;color:#573539}
+.jp-event button.found-copy {background:none;color:#653332;text-decoration:underline;text-underline-offset:.2em;padding:.3em}
+@media (orientation:portrait) and (max-width:760px) {
+ .duel-board .arena-stage .arena-foes:has(button:nth-child(3)) {grid-template-columns:repeat(3,minmax(0,1fr));max-height:25dvh}
+ .journey .duel-board .arena-foes:has(button:nth-child(3)) button {display:block;min-width:0;padding:7px 8px}
+ .arena-foes:has(button:nth-child(3)) :is(strong,small,meter) {display:block}
+ .arena-foes:has(button:nth-child(3)) meter {width:100%}
+ .cave-room {display:flex;flex-direction:column;background:#2b2236}
+ .cave-room::before {content:"";flex:1;min-height:0;background:var(--cave-portrait) center 48%/cover}
+ .cave-room>div {position:relative;flex:none;padding:24px 7% 20px;background-color:#322638}
+ .cave-room button {min-height:44px}
+}
+
+@media (orientation:landscape) {
+ .duel-board .arena-foes:has(button:nth-child(3)) {display:grid;width:29%;gap:1px}
+ .duel-board .arena-foes:has(button:nth-child(3)) button {
+  width:100%;grid-template-columns:1fr auto auto;gap:0 5px;padding:5px 8%;align-items:center;
+ }
+ .duel-board .arena-foes:has(button:nth-child(3)) button>small:first-of-type {grid-area:1/3}
+ .duel-board .arena-foes:has(button:nth-child(3)) meter {height:4px}
+ .duel-board .arena-foes:has(button:nth-child(3)) .intent-scroll {margin:0}
+}

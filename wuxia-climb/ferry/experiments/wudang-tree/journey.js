@@ -1,16 +1,16 @@
-import {fresh,win,take,study,rehearse,equip,ready,deck} from './rules.js';
-import {startBout} from './combat.js';
+import {fresh,win,take,study,rehearse,equip,ready,deck,archiveCopy} from './rules.js?branch=1';
+import {startBout} from './combat.js?branch=1';
 import {arts,byName} from './catalogue.js';
 import {collection,estimate,rollCopy} from './manuscripts.js';
 
 export const road=[
  ['fighter'],['fighter','cache','inn'],['school','pair','guard'],['inn','school'],['elite1'],
- ['cache','pair','school','inn'],['school','inn','guard'],['guard','cache','pair'],['inn','school'],['elite2'],
+ ['cache','pair','school','inn','cave'],['school','inn','guard'],['guard','cache','pair','banner'],['inn','school'],['elite2'],
  ['guard','cache','school','pair'],['school','pair','inn'],['fighter','school','cache'],['inn','guard'],['boss']
 ];
 export const rooms={
  fighter:'橋頭比武',guard:'鐵衣守擂',pair:'雙人合擊',inn:'客棧',school:'師門',cache:'山道貨郎',
- elite1:'鐵衣堂主',elite2:'雙煞把關',boss:'守壇劍宗'
+ banner:'巡山旗主',cave:'山洞遺鏢',elite1:'鐵衣堂主',elite2:'雙煞把關',boss:'守壇劍宗'
 };
 export const bagCapacity=3;
 export const roomName=(type,floor)=>type==='cache'&&floor===2?'江湖偶遇':rooms[type];
@@ -40,7 +40,7 @@ export function gift(s,id){
 // Lane indices from the original journey retain their rooms and connections.
 const trails=[
  [[0,1,2]], [[0,1],[1,2],[2]], [[0],[0,1],[1]], [[0],[0]],
- [[0,1,2,3]], [[0],[1],[1,2],[2]], [[0],[0,1],[1,2]], [[0,1],[1],[1]], [[0],[0]],
+ [[0,1,2,3,4]], [[0],[1],[1,2],[2],[1,2]], [[0],[0,1,3],[1,2,3]], [[0,1],[1],[1],[0,1]], [[0],[0]],
  [[0,1,2,3]], [[0],[1],[1,2],[2]], [[0,1],[1],[1,2]], [[0],[0,1],[1]], [[0],[0]]
 ];
 export function linked(floor,from,to){
@@ -49,6 +49,7 @@ export function linked(floor,from,to){
 }
 const duels={
  fighter:[0],guard:[1],pair:[2],
+ banner:[2,[['巡山旗主',47,3,[[8,1,0],[5,2,0],[0,0,6]]],['前哨',10,0,[[5,1,0]]],['後哨',9,0,[[4,1,0]]]]],
  elite1:[1,[['鐵衣堂主',71,7,[[8,1,0],[0,0,7],[6,2,0]]]]],
  elite2:[2,[['青煞',46,0,[[7,1,0],[4,2,0]]],['白煞',42,4,[[0,0,5],[9,1,0]]]]],
  boss:[0,[['守壇劍宗',110,8,[[12,1,0],[7,2,0],[0,0,10],[19,1,0]]]]]
@@ -72,7 +73,7 @@ export function prepareJourney(s){
  if(!b||b.tactics===2)return;
  b.relics=[...s.relics];
  for(const e of b.foes){
-  if(patterns[e.name])e.moves=patterns[e.name];
+  if(!e.scout&&patterns[e.name])e.moves=patterns[e.name];
   if(e.name==='蒙眼刺客'&&s.route.floor===1)e.moves=[[7,1,0,'wound'],[0,0,4,'disrupt'],[4,2,0,'wound']];
   if(e.openings){e.exposed=1;delete e.openings}
  }
@@ -102,7 +103,7 @@ export function buyMedicine(s,name){
 // Roll once on victory. A separate stream keeps rewards stable through reloads,
  // inspections and training, without consuming the six rehearsal dice.
 function victoryLoot(s,enemySeed){
- const r=s.route,first=r.floor===1,gate=r.floor===5||r.floor===10;
+ const r=s.route,first=r.floor===1,gate=r.floor===5||r.floor===10||road[r.floor-1][r.path.at(-1)]==='banner';
  const kind=road[r.floor-1][r.path.at(-1)], hard=kind==='pair'||kind==='guard';
  let seed=(enemySeed^Math.imul(r.floor,0x9e3779b1))>>>0;
  const roll=()=>{seed=(Math.imul(1664525,seed)+1013904223)>>>0;return seed/4294967296};
@@ -112,14 +113,14 @@ function victoryLoot(s,enemySeed){
  const books=first||gate||r.missedBooks||roll()<(hard?.82:.65);
  const gear=first||gate||roll()<(hard?.55:.25);
  const medicine=roll()<(gate?.8:hard?.6:.45)?(roll()<.6?'金創藥':'軟筋散'):null;
- return {gold,xp,books:Boolean(books),gear,medicine};
+ return {gold,xp,books:Boolean(books),gear,medicine,elite:gate};
 }
 export function spoils(s){
  const r=s.route;
  if(r.phase!=='reward')return [];
  const items=[];
  if((!r.loot||r.loot.gear)&&!s.relics.some(n=>wares[n]?.source==='戰後選裝'))items.push('青鋼劍','竹編護臂');
- if([5,10].includes(r.floor)&&!r.tookRelic){
+ if((r.loot?.elite||[5,10].includes(r.floor))&&!r.tookRelic){
   items.push(...Object.keys(wares).filter(n=>wares[n].source==='守關獎勵'&&!s.relics.includes(n)));
   if(!s.relics.includes('劍穗'))items.push('劍穗');
  }
@@ -170,15 +171,45 @@ export function enter(s,lane){
  const r=s.route,floor=r.floor+1;
  if(r.phase!=='map'||!Number.isInteger(lane)||!road[floor-1]?.[lane]||!linked(floor,r.path.at(-1),lane))return false;
  const id=road[floor-1][lane];r.floor=floor;r.path.push(lane);r.free=null;r.last='';r.tookRelic=false;r.tookItem=false;delete r.loot;delete r.purchases;delete r.stop;
- if(duels[id]){
+ if(duels[id])beginEncounter(s,id);
+ else if(id==='cave'){r.phase='cache';r.stop={story:'cave',finds:[]}}
+ else{r.phase=id;if(id==='cache')prepareStop(s)}
+ return true;
+}
+function beginEncounter(s,id){
+  const r=s.route,floor=r.floor;
   const [profile,enemies]=duels[id];
   const b=startBout(s,profile,Math.floor(random(s)*4294967296));b.maxHp=r.maxHp;b.hp=r.hp;
   if(enemies)b.foes=enemies.map(([name,hp,block,moves])=>({name,hp,maxHp:hp,block,moves}));
+  if(id==='banner'){
+   b.foes[0].rallies=true;
+   for(const e of b.foes.slice(1))e.scout=true;
+   b.log=['巡山旗主把竹哨含在嘴裏。打退哨兵，他便要停手召人。旗主一倒，兩哨就會散去。'];
+  }
   if(id==='elite1'||id==='boss')b.foes[0].reads={};
   if(id==='boss')b.foes[0].sealsBreath=true;
   if(floor===1){b.foes[0].hp=b.foes[0].maxHp=34}
   s.bout=b;prepareJourney(s);if(s.relics.includes('銅護腕'))b.block+=6;r.phase='fight';
- }else{r.phase=id;if(id==='cache')prepareStop(s)}
+}
+export const caveRisk=count=>(count+1)*25;
+export function exploreCave(s,choice){
+ const r=s.route,stop=r.stop;
+ if(r.phase!=='cache'||stop?.story!=='cave')return false;
+ const count=stop.finds.length;
+ if(choice==='coins'&&!count){
+  s.gold+=4;r.last='你拾起洞口的四文散錢，趁腳步聲還遠，退回山道。';return leave(s);
+ }
+ if(choice!=='search'||count>=3)return false;
+ if(random(s)*100<caveRisk(count)){
+  beginEncounter(s,'guard');
+  s.bout.log=['靴聲忽然停在背後。鐵衣客堵住洞口：「誰許你翻這趟鏢？」'+(count?'先前收好的抄本仍在書囊裏。':'')];
+  return true;
+ }
+ const name=count?stop.finds[0].name:['武當丹劍','八卦步','武當長拳'][Math.floor(random(s)*3)];
+ const sections=rollCopy(()=>random(s)),prior=collection(s,name);
+ const kept=archiveCopy(s,name,sections,{kind:'cave',floor:r.floor});
+ stop.finds.push({name,sections,prior,kept:kept.includes(sections)});
+ r.last='在鏢囊裏找到《'+name+'》'+(kept.includes(sections)?'，已收進書囊。':'，已有藏本涵蓋這份抄本。');
  return true;
 }
 export function finishFight(s){
@@ -307,7 +338,7 @@ function pay(s,name,price){
  s.route.last='花了 '+price+' 文買下'+name+'。';
 }
 export function stallLimit(s,name){
- if(s.route.phase!=='cache'||s.route.floor===2||!Object.hasOwn(stockAt(s),name))return '此處沒有這件貨品';
+ if(s.route.phase!=='cache'||s.route.floor===2||!Object.hasOwn(stockAt(s)??{},name))return '此處沒有這件貨品';
  if(s.route.purchases?.includes(name))return '已售出';
  return purchaseLimit(s,name,stockAt(s)[name]);
 }

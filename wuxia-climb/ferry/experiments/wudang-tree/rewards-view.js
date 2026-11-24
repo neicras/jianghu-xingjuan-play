@@ -1,5 +1,5 @@
 import {descriptions} from './annotations.js';
-import {acquisition,editionInfo} from './editions.js';
+import {acquisition,editionInfo} from './editions.js?branch=1';
 import {moveNames} from './rehearsal.js';
 import {cardRarity} from './card-face.js';
 import {supportArt} from './art-library/support-files.js';
@@ -67,13 +67,13 @@ function copySummary(sections){
 }
 function openCopy(s,book,btn){
  const {a,known,incoming,prior,combined,taken}=book;
- const names=moveNames(a),origin=editionInfo(a,acquisition(s,a));
+ const names=moveNames(a),origin=editionInfo(a,book.source??acquisition(s,a.name));
  const leaves=incoming.map((q,i)=>{
   const improves=known.length>0&&!taken&&combined[i]>prior[i];
   return '<li data-quality="'+q+'"><button type="button" class="read-leaf" data-leaf="'+i+'" aria-expanded="false"><span>'+chapters[i]+' · '+names[i]+'</span><i aria-hidden="true"></i><b>'+chapterState[q]+'</b>'+(improves?'<em>補</em>':'')+'</button></li>';
  }).join('');
  const better=known.length&&!taken?chapters.filter((_,i)=>combined[i]>prior[i]):[];
- const note=taken?'已收入書囊':!known.length?'首次得見此書':better.length?'可補原藏第'+better.join('、')+'篇':'原藏已涵蓋此本';
+ const note=book.note??(taken?'已收入書囊':!known.length?'首次得見此書':better.length?'可補原藏第'+better.join('、')+'篇':'原藏已涵蓋此本');
  const pose=copyFace(a,incoming,ranks[a.rank]);
  return '<div class="book-reader"><article class="spread" aria-labelledby="pick-title">'+
   '<div class="spread-pages"><section class="illustrated-leaf"><small>武當 · '+a.branch+' · '+ranks[a.rank]+'品 · '+cardRarity(a)+'</small>'+
@@ -81,7 +81,7 @@ function openCopy(s,book,btn){
   '<section class="contents-leaf"><h3>六篇招訣</h3><ol>'+leaves+'</ol><p class="leaf-gloss" aria-live="polite">點篇名，細讀這一式。</p><strong>'+note+'</strong><small>'+book.library+' · '+(s.learned.includes(a.name)?'師門藏本':'合參後練成把握 '+trainingChance(s,a,combined)+'%')+'</small>'+
   '<details class="copy-colophon"><summary>抄本來歷與研習</summary><div><p>'+origin.account+'</p>'+book.detail+'<ul>'+book.odds+'</ul></div></details></section></div>'+
   '<div class="turn-cover" aria-hidden="true"><div class="turn-front">'+pose+'</div><div class="turn-back"></div></div></article>'+
-  '<div class="reader-actions">'+btn('putBack','放回書案','return-copy')+btn('take/'+a.name,taken?'已收入書囊':'收入書囊','red-seal',taken||!picksLeft(s))+'</div></div>';
+  '<div class="reader-actions">'+(book.source?btn('back','合上抄本，回到洞口','red-seal'):btn('putBack','放回書案','return-copy')+btn('take/'+a.name,taken?'已收入書囊':'收入書囊','red-seal',taken||!picksLeft(s)))+'</div></div>';
 }
 export function choices(s,btn,selected){
  const books=s.offer.map(name=>manuscript(s,name)),current=books.find(b=>b.a.name===selected);
@@ -100,11 +100,16 @@ export function choices(s,btn,selected){
 }
 
 // Keep opening and putting back identical in the journey and standalone study.
-export function displayBookDialog(s,btn,selected,returnTo){
+export function displayBookDialog(s,btn,selected,returnTo,found){
  const dialog=document.getElementById('book-choice'),body=document.getElementById('book-body');
  const previous=selected&&Array.from(body.querySelectorAll('.shelf-volume')).find(b=>b.dataset.action==='browse/'+selected);
  const origin=previous?.querySelector('.copy-face').getBoundingClientRect();
- body.innerHTML=choices(s,btn,selected);
+ const a=byName.get(selected);
+ const foundBook=found&&{a,known:found.prior,incoming:found.sections,prior:collate(found.prior),
+  combined:collate(collection(s,selected)),taken:true,source:{kind:'cave',floor:s.route.floor},
+  note:found.kept?'已收入書囊':'舊藏的三冊已足以補齊此本',library:s.learned.includes(selected)?'已學成':'可回師門研習',
+  detail:'<p>鏢師分冊抄錄。同名的殘篇可以互補。</p>',odds:''};
+ body.innerHTML=foundBook?openCopy(s,foundBook,btn):choices(s,btn,selected);
  if(!dialog.open)dialog.showModal();
  if(selected){
   const reader=body.querySelector('.book-reader');
@@ -116,8 +121,8 @@ export function displayBookDialog(s,btn,selected,returnTo){
    spread.style.setProperty('--fly-scale',String(origin.height/rect.height));
    reader.classList.add('unfolding');
   }
-  const a=byName.get(selected),pages=s.finds[selected],prior=collate(collection(s,selected));
-  const combined=collate(mergedCopies(s,a,pages)),odds=gateOdds(s,a,combined), names=moveNames(a);
+  const pages=found?.sections??s.finds[selected],prior=foundBook?.prior??collate(collection(s,selected));
+  const combined=foundBook?.combined??collate(mergedCopies(s,a,pages)),odds=gateOdds(s,a,combined), names=moveNames(a);
   reader.querySelector('.contents-leaf ol').addEventListener('click',event=>{
    const button=event.target.closest('[data-leaf]');if(!button)return;
    const i=Number(button.dataset.leaf),quality=pages[i];

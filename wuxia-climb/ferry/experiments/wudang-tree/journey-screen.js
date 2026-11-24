@@ -1,24 +1,24 @@
 import {trailTools,wallet,objectImage} from './trail-hud.js';
 import {cover} from './bound-book.js';
-import {atlas} from './route-scroll.js';
-import {supportArt} from './art-library/support-files.js';
-import {newJourney,gift,enter,finishFight,receive,train,rest,leave,prepareJourney,lessons,drill,goods,spoils,pack,useItem,wares,apothecary,buyMedicine,purchaseLimit,bagCapacity,escort,storyAt,storyLimit,marketRanges,stockAt,buyAtStall} from './journey.js';
-import {play,endRound,settleChoice} from './combat.js';
+import {atlas} from './route-scroll.js?branch=1';
+import {supportArt} from './art-library/support-files.js?branch=1';
+import {newJourney,gift,enter,finishFight,receive,train,rest,leave,prepareJourney,lessons,drill,goods,spoils,pack,useItem,wares,apothecary,buyMedicine,purchaseLimit,bagCapacity,exploreCave,caveRisk,escort,storyAt,storyLimit,marketRanges,stockAt,buyAtStall} from './journey.js?branch=1';
+import {play,endRound,settleChoice} from './combat.js?branch=1';
 import {manual,navigateRegister} from './manual.js';
 import {editionSheet} from './book-view.js';
-import {arena,paintBout,animateBout,pileSheet} from './arena.js?gates=1';
-import {displayBookDialog} from './rewards-view.js';
+import {arena,paintBout,animateBout,pileSheet} from './arena.js?branch=1';
+import {displayBookDialog} from './rewards-view.js?branch=1';
 import {rehearsalResult} from './rehearsal.js';
 import {deck,picksLeft,attemptFee,claimReward,trainingChance,ready,equip} from './rules.js';
 import {estimate,reroll} from './manuscripts.js';
-import {frames,reviewJourney} from './review-frames.js';
+import {frames,reviewJourney} from './review-frames.js?branch=1';
 import {descriptions} from './annotations.js';
 import {effect,byName} from './catalogue.js';
 import {keywords,statuses,marked,glyph} from './vocabulary.js';
 import {cardFace} from './card-face.js';
 
 import {merchant} from './merchant.js';
-import {departure,rewardPile,gearOffers,ending} from './journey-plates.js';
+import {departure,rewardPile,gearOffers,ending} from './journey-plates.js?branch=1';
 let heldWare=null, seat='sword';
 
 const key='wudang-journey-15-v1',$=id=>document.getElementById(id);
@@ -142,6 +142,19 @@ function dispensary(){
  }).join('');
  modal('<h2>客棧藥攤</h2><p>郎中明早便要出診。你可以買下一件帶走，也可以留下陪他整理藥案。身上有 '+s.gold+' 文。</p><div class="stall">'+offers+'</div>'+btn('rest/casebook','留下聽醫案 · 得 4 點歷練並上路'));
 }
+function caveRoom(){
+ const finds=s.route.stop.finds,n=finds.length;
+ const scene=supportArt('cave-cache'),portrait=new URL('portrait.webp',scene).href;
+ const lines=['鏢囊落在洞口，幾枚銅錢滾到了你腳邊。洞裏傳來靴聲，押鏢的人恐怕還未走遠。',
+  '抄本的封底寫著「分裝三袋」。裏頭那袋也許藏著同一門功夫的另一份抄本。靴聲近了。',
+  '只剩最深處的一袋。洞壁上的人影晃了一下，伸手之前，你得想清楚。',
+  '三個暗袋都空了。你把鏢囊擱回原處。'];
+ const choices=[!n&&btn('cave/coins','<strong>拾起四文便走</strong><small>安全離開</small>'),
+  n<3&&btn('cave/search','<strong>'+(n?'再搜一袋':'打開鏢囊')+'</strong><small>'+caveRisk(n)+'% 遇上追兵</small>'),
+  btn('leave',n?'帶著抄本離開':'悄悄離開')].filter(Boolean).join('');
+ const books=finds.map((f,i)=>btn('caveBook/'+i,'第'+'一二三'[i]+'冊 · '+f.name,'found-copy')).join('');
+ return '<section class="jp-room jp-event cave-room" style="--scene:url('+scene+');--cave-portrait:url('+portrait+')"><div><h2>山洞遺鏢</h2><p>'+lines[n]+'</p>'+choices+(n?'<aside>翻閱所得　'+books+'</aside>':'')+'</div></section>';
+}
 function eventRoom(){
  const story=storyAt(s);
  const scene={ledger:supportArt('journey-letter'),lesson:supportArt('journey-boxing'),porter:supportArt('ferry')}[story.image];
@@ -168,8 +181,8 @@ function render(){
  $('balance').innerHTML=wallet(b?.hp??r.hp,r.maxHp,s.xp,s.gold);
  $('potion-belt').innerHTML=belt();
  document.body.classList.toggle('studying',reading);
- document.body.classList.toggle('jp-active',!reading&&(['gift','reward','inn','won','lost','school','map'].includes(r.phase)||(r.phase==='cache'&&r.floor===2)));
- document.body.classList.toggle('at-market',!reading&&r.phase==='cache'&&r.floor!==2);
+ document.body.classList.toggle('jp-active',!reading&&(['gift','reward','inn','won','lost','school','map'].includes(r.phase)||(r.phase==='cache'&&(r.floor===2||r.stop?.story==='cave'))));
+ document.body.classList.toggle('at-market',!reading&&r.phase==='cache'&&r.floor!==2&&r.stop?.story!=='cave');
  if(reading){
   $('room').innerHTML=manual(s,byName.get(selected),treeButton);
   $('room').querySelector('.skill-detail').insertAdjacentHTML('afterbegin',btn('backToRegister','返回武學譜','return-to-register'));
@@ -188,7 +201,7 @@ function render(){
   const notes=chosen?'<strong>'+chosen.a.name+'</strong><p>'+effect(chosen.a)+'</p><small>練成把握 '+trainingChance(chosen.preview,chosen.a)+'%　·　學成用 '+chosen.cost+' 歷練，失手用 '+attemptFee(chosen.cost)+'</small>':'<strong>切磋所學</strong><p>今日可跟師兄拆招，增長歷練。</p>';
   html='<section class="school-court"><div class="school-title"><h2>師門請益</h2></div><div class="lesson-shelf" aria-label="可請教的功法">'+volumes+'</div><div class="school-slip"><div>'+notes+'</div>'+ (chosen?btn('train/'+chosen.a.name,s.xp<chosen.cost?'尚欠 '+(chosen.cost-s.xp)+' 歷練':'請師兄指點','red-seal',s.xp<chosen.cost):'')+'</div><div class="lesson-links"><span>本次只可請益或拆招一次</span>'+btn('drill','跟師兄拆招 · 得 8 歷練')+btn('leave','辭別上路')+'</div></section>';break;
  }
- case 'cache':html=r.floor===2?eventRoom():merchant(s,heldWare,true);break;
+ case 'cache':html=r.stop?.story==='cave'?caveRoom():r.floor===2?eventRoom():merchant(s,heldWare,true);break;
  case 'won':case 'lost':html=ending(s,btn);break;
  }
  $('room').innerHTML=html;
@@ -222,11 +235,21 @@ document.addEventListener('click',async e=>{
   if(action==='nap'){modal('<h2>回房歇息</h2><p>卸下行裝，安心睡到天亮。氣血 '+r.hp+' → '+Math.min(r.maxHp,r.hp+Math.ceil(r.maxHp*.3))+'／'+r.maxHp+'。</p>'+btn('rest/heal','就寢，明早上路','primary'));return}
   if(action==='innBuy'&&buyMedicine(s,v))$('folio').close();
  }
- if(action==='inspectWare'&&r.phase==='cache'&&r.floor!==2&&Object.hasOwn(stockAt(s),v)){
+ if(action==='inspectWare'&&r.phase==='cache'&&r.floor!==2&&Object.hasOwn(stockAt(s)??{},v)){
   heldWare=v;render();$('room').querySelector('.mk-lot[aria-pressed=true]')?.focus({preventScroll:true});return;
  }
  if(action==='buy'&&buyAtStall(s,v)){
   heldWare=v;render();$('room').querySelector('.mk-lot[aria-pressed=true]')?.focus({preventScroll:true});return;
+ }
+ if(action==='cave'&&exploreCave(s,v)&&r.phase==='cache'){
+  render();
+  const found=r.stop.finds.at(-1);
+  browsing=null;displayBookDialog(s,btn,found.name,null,found);return;
+ }
+ if(action==='caveBook'&&r.phase==='cache'&&r.stop?.story==='cave'){
+  const found=r.stop.finds[Number(v)];
+  if(found){browsing=null;displayBookDialog(s,btn,found.name,null,found)}
+  return;
  }
  if(action==='escort')escort(s,v);
  if(action==='vial'){medicine(Number(v));return}
