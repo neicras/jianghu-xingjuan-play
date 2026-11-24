@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 82" preserveAspectRatio="none" fill="none" stroke="white">
+  <path d="M8 1h80l7 7v66l-7 7H8l-7-7V8z" stroke-width="1.6"/>
+  <path d="M10 4h76l6 6v62l-6 6H10l-6-6V10z" opacity=".45"/>
+  <path id="corner" d="M2 16h5V9h7V5h6M8 4v2H6v2H4" stroke-width="1.4"/>
+  <use href="#corner" transform="translate(96) scale(-1 1)"/>
+  <use href="#corner" transform="translate(0 82) scale(1 -1)"/>
+  <use href="#corner" transform="translate(96 82) scale(-1)"/>
+</svg>

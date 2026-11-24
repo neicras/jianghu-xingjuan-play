@@ -1,0 +1,207 @@
+{
+  "canvas": [
+    1200,
+    750
+  ],
+  "clipSeconds": 6.4,
+  "layers": {
+    "court": "court.webp",
+    "lanterns": "gate.webp"
+  },
+  "actors": {
+    "traveller": {
+      "file": "traveller.webp",
+      "weaponWristAndTip": [
+        [
+          [
+            282.2,
+            187.3
+          ],
+          [
+            359.2,
+            271.3
+          ]
+        ],
+        [
+          [
+            248.6,
+            152.3
+          ],
+          [
+            356.4,
+            188.7
+          ]
+        ],
+        [
+          [
+            336.1,
+            127.1
+          ],
+          [
+            443.2,
+            96.3
+          ]
+        ],
+        [
+          [
+            336.1,
+            190.8
+          ],
+          [
+            408.9,
+            265.7
+          ]
+        ],
+        [
+          [
+            296.9,
+            92.8
+          ],
+          [
+            362.7,
+            27.0
+          ]
+        ],
+        [
+          [
+            238.1,
+            150.2
+          ],
+          [
+            350.1,
+            190.1
+          ]
+        ]
+      ]
+    },
+    "assassin": {
+      "file": "assassin.webp",
+      "weaponWristAndTip": [
+        [
+          [
+            237.4,
+            185.9
+          ],
+          [
+            187.7,
+            210.4
+          ]
+        ],
+        [
+          [
+            327.7,
+            129.2
+          ],
+          [
+            299.7,
+            166.3
+          ]
+        ],
+        [
+          [
+            180.7,
+            130.6
+          ],
+          [
+            132.4,
+            160.7
+          ]
+        ],
+        [
+          [
+            144.3,
+            140.4
+          ],
+          [
+            159.7,
+            77.4
+          ]
+        ],
+        [
+          [
+            86.2,
+            138.3
+          ],
+          [
+            26.7,
+            131.3
+          ]
+        ],
+        [
+          [
+            341.7,
+            144.6
+          ],
+          [
+            380.2,
+            178.9
+          ]
+        ]
+      ]
+    }
+  },
+  "cell": [
+    500,
+    310
+  ],
+  "grid": [
+    3,
+    2
+  ],
+  "pivot": [
+    250,
+    300
+  ],
+  "keyframes": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "frameCount": 6,
+  "frames": "Six original painted poses, row-major, straight alpha. Each pose keeps its original proportions.",
+  "keyPoseNames": {
+    "traveller": [
+      "ready",
+      "step",
+      "extend",
+      "follow-through",
+      "guard",
+      "recoil"
+    ],
+    "assassin": [
+      "ready",
+      "step",
+      "evade",
+      "crouch",
+      "lunge",
+      "withdraw"
+    ]
+  },
+  "lanternLayout": {
+    "originalCanvas": [
+      1536,
+      1024
+    ],
+    "crop": [
+      0,
+      0,
+      1536,
+      360
+    ],
+    "hangingPoints": [
+      [
+        184,
+        0
+      ],
+      [
+        1382,
+        0
+      ]
+    ]
+  },
+  "timing": "Pose changes use held exposures. Position and uniform perspective scale come from world placement.",
+  "artDirection": "暫定沿用夜渡焚天壇手繪樣板 altar-proof.webp"
+}

@@ -1,0 +1,5 @@
+.pile{justify-self:center;display:grid;justify-items:center;gap:7px;background:none;border:0;padding:6px 0;color:#f8e8bd;font:700 15px var(--serif);text-shadow:0 2px 2px #07130e}.pile b{font:700 16px Georgia,serif;color:#ffdb90}.pile:hover:enabled .stack{translate:0 -3px}.stack{display:block;position:relative;width:clamp(37px,4.5vw,56px);aspect-ratio:2/3;transition:translate .12s}
+.stack i{position:absolute;inset:0;border:2px ridge #c29e63;border-radius:4px;box-shadow:1px 2px 2px #19150e;transform:rotate(-9deg);background:#193e39 url(art/back.webp) center 40%/100% 170%}
+.draw .stack i:first-child{translate:-4px 5px}.draw .stack i:nth-child(2){translate:-2px 3px}
+.discard .stack i:first-child{transform:translate(-12%,5%) rotate(-20deg)}.discard .stack i:nth-child(2){transform:rotate(0deg)}.discard .stack i:last-child{transform:translate(12%,3%) rotate(14deg);background-image:url(art/frame.webp),var(--discard-art,url(art/back.webp));background-size:100% 100%,96% 47%;background-position:center,center 22%;background-repeat:no-repeat}
+.pile.empty .stack{filter:grayscale(.7);opacity:.52}

@@ -1,0 +1,1487 @@
+{
+  "release": "2026-11-24.4",
+  "direction": "directions/manual-ink/v1",
+  "characters": [
+    {
+      "id": "traveller",
+      "name": "斗篷客",
+      "revision": "v1"
+    },
+    {
+      "id": "assassin",
+      "name": "蒙眼刺客",
+      "revision": "v1"
+    },
+    {
+      "id": "iron-guard",
+      "name": "鐵衣客",
+      "revision": "v1"
+    },
+    {
+      "id": "iron-master",
+      "name": "鐵衣堂主",
+      "revision": "v1"
+    },
+    {
+      "id": "front-scout",
+      "name": "前哨",
+      "revision": "v3"
+    },
+    {
+      "id": "rear-scout",
+      "name": "後哨",
+      "revision": "v1"
+    },
+    {
+      "id": "jade-fiend",
+      "name": "青煞",
+      "revision": "v1"
+    },
+    {
+      "id": "white-fiend",
+      "name": "白煞",
+      "revision": "v1"
+    },
+    {
+      "id": "altar-master",
+      "name": "守壇劍宗",
+      "revision": "v2"
+    }
+  ],
+  "cards": [
+    {
+      "id": "inner-9",
+      "name": "武當太和功",
+      "revision": "v1"
+    },
+    {
+      "id": "inner-8",
+      "name": "抱元守一",
+      "revision": "v1"
+    },
+    {
+      "id": "inner-7",
+      "name": "一字混元樁",
+      "revision": "v1"
+    },
+    {
+      "id": "inner-6",
+      "name": "羅天真訣十二樁",
+      "revision": "v1"
+    },
+    {
+      "id": "inner-5",
+      "name": "洗髓金經",
+      "revision": "v1"
+    },
+    {
+      "id": "inner-4",
+      "name": "武當混元功",
+      "revision": "v1"
+    },
+    {
+      "id": "inner-3",
+      "name": "太乙神功",
+      "revision": "v1"
+    },
+    {
+      "id": "inner-2",
+      "name": "純陽無極功",
+      "revision": "v1"
+    },
+    {
+      "id": "inner-1",
+      "name": "元始先天功",
+      "revision": "v1"
+    },
+    {
+      "id": "step-9",
+      "name": "五步梅花樁",
+      "revision": "v1"
+    },
+    {
+      "id": "step-8",
+      "name": "八卦步",
+      "revision": "v1"
+    },
+    {
+      "id": "step-7",
+      "name": "雲環步",
+      "revision": "v1"
+    },
+    {
+      "id": "step-6",
+      "name": "天罡北斗步",
+      "revision": "v1"
+    },
+    {
+      "id": "step-5",
+      "name": "太乙九宮步",
+      "revision": "v1"
+    },
+    {
+      "id": "step-4",
+      "name": "上天梯",
+      "revision": "v1"
+    },
+    {
+      "id": "step-3",
+      "name": "凌雲飛渡",
+      "revision": "v1"
+    },
+    {
+      "id": "guard-9",
+      "name": "武當鐵布衫",
+      "revision": "v1"
+    },
+    {
+      "id": "guard-7",
+      "name": "雲床九練",
+      "revision": "v1"
+    },
+    {
+      "id": "guard-5",
+      "name": "五氣朝元功",
+      "revision": "v1"
+    },
+    {
+      "id": "guard-3",
+      "name": "無極勁",
+      "revision": "v1"
+    },
+    {
+      "id": "formation-8",
+      "name": "三才劍陣",
+      "revision": "v1"
+    },
+    {
+      "id": "formation-6",
+      "name": "陰陽周天法",
+      "revision": "v1"
+    },
+    {
+      "id": "formation-4",
+      "name": "真武蕩魔陣",
+      "revision": "v1"
+    },
+    {
+      "id": "formation-2",
+      "name": "三華聚頂",
+      "revision": "v1"
+    },
+    {
+      "id": "palm-9",
+      "name": "武當長拳",
+      "revision": "v1"
+    },
+    {
+      "id": "palm-8",
+      "name": "追風雲環掌",
+      "revision": "v1"
+    },
+    {
+      "id": "palm-7",
+      "name": "武當綿掌",
+      "revision": "v1"
+    },
+    {
+      "id": "palm-6",
+      "name": "遊身八卦掌",
+      "revision": "v1"
+    },
+    {
+      "id": "palm-5",
+      "name": "太乙逍遙掌",
+      "revision": "v1"
+    },
+    {
+      "id": "palm-4",
+      "name": "玄功神拳",
+      "revision": "v1"
+    },
+    {
+      "id": "palm-3",
+      "name": "武當純陽拳",
+      "revision": "v1"
+    },
+    {
+      "id": "palm-2",
+      "name": "紫陽正氣拳",
+      "revision": "v1"
+    },
+    {
+      "id": "palm-1",
+      "name": "太極拳",
+      "revision": "v1"
+    },
+    {
+      "id": "sword-9",
+      "name": "武當丹劍",
+      "revision": "v1"
+    },
+    {
+      "id": "sword-8",
+      "name": "武當逍遙劍",
+      "revision": "v1"
+    },
+    {
+      "id": "sword-7",
+      "name": "白虹劍法",
+      "revision": "v1"
+    },
+    {
+      "id": "sword-6",
+      "name": "太乙玄門劍",
+      "revision": "v1"
+    },
+    {
+      "id": "sword-5",
+      "name": "純陽劍意",
+      "revision": "v1"
+    },
+    {
+      "id": "sword-4",
+      "name": "真武遊龍劍",
+      "revision": "v1"
+    },
+    {
+      "id": "sword-3",
+      "name": "太極劍法",
+      "revision": "v1"
+    },
+    {
+      "id": "sword-2",
+      "name": "先天少陽劍氣",
+      "revision": "v1"
+    },
+    {
+      "id": "sword-1",
+      "name": "無極劍式",
+      "revision": "v1"
+    },
+    {
+      "id": "whisk-9",
+      "name": "拂塵功",
+      "revision": "v1"
+    },
+    {
+      "id": "whisk-8",
+      "name": "武當鐵拂塵",
+      "revision": "v1"
+    },
+    {
+      "id": "whisk-7",
+      "name": "兩儀拂塵功",
+      "revision": "v1"
+    },
+    {
+      "id": "whisk-6",
+      "name": "老君拂塵功",
+      "revision": "v1"
+    },
+    {
+      "id": "whisk-5",
+      "name": "錯倒陰陽拂塵",
+      "revision": "v1"
+    },
+    {
+      "id": "whisk-4",
+      "name": "太乙雲拂功",
+      "revision": "v1"
+    },
+    {
+      "id": "whisk-3",
+      "name": "無量掃塵功",
+      "revision": "v1"
+    },
+    {
+      "id": "whisk-2",
+      "name": "玄空神拂",
+      "revision": "v1"
+    },
+    {
+      "id": "basic-strike",
+      "name": "一線穿雲",
+      "revision": "v1"
+    },
+    {
+      "id": "basic-guard",
+      "name": "橫劍當胸",
+      "revision": "v1"
+    },
+    {
+      "id": "basic-twin",
+      "name": "連環劍",
+      "revision": "v1"
+    },
+    {
+      "id": "basic-breath",
+      "name": "吐納",
+      "revision": "v1"
+    },
+    {
+      "id": "basic-step",
+      "name": "踏浪步",
+      "revision": "v1"
+    },
+    {
+      "id": "injury-wound",
+      "name": "劍傷",
+      "revision": "v1"
+    },
+    {
+      "id": "injury-qi",
+      "name": "岔氣",
+      "revision": "v1"
+    }
+  ],
+  "support": [
+    {
+      "id": "journey-pavilion",
+      "name": "餞行亭空景",
+      "revision": "v1",
+      "category": "場景",
+      "use": "01 臨行",
+      "file": "artwork.webp",
+      "method": "沿用秘笈套色圖稿"
+    },
+    {
+      "id": "journey-cloth",
+      "name": "俯視包袱底布",
+      "revision": "v1",
+      "category": "場景",
+      "use": "04 拾取",
+      "file": "artwork.webp",
+      "method": "沿用秘笈套色圖稿"
+    },
+    {
+      "id": "journey-letter",
+      "name": "雨中的家書",
+      "revision": "v1",
+      "category": "場景",
+      "use": "09 遭遇",
+      "file": "artwork.webp",
+      "method": "沿用秘笈套色圖稿"
+    },
+    {
+      "id": "journey-boxing",
+      "name": "拳館門前的空凳",
+      "revision": "v1",
+      "category": "場景",
+      "use": "09 遭遇",
+      "file": "artwork.webp",
+      "method": "沿用秘笈套色圖稿"
+    },
+    {
+      "id": "journey-scroll",
+      "name": "三段行旅空卷",
+      "revision": "v1",
+      "category": "場景",
+      "use": "11 結算；路線、印與文字另疊",
+      "file": "artwork.webp",
+      "method": "沿用秘笈套色圖稿"
+    },
+    {
+      "id": "journey-host-health",
+      "name": "贈丹婆婆",
+      "revision": "v1",
+      "category": "角色",
+      "use": "01 臨行；可逐人點選",
+      "file": "artwork.webp",
+      "method": "沿用秘笈套色圖稿"
+    },
+    {
+      "id": "journey-host-xp",
+      "name": "談武師兄",
+      "revision": "v1",
+      "category": "角色",
+      "use": "01 臨行；可逐人點選",
+      "file": "artwork.webp",
+      "method": "沿用秘笈套色圖稿"
+    },
+    {
+      "id": "journey-host-sword",
+      "name": "授劍師傅",
+      "revision": "v1",
+      "category": "角色",
+      "use": "01 臨行；可逐人點選",
+      "file": "artwork.webp",
+      "method": "沿用秘笈套色圖稿"
+    },
+    {
+      "id": "journey-host-palm",
+      "name": "掌法師傅",
+      "revision": "v1",
+      "category": "角色",
+      "use": "01 臨行；可逐人點選",
+      "file": "artwork.webp",
+      "method": "沿用秘笈套色圖稿"
+    },
+    {
+      "id": "journey-coins",
+      "name": "錢串",
+      "revision": "v1",
+      "category": "拾取物",
+      "use": "04 拾取；領取狀態由規則決定",
+      "file": "artwork.webp",
+      "method": "沿用秘笈套色圖稿"
+    },
+    {
+      "id": "journey-diary",
+      "name": "歷練筆記",
+      "revision": "v1",
+      "category": "拾取物",
+      "use": "04 拾取；領取狀態由規則決定",
+      "file": "artwork.webp",
+      "method": "沿用秘笈套色圖稿"
+    },
+    {
+      "id": "journey-manuals",
+      "name": "待選書捆",
+      "revision": "v1",
+      "category": "拾取物",
+      "use": "04 拾取；領取狀態由規則決定",
+      "file": "artwork.webp",
+      "method": "沿用秘笈套色圖稿"
+    },
+    {
+      "id": "journey-bookmark",
+      "name": "校書籤",
+      "revision": "v1",
+      "category": "拾取物",
+      "use": "04 拾取；領取狀態由規則決定",
+      "file": "artwork.webp",
+      "method": "沿用秘笈套色圖稿"
+    },
+    {
+      "id": "journey-slip",
+      "name": "米紙籤",
+      "revision": "v1",
+      "category": "控件",
+      "use": "01、04、11；文字由遊戲排印",
+      "file": "artwork.webp",
+      "method": "沿用秘笈套色圖稿"
+    },
+    {
+      "id": "journey-press",
+      "name": "朱漆按印",
+      "revision": "v1",
+      "category": "控件",
+      "use": "01、04、11；文字由遊戲排印",
+      "file": "artwork.webp",
+      "method": "沿用秘笈套色圖稿"
+    },
+    {
+      "id": "journey-won",
+      "name": "勝印底",
+      "revision": "v1",
+      "category": "控件",
+      "use": "01、04、11；文字由遊戲排印",
+      "file": "artwork.webp",
+      "method": "沿用秘笈套色圖稿"
+    },
+    {
+      "id": "journey-lost",
+      "name": "敗印底",
+      "revision": "v1",
+      "category": "控件",
+      "use": "01、04、11；文字由遊戲排印",
+      "file": "artwork.webp",
+      "method": "沿用秘笈套色圖稿"
+    },
+    {
+      "id": "journey-hp",
+      "name": "氣血",
+      "revision": "v1",
+      "category": "圖示",
+      "use": "行程、比武與六關試練",
+      "file": "artwork.webp",
+      "method": "沿用秘笈套色圖稿"
+    },
+    {
+      "id": "journey-qi",
+      "name": "內力",
+      "revision": "v1",
+      "category": "圖示",
+      "use": "行程、比武與六關試練",
+      "file": "artwork.webp",
+      "method": "沿用秘笈套色圖稿"
+    },
+    {
+      "id": "journey-xp",
+      "name": "歷練",
+      "revision": "v1",
+      "category": "圖示",
+      "use": "行程、比武與六關試練",
+      "file": "artwork.webp",
+      "method": "沿用秘笈套色圖稿"
+    },
+    {
+      "id": "journey-gold",
+      "name": "銅錢",
+      "revision": "v1",
+      "category": "圖示",
+      "use": "行程、比武與六關試練",
+      "file": "artwork.webp",
+      "method": "沿用秘笈套色圖稿"
+    },
+    {
+      "id": "journey-attack",
+      "name": "單擊",
+      "revision": "v1",
+      "category": "圖示",
+      "use": "行程、比武與六關試練",
+      "file": "artwork.webp",
+      "method": "沿用秘笈套色圖稿"
+    },
+    {
+      "id": "journey-multi",
+      "name": "連擊",
+      "revision": "v1",
+      "category": "圖示",
+      "use": "行程、比武與六關試練",
+      "file": "artwork.webp",
+      "method": "沿用秘笈套色圖稿"
+    },
+    {
+      "id": "journey-guard",
+      "name": "護體",
+      "revision": "v1",
+      "category": "圖示",
+      "use": "行程、比武與六關試練",
+      "file": "artwork.webp",
+      "method": "沿用秘笈套色圖稿"
+    },
+    {
+      "id": "journey-counter",
+      "name": "反擊",
+      "revision": "v1",
+      "category": "圖示",
+      "use": "行程、比武與六關試練",
+      "file": "artwork.webp",
+      "method": "沿用秘笈套色圖稿"
+    },
+    {
+      "id": "journey-exposed",
+      "name": "破綻",
+      "revision": "v1",
+      "category": "圖示",
+      "use": "行程、比武與六關試練",
+      "file": "artwork.webp",
+      "method": "沿用秘笈套色圖稿"
+    },
+    {
+      "id": "journey-weak",
+      "name": "氣短",
+      "revision": "v1",
+      "category": "圖示",
+      "use": "行程、比武與六關試練",
+      "file": "artwork.webp",
+      "method": "沿用秘笈套色圖稿"
+    },
+    {
+      "id": "journey-strength",
+      "name": "勁力",
+      "revision": "v1",
+      "category": "圖示",
+      "use": "行程、比武與六關試練",
+      "file": "artwork.webp",
+      "method": "沿用秘笈套色圖稿"
+    },
+    {
+      "id": "journey-defence",
+      "name": "守勁",
+      "revision": "v1",
+      "category": "圖示",
+      "use": "行程、比武與六關試練",
+      "file": "artwork.webp",
+      "method": "沿用秘笈套色圖稿"
+    },
+    {
+      "id": "journey-read",
+      "name": "識招",
+      "revision": "v1",
+      "category": "圖示",
+      "use": "行程、比武與六關試練",
+      "file": "artwork.webp",
+      "method": "沿用秘笈套色圖稿"
+    },
+    {
+      "id": "journey-waiting",
+      "name": "等待",
+      "revision": "v1",
+      "category": "圖示",
+      "use": "行程、比武與六關試練",
+      "file": "artwork.webp",
+      "method": "沿用秘笈套色圖稿"
+    },
+    {
+      "id": "journey-pass",
+      "name": "過關",
+      "revision": "v1",
+      "category": "圖示",
+      "use": "行程、比武與六關試練",
+      "file": "artwork.webp",
+      "method": "沿用秘笈套色圖稿"
+    },
+    {
+      "id": "journey-fail",
+      "name": "失手",
+      "revision": "v1",
+      "category": "圖示",
+      "use": "行程、比武與六關試練",
+      "file": "artwork.webp",
+      "method": "沿用秘笈套色圖稿"
+    },
+    {
+      "id": "item-0",
+      "name": "青鋼劍",
+      "revision": "v1",
+      "category": "裝備與藥物",
+      "use": "行囊、貨郎、戰鬥",
+      "file": "artwork.webp",
+      "method": "沿用秘笈套色圖稿"
+    },
+    {
+      "id": "item-1",
+      "name": "竹編護臂",
+      "revision": "v1",
+      "category": "裝備與藥物",
+      "use": "行囊、貨郎、戰鬥",
+      "file": "artwork.webp",
+      "method": "沿用秘笈套色圖稿"
+    },
+    {
+      "id": "item-2",
+      "name": "銅護腕",
+      "revision": "v1",
+      "category": "裝備與藥物",
+      "use": "行囊、貨郎、戰鬥",
+      "file": "artwork.webp",
+      "method": "沿用秘笈套色圖稿"
+    },
+    {
+      "id": "item-3",
+      "name": "劍穗",
+      "revision": "v1",
+      "category": "裝備與藥物",
+      "use": "行囊、貨郎、戰鬥",
+      "file": "artwork.webp",
+      "method": "沿用秘笈套色圖稿"
+    },
+    {
+      "id": "item-4",
+      "name": "三才玉環",
+      "revision": "v1",
+      "category": "裝備與藥物",
+      "use": "行囊、貨郎、戰鬥",
+      "file": "artwork.webp",
+      "method": "沿用秘笈套色圖稿"
+    },
+    {
+      "id": "item-5",
+      "name": "藥葫蘆",
+      "revision": "v1",
+      "category": "裝備與藥物",
+      "use": "行囊、貨郎、戰鬥",
+      "file": "artwork.webp",
+      "method": "沿用秘笈套色圖稿"
+    },
+    {
+      "id": "item-6",
+      "name": "針灸匣",
+      "revision": "v1",
+      "category": "裝備與藥物",
+      "use": "行囊、貨郎、戰鬥",
+      "file": "artwork.webp",
+      "method": "沿用秘笈套色圖稿"
+    },
+    {
+      "id": "item-7",
+      "name": "金創藥",
+      "revision": "v1",
+      "category": "裝備與藥物",
+      "use": "行囊、貨郎、戰鬥",
+      "file": "artwork.webp",
+      "method": "沿用秘笈套色圖稿"
+    },
+    {
+      "id": "item-8",
+      "name": "軟筋散",
+      "revision": "v1",
+      "category": "裝備與藥物",
+      "use": "行囊、貨郎、戰鬥",
+      "file": "artwork.webp",
+      "method": "沿用秘笈套色圖稿"
+    },
+    {
+      "id": "shop-banner",
+      "name": "山道貨郎招幌",
+      "revision": "v1",
+      "category": "貨郎用件",
+      "use": "貨郎",
+      "file": "artwork.webp",
+      "method": "沿用秘笈套色圖稿"
+    },
+    {
+      "id": "shop-cloth",
+      "name": "貨郎攤布",
+      "revision": "v1",
+      "category": "貨郎用件",
+      "use": "貨郎",
+      "file": "artwork.webp",
+      "method": "沿用秘笈套色圖稿"
+    },
+    {
+      "id": "shop-exit",
+      "name": "離開木牌",
+      "revision": "v1",
+      "category": "貨郎用件",
+      "use": "貨郎",
+      "file": "artwork.webp",
+      "method": "沿用秘笈套色圖稿"
+    },
+    {
+      "id": "shop-pay",
+      "name": "付款印",
+      "revision": "v1",
+      "category": "貨郎用件",
+      "use": "貨郎",
+      "file": "artwork.webp",
+      "method": "沿用秘笈套色圖稿"
+    },
+    {
+      "id": "shop-tally",
+      "name": "價籤",
+      "revision": "v1",
+      "category": "貨郎用件",
+      "use": "貨郎",
+      "file": "artwork.webp",
+      "method": "沿用秘笈套色圖稿"
+    },
+    {
+      "id": "shop-wallet",
+      "name": "盤纏袋",
+      "revision": "v1",
+      "category": "貨郎用件",
+      "use": "貨郎",
+      "file": "artwork.webp",
+      "method": "沿用秘笈套色圖稿"
+    },
+    {
+      "id": "shop-slip",
+      "name": "貨單",
+      "revision": "v1",
+      "category": "貨郎用件",
+      "use": "貨郎",
+      "file": "artwork.webp",
+      "method": "沿用秘笈套色圖稿"
+    },
+    {
+      "id": "inn",
+      "name": "山腳客棧",
+      "revision": "v1",
+      "category": "場景",
+      "use": "客棧",
+      "file": "artwork.webp",
+      "method": "沿用秘笈套色圖稿"
+    },
+    {
+      "id": "ferry",
+      "name": "末班渡船",
+      "revision": "v1",
+      "category": "場景",
+      "use": "江湖遭遇",
+      "file": "artwork.webp",
+      "method": "沿用秘笈套色圖稿"
+    },
+    {
+      "id": "ridge",
+      "name": "武當山道",
+      "revision": "v1",
+      "category": "場景",
+      "use": "路線、武學譜",
+      "file": "artwork.webp",
+      "method": "沿用秘笈套色圖稿"
+    },
+    {
+      "id": "court",
+      "name": "焚天壇擂台",
+      "revision": "v1",
+      "category": "場景",
+      "use": "戰場",
+      "file": "artwork.webp",
+      "method": "按秘笈封面與卡圖色稿重繪"
+    },
+    {
+      "id": "lanterns",
+      "name": "焚天壇雙燈",
+      "revision": "v1",
+      "category": "場景",
+      "use": "戰場前景 · 隨風擺動",
+      "file": "artwork.webp",
+      "method": "按秘笈封面與卡圖色稿重繪"
+    },
+    {
+      "id": "back",
+      "name": "武當劍紋牌背",
+      "revision": "v1",
+      "category": "卡框與牌背",
+      "use": "抽牌堆、棄牌堆",
+      "file": "artwork.webp",
+      "method": "按秘笈封面與卡圖色稿重繪"
+    },
+    {
+      "id": "frame-common",
+      "name": "普通 · 紙墨卡框",
+      "revision": "v1",
+      "category": "卡框與牌背",
+      "use": "手牌、牌組、精練比較",
+      "file": "artwork.webp",
+      "method": "按秘笈封面與卡圖色稿重繪"
+    },
+    {
+      "id": "frame-fine",
+      "name": "精良 · 靛青卡框",
+      "revision": "v1",
+      "category": "卡框與牌背",
+      "use": "手牌、牌組、精練比較",
+      "file": "artwork.webp",
+      "method": "按秘笈封面與卡圖色稿重繪"
+    },
+    {
+      "id": "frame-rare",
+      "name": "稀有 · 金箔卡框",
+      "revision": "v1",
+      "category": "卡框與牌背",
+      "use": "手牌、牌組、精練比較",
+      "file": "artwork.webp",
+      "method": "按秘笈封面與卡圖色稿重繪"
+    },
+    {
+      "id": "frame-injury",
+      "name": "傷勢 · 朱砂卡框",
+      "revision": "v1",
+      "category": "卡框與牌背",
+      "use": "手牌、牌組、精練比較",
+      "file": "artwork.webp",
+      "method": "按秘笈封面與卡圖色稿重繪"
+    },
+    {
+      "id": "seal-inner-9",
+      "name": "武當太和功功印",
+      "revision": "v1",
+      "category": "武學功印",
+      "use": "武學譜、藏書",
+      "file": "artwork.webp",
+      "method": "沿用功印輪廓，重製雙色印版"
+    },
+    {
+      "id": "seal-inner-8",
+      "name": "抱元守一功印",
+      "revision": "v1",
+      "category": "武學功印",
+      "use": "武學譜、藏書",
+      "file": "artwork.webp",
+      "method": "沿用功印輪廓，重製雙色印版"
+    },
+    {
+      "id": "seal-inner-7",
+      "name": "一字混元樁功印",
+      "revision": "v1",
+      "category": "武學功印",
+      "use": "武學譜、藏書",
+      "file": "artwork.webp",
+      "method": "沿用功印輪廓，重製雙色印版"
+    },
+    {
+      "id": "seal-inner-6",
+      "name": "羅天真訣十二樁功印",
+      "revision": "v1",
+      "category": "武學功印",
+      "use": "武學譜、藏書",
+      "file": "artwork.webp",
+      "method": "沿用功印輪廓，重製雙色印版"
+    },
+    {
+      "id": "seal-inner-5",
+      "name": "洗髓金經功印",
+      "revision": "v1",
+      "category": "武學功印",
+      "use": "武學譜、藏書",
+      "file": "artwork.webp",
+      "method": "沿用功印輪廓，重製雙色印版"
+    },
+    {
+      "id": "seal-inner-4",
+      "name": "武當混元功功印",
+      "revision": "v1",
+      "category": "武學功印",
+      "use": "武學譜、藏書",
+      "file": "artwork.webp",
+      "method": "沿用功印輪廓，重製雙色印版"
+    },
+    {
+      "id": "seal-inner-3",
+      "name": "太乙神功功印",
+      "revision": "v1",
+      "category": "武學功印",
+      "use": "武學譜、藏書",
+      "file": "artwork.webp",
+      "method": "沿用功印輪廓，重製雙色印版"
+    },
+    {
+      "id": "seal-inner-2",
+      "name": "純陽無極功功印",
+      "revision": "v1",
+      "category": "武學功印",
+      "use": "武學譜、藏書",
+      "file": "artwork.webp",
+      "method": "沿用功印輪廓，重製雙色印版"
+    },
+    {
+      "id": "seal-inner-1",
+      "name": "元始先天功功印",
+      "revision": "v1",
+      "category": "武學功印",
+      "use": "武學譜、藏書",
+      "file": "artwork.webp",
+      "method": "沿用功印輪廓，重製雙色印版"
+    },
+    {
+      "id": "seal-step-9",
+      "name": "五步梅花樁功印",
+      "revision": "v1",
+      "category": "武學功印",
+      "use": "武學譜、藏書",
+      "file": "artwork.webp",
+      "method": "沿用功印輪廓，重製雙色印版"
+    },
+    {
+      "id": "seal-step-8",
+      "name": "八卦步功印",
+      "revision": "v1",
+      "category": "武學功印",
+      "use": "武學譜、藏書",
+      "file": "artwork.webp",
+      "method": "沿用功印輪廓，重製雙色印版"
+    },
+    {
+      "id": "seal-step-7",
+      "name": "雲環步功印",
+      "revision": "v1",
+      "category": "武學功印",
+      "use": "武學譜、藏書",
+      "file": "artwork.webp",
+      "method": "沿用功印輪廓，重製雙色印版"
+    },
+    {
+      "id": "seal-step-6",
+      "name": "天罡北斗步功印",
+      "revision": "v1",
+      "category": "武學功印",
+      "use": "武學譜、藏書",
+      "file": "artwork.webp",
+      "method": "沿用功印輪廓，重製雙色印版"
+    },
+    {
+      "id": "seal-step-5",
+      "name": "太乙九宮步功印",
+      "revision": "v1",
+      "category": "武學功印",
+      "use": "武學譜、藏書",
+      "file": "artwork.webp",
+      "method": "沿用功印輪廓，重製雙色印版"
+    },
+    {
+      "id": "seal-step-4",
+      "name": "上天梯功印",
+      "revision": "v1",
+      "category": "武學功印",
+      "use": "武學譜、藏書",
+      "file": "artwork.webp",
+      "method": "沿用功印輪廓，重製雙色印版"
+    },
+    {
+      "id": "seal-step-3",
+      "name": "凌雲飛渡功印",
+      "revision": "v1",
+      "category": "武學功印",
+      "use": "武學譜、藏書",
+      "file": "artwork.webp",
+      "method": "沿用功印輪廓，重製雙色印版"
+    },
+    {
+      "id": "seal-guard-9",
+      "name": "武當鐵布衫功印",
+      "revision": "v1",
+      "category": "武學功印",
+      "use": "武學譜、藏書",
+      "file": "artwork.webp",
+      "method": "沿用功印輪廓，重製雙色印版"
+    },
+    {
+      "id": "seal-guard-7",
+      "name": "雲床九練功印",
+      "revision": "v1",
+      "category": "武學功印",
+      "use": "武學譜、藏書",
+      "file": "artwork.webp",
+      "method": "沿用功印輪廓，重製雙色印版"
+    },
+    {
+      "id": "seal-guard-5",
+      "name": "五氣朝元功功印",
+      "revision": "v1",
+      "category": "武學功印",
+      "use": "武學譜、藏書",
+      "file": "artwork.webp",
+      "method": "沿用功印輪廓，重製雙色印版"
+    },
+    {
+      "id": "seal-guard-3",
+      "name": "無極勁功印",
+      "revision": "v1",
+      "category": "武學功印",
+      "use": "武學譜、藏書",
+      "file": "artwork.webp",
+      "method": "沿用功印輪廓，重製雙色印版"
+    },
+    {
+      "id": "seal-formation-8",
+      "name": "三才劍陣功印",
+      "revision": "v1",
+      "category": "武學功印",
+      "use": "武學譜、藏書",
+      "file": "artwork.webp",
+      "method": "沿用功印輪廓，重製雙色印版"
+    },
+    {
+      "id": "seal-formation-6",
+      "name": "陰陽周天法功印",
+      "revision": "v1",
+      "category": "武學功印",
+      "use": "武學譜、藏書",
+      "file": "artwork.webp",
+      "method": "沿用功印輪廓，重製雙色印版"
+    },
+    {
+      "id": "seal-formation-4",
+      "name": "真武蕩魔陣功印",
+      "revision": "v1",
+      "category": "武學功印",
+      "use": "武學譜、藏書",
+      "file": "artwork.webp",
+      "method": "沿用功印輪廓，重製雙色印版"
+    },
+    {
+      "id": "seal-formation-2",
+      "name": "三華聚頂功印",
+      "revision": "v1",
+      "category": "武學功印",
+      "use": "武學譜、藏書",
+      "file": "artwork.webp",
+      "method": "沿用功印輪廓，重製雙色印版"
+    },
+    {
+      "id": "seal-palm-9",
+      "name": "武當長拳功印",
+      "revision": "v1",
+      "category": "武學功印",
+      "use": "武學譜、藏書",
+      "file": "artwork.webp",
+      "method": "沿用功印輪廓，重製雙色印版"
+    },
+    {
+      "id": "seal-palm-8",
+      "name": "追風雲環掌功印",
+      "revision": "v1",
+      "category": "武學功印",
+      "use": "武學譜、藏書",
+      "file": "artwork.webp",
+      "method": "沿用功印輪廓，重製雙色印版"
+    },
+    {
+      "id": "seal-palm-7",
+      "name": "武當綿掌功印",
+      "revision": "v1",
+      "category": "武學功印",
+      "use": "武學譜、藏書",
+      "file": "artwork.webp",
+      "method": "沿用功印輪廓，重製雙色印版"
+    },
+    {
+      "id": "seal-palm-6",
+      "name": "遊身八卦掌功印",
+      "revision": "v1",
+      "category": "武學功印",
+      "use": "武學譜、藏書",
+      "file": "artwork.webp",
+      "method": "沿用功印輪廓，重製雙色印版"
+    },
+    {
+      "id": "seal-palm-5",
+      "name": "太乙逍遙掌功印",
+      "revision": "v1",
+      "category": "武學功印",
+      "use": "武學譜、藏書",
+      "file": "artwork.webp",
+      "method": "沿用功印輪廓，重製雙色印版"
+    },
+    {
+      "id": "seal-palm-4",
+      "name": "玄功神拳功印",
+      "revision": "v1",
+      "category": "武學功印",
+      "use": "武學譜、藏書",
+      "file": "artwork.webp",
+      "method": "沿用功印輪廓，重製雙色印版"
+    },
+    {
+      "id": "seal-palm-3",
+      "name": "武當純陽拳功印",
+      "revision": "v1",
+      "category": "武學功印",
+      "use": "武學譜、藏書",
+      "file": "artwork.webp",
+      "method": "沿用功印輪廓，重製雙色印版"
+    },
+    {
+      "id": "seal-palm-2",
+      "name": "紫陽正氣拳功印",
+      "revision": "v1",
+      "category": "武學功印",
+      "use": "武學譜、藏書",
+      "file": "artwork.webp",
+      "method": "沿用功印輪廓，重製雙色印版"
+    },
+    {
+      "id": "seal-palm-1",
+      "name": "太極拳功印",
+      "revision": "v1",
+      "category": "武學功印",
+      "use": "武學譜、藏書",
+      "file": "artwork.webp",
+      "method": "沿用功印輪廓，重製雙色印版"
+    },
+    {
+      "id": "seal-sword-9",
+      "name": "武當丹劍功印",
+      "revision": "v1",
+      "category": "武學功印",
+      "use": "武學譜、藏書",
+      "file": "artwork.webp",
+      "method": "沿用功印輪廓，重製雙色印版"
+    },
+    {
+      "id": "seal-sword-8",
+      "name": "武當逍遙劍功印",
+      "revision": "v1",
+      "category": "武學功印",
+      "use": "武學譜、藏書",
+      "file": "artwork.webp",
+      "method": "沿用功印輪廓，重製雙色印版"
+    },
+    {
+      "id": "seal-sword-7",
+      "name": "白虹劍法功印",
+      "revision": "v1",
+      "category": "武學功印",
+      "use": "武學譜、藏書",
+      "file": "artwork.webp",
+      "method": "沿用功印輪廓，重製雙色印版"
+    },
+    {
+      "id": "seal-sword-6",
+      "name": "太乙玄門劍功印",
+      "revision": "v1",
+      "category": "武學功印",
+      "use": "武學譜、藏書",
+      "file": "artwork.webp",
+      "method": "沿用功印輪廓，重製雙色印版"
+    },
+    {
+      "id": "seal-sword-5",
+      "name": "純陽劍意功印",
+      "revision": "v1",
+      "category": "武學功印",
+      "use": "武學譜、藏書",
+      "file": "artwork.webp",
+      "method": "沿用功印輪廓，重製雙色印版"
+    },
+    {
+      "id": "seal-sword-4",
+      "name": "真武遊龍劍功印",
+      "revision": "v1",
+      "category": "武學功印",
+      "use": "武學譜、藏書",
+      "file": "artwork.webp",
+      "method": "沿用功印輪廓，重製雙色印版"
+    },
+    {
+      "id": "seal-sword-3",
+      "name": "太極劍法功印",
+      "revision": "v1",
+      "category": "武學功印",
+      "use": "武學譜、藏書",
+      "file": "artwork.webp",
+      "method": "沿用功印輪廓，重製雙色印版"
+    },
+    {
+      "id": "seal-sword-2",
+      "name": "先天少陽劍氣功印",
+      "revision": "v1",
+      "category": "武學功印",
+      "use": "武學譜、藏書",
+      "file": "artwork.webp",
+      "method": "沿用功印輪廓，重製雙色印版"
+    },
+    {
+      "id": "seal-sword-1",
+      "name": "無極劍式功印",
+      "revision": "v1",
+      "category": "武學功印",
+      "use": "武學譜、藏書",
+      "file": "artwork.webp",
+      "method": "沿用功印輪廓，重製雙色印版"
+    },
+    {
+      "id": "seal-whisk-9",
+      "name": "拂塵功功印",
+      "revision": "v1",
+      "category": "武學功印",
+      "use": "武學譜、藏書",
+      "file": "artwork.webp",
+      "method": "沿用功印輪廓，重製雙色印版"
+    },
+    {
+      "id": "seal-whisk-8",
+      "name": "武當鐵拂塵功印",
+      "revision": "v1",
+      "category": "武學功印",
+      "use": "武學譜、藏書",
+      "file": "artwork.webp",
+      "method": "沿用功印輪廓，重製雙色印版"
+    },
+    {
+      "id": "seal-whisk-7",
+      "name": "兩儀拂塵功功印",
+      "revision": "v1",
+      "category": "武學功印",
+      "use": "武學譜、藏書",
+      "file": "artwork.webp",
+      "method": "沿用功印輪廓，重製雙色印版"
+    },
+    {
+      "id": "seal-whisk-6",
+      "name": "老君拂塵功功印",
+      "revision": "v1",
+      "category": "武學功印",
+      "use": "武學譜、藏書",
+      "file": "artwork.webp",
+      "method": "沿用功印輪廓，重製雙色印版"
+    },
+    {
+      "id": "seal-whisk-5",
+      "name": "錯倒陰陽拂塵功印",
+      "revision": "v1",
+      "category": "武學功印",
+      "use": "武學譜、藏書",
+      "file": "artwork.webp",
+      "method": "沿用功印輪廓，重製雙色印版"
+    },
+    {
+      "id": "seal-whisk-4",
+      "name": "太乙雲拂功功印",
+      "revision": "v1",
+      "category": "武學功印",
+      "use": "武學譜、藏書",
+      "file": "artwork.webp",
+      "method": "沿用功印輪廓，重製雙色印版"
+    },
+    {
+      "id": "seal-whisk-3",
+      "name": "無量掃塵功功印",
+      "revision": "v1",
+      "category": "武學功印",
+      "use": "武學譜、藏書",
+      "file": "artwork.webp",
+      "method": "沿用功印輪廓，重製雙色印版"
+    },
+    {
+      "id": "seal-whisk-2",
+      "name": "玄空神拂功印",
+      "revision": "v1",
+      "category": "武學功印",
+      "use": "武學譜、藏書",
+      "file": "artwork.webp",
+      "method": "沿用功印輪廓，重製雙色印版"
+    },
+    {
+      "id": "inlay",
+      "name": "功格角花",
+      "revision": "v1",
+      "category": "控件",
+      "use": "武學譜",
+      "file": "artwork.svg",
+      "method": "按功格縮放的單色線刻"
+    },
+    {
+      "id": "hero-plaque",
+      "name": "主角青墨名牌",
+      "category": "控件",
+      "use": "戰場 · 主角狀態",
+      "revision": "v1",
+      "file": "artwork.webp",
+      "method": "沿用朱漆按印外框，青墨區分敵我"
+    },
+    {
+      "id": "duel-wharf",
+      "name": "晨霧渡口",
+      "revision": "v1",
+      "category": "場景",
+      "use": "渡口對招 · 遠岸及棧台",
+      "file": "artwork.webp",
+      "method": "參照焚天壇版畫色稿生成，待試景"
+    },
+    {
+      "id": "wharf-reeds",
+      "name": "渡口蘆花",
+      "revision": "v1",
+      "category": "場景",
+      "use": "渡口對招 · 透明近景",
+      "file": "artwork.webp",
+      "method": "參照焚天壇版畫色稿生成，待試景"
+    },
+    {
+      "id": "duel-bamboo",
+      "name": "風過竹關",
+      "revision": "v1",
+      "category": "場景",
+      "use": "竹關對招 · 山谷及石徑",
+      "file": "artwork.webp",
+      "method": "參照焚天壇版畫色稿生成，待試景"
+    },
+    {
+      "id": "bamboo-branches",
+      "name": "竹關垂枝",
+      "revision": "v1",
+      "category": "場景",
+      "use": "竹關對招 · 透明近景",
+      "file": "artwork.webp",
+      "method": "參照焚天壇版畫色稿生成，待試景"
+    },
+    {
+      "id": "road-scroll",
+      "name": "江湖路引",
+      "revision": "v1",
+      "category": "場景",
+      "use": "江湖路引",
+      "file": "artwork.webp"
+    },
+    {
+      "id": "route-marks",
+      "name": "江湖路引 · 八方圖記",
+      "revision": "v1",
+      "category": "場景",
+      "use": "路線節點與圖例",
+      "file": "artwork.webp"
+    },
+    {
+      "id": "books-table",
+      "name": "壇前選卷案",
+      "revision": "v1",
+      "category": "場景",
+      "use": "壇前選卷案",
+      "file": "artwork.webp"
+    },
+    {
+      "id": "manual-binding",
+      "name": "武當藏經冊",
+      "revision": "v1",
+      "category": "場景",
+      "use": "武當藏經冊",
+      "file": "artwork.webp"
+    },
+    {
+      "id": "school-court",
+      "name": "武當授業庭",
+      "revision": "v1",
+      "category": "場景",
+      "use": "武當授業庭",
+      "file": "artwork.webp"
+    },
+    {
+      "id": "volume-dan",
+      "name": "武當丹劍",
+      "revision": "v1",
+      "category": "介面道具",
+      "use": "秘笈書案、師門書架與行囊",
+      "file": "artwork.webp",
+      "method": "從已選五選二第二稿逐冊裁出"
+    },
+    {
+      "id": "volume-steps",
+      "name": "八卦步",
+      "revision": "v1",
+      "category": "介面道具",
+      "use": "秘笈書案、師門書架與行囊",
+      "file": "artwork.webp",
+      "method": "從已選五選二第二稿逐冊裁出"
+    },
+    {
+      "id": "volume-rainbow",
+      "name": "白虹劍法",
+      "revision": "v1",
+      "category": "介面道具",
+      "use": "秘笈書案、師門書架與行囊",
+      "file": "artwork.webp",
+      "method": "從已選五選二第二稿逐冊裁出"
+    },
+    {
+      "id": "volume-fist",
+      "name": "武當長拳",
+      "revision": "v1",
+      "category": "介面道具",
+      "use": "秘笈書案、師門書架與行囊",
+      "file": "artwork.webp",
+      "method": "從已選五選二第二稿逐冊裁出"
+    },
+    {
+      "id": "volume-coat",
+      "name": "武當鐵布衫",
+      "revision": "v1",
+      "category": "介面道具",
+      "use": "秘笈書案、師門書架與行囊",
+      "file": "artwork.webp",
+      "method": "從已選五選二第二稿逐冊裁出"
+    },
+    {
+      "id": "book-shell",
+      "name": "線裝書殼",
+      "revision": "v1",
+      "category": "介面道具",
+      "use": "秘笈書案、師門書架與行囊",
+      "file": "artwork.webp",
+      "method": "按已選五選二第二稿生成透明道具"
+    },
+    {
+      "id": "book-satchel",
+      "name": "隨身書囊",
+      "revision": "v1",
+      "category": "介面道具",
+      "use": "秘笈書案、師門書架與行囊",
+      "file": "artwork.webp",
+      "method": "按已選五選二第二稿生成透明道具"
+    },
+    {
+      "id": "open-manuscript",
+      "name": "攤開的線裝秘笈",
+      "revision": "v1",
+      "category": "介面道具",
+      "use": "翻閱秘笈 · 兩面內頁",
+      "file": "artwork.webp",
+      "method": "參照已選書封生成透明雙頁"
+    }
+  ]
+}

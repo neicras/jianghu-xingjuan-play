@@ -1,0 +1,44 @@
+body.jp-active{background:#211d30;display:flex;flex-direction:column;height:100dvh;min-height:0}
+.jp-active>header,.jp-active>#travel-strip{background:#211d30;color:#edd8b1;border:0}
+.jp-active>header button{color:#ead5ad;background:none;border:0}
+.jp-active main#room{width:100%;max-width:1500px;min-height:0;flex:1;padding:0;margin:0 auto}
+.jp-room{position:relative;isolation:isolate;container-type:size;width:100%;height:100%;overflow:hidden;color:#f6dfb4;background-color:#211d30;font-family:var(--serif);line-height:1.22}
+.jp-room h2{position:absolute;z-index:1;left:3.8%;top:3%;margin:0;color:#ffe4b5;font:bold clamp(23px,4.3cqw,61px)/1.1 var(--serif);text-shadow:0 2px 1px #20182e}
+.jp-room button,.jp-gear-options button{border:0;color:inherit;font:inherit;margin:0;padding:0;background:transparent;cursor:pointer;box-shadow:none}
+.jp-room button:focus-visible{outline:3px solid #ffd07c;outline-offset:1px}.jp-room button:disabled{opacity:1;cursor:default}
+.jp-depart{background-image:var(--art-journey-pavilion);background-size:100% 100%}
+.jp-seats{position:absolute;top:20%;left:2%;right:2%;height:52%;display:flex;align-items:end}
+.jp-seat{width:25%;height:100%;display:flex;align-items:center;justify-content:flex-end;flex-direction:column;min-height:0}
+.jp-seat img{display:block;width:100%;height:83%;object-fit:contain;object-position:center bottom;transition:filter .15s,transform .15s}
+.jp-seat:is([aria-pressed=true],:hover,:focus-visible) img{filter:drop-shadow(2px 1px 0 #ffc46e) drop-shadow(-2px -1px 0 #ffc46e);transform:translateY(-2%)}
+.jp-seat span,.jp-find span,.jp-study{color:#372736;background:var(--art-journey-slip) center/100% 100% no-repeat;padding:.35em .8em;font-size:clamp(12px,1.7cqw,25px);font-weight:700;text-align:center}
+.jp-seat[aria-pressed=true] span{color:#852c27;text-decoration:underline;text-underline-offset:3px}
+.jp-foot{position:absolute;inset:auto 3% 2.5%;height:21%;display:flex;gap:2%;align-items:center}
+.jp-slip,.jp-endnote,.jp-gear-options button{background:var(--art-journey-slip) center/100% 100% no-repeat;color:#362733}
+.jp-slip{flex:1;min-width:0;max-height:100%;overflow:auto;padding:1.4% 4%;font-size:clamp(13px,1.75cqw,25px)}
+.jp-slip b{font-size:1.25em}.jp-slip p,.jp-endnote p{margin:0.15em 0}
+.jp-room .jp-press{width:23%;min-height:38px;height:63%;font:bold clamp(15px,2.6cqw,36px) var(--serif);background:var(--art-journey-press) center/100% 100% no-repeat;color:#ffebc2}
+.jp-room button:active:enabled{translate:0 2px}.jp-loot{background-image:var(--art-journey-cloth);background-size:100% 100%}
+.jp-find{display:flex;min-width:0;min-height:0;align-items:center;justify-content:center;flex-direction:column}
+.jp-find>img,.jp-find>i:not(.jp-taken){display:block;width:95%;height:75%;object-fit:contain}.jp-find i img{height:100%;width:48%;object-fit:contain}
+.jp-find:is(:hover,:focus-visible):enabled img{filter:drop-shadow(1px -1px 0 #ffc76e);transform:translateY(-2%)}
+.jp-takings,.jp-drops,.jp-drug,.jp-manuals{position:absolute;display:flex;justify-content:center;align-items:stretch}
+.jp-takings{left:3%;right:3%;top:13%;height:22%;gap:3%;justify-content:space-between}.jp-takings .jp-find{width:22%}
+.jp-manuals{left:34%;top:33%;width:32%;height:42%}.jp-find.jp-manuals>img{height:82%}
+.jp-drops{left:2%;top:40%;width:30%;height:34%}.jp-drug{right:3%;top:42%;width:24%;height:32%}
+.jp-drops>.jp-find,.jp-drug>.jp-find{flex:1}.jp-drops .jp-find>i:not(.jp-taken){display:flex;justify-content:center}.jp-taken{display:block;align-self:center;padding:.16em .3em;border:3px double #b98870;color:#edd8bc;background:#522f38;transform:rotate(-6deg);font-style:normal;font-weight:bold}
+.jp-slip .jp-study{background:#694034;color:#fff0c6;padding:.2em .5em;margin:.1em .3em .1em 0;font-size:.9em}
+.jp-ending{background:#211d30;text-align:center}.jp-scroll{position:absolute;inset:17% 2% auto;height:47%}.jp-roll,.jp-trail{position:absolute;inset:0;width:100%;height:100%}.jp-roll{object-fit:fill}.jp-result{position:absolute;right:5%;top:17%;height:53%;width:9%;display:grid;place-content:center;writing-mode:vertical-rl;letter-spacing:.12em;color:#ffe9b4;background:var(--art-journey-won) center/100% 100%;font-size:clamp(14px,2cqw,32px)}.jp-result.lost{background-image:var(--art-journey-lost)}
+.jp-room .jp-tab{position:absolute;left:6%;top:3%;background:#793e39;color:#f3dfb3;padding:.55em .3em;writing-mode:vertical-rl}
+.jp-endnote{position:absolute;left:10%;right:10%;top:66%;height:19%;overflow:auto;padding:1.1% 5%;font-size:clamp(13px,1.8cqw,27px)}
+.jp-ending>.jp-press{position:absolute;height:9%;bottom:3%;left:38%}
+.jp-gear-options{display:flex;flex-wrap:wrap;gap:10px}.jp-gear-options button{display:grid;justify-items:center;max-width:260px;flex:1;min-width:120px;padding:15px 18px}.jp-gear-options img{width:72px;height:62px;object-fit:contain}
+.jp-icon{height:1.18em!important;width:1.18em!important;object-fit:contain;vertical-align:-.2em;margin-right:.2em}.journey .item-icon.jp-ware{background:none;object-fit:contain}
+@media(max-aspect-ratio:1/1){body.jp-active{height:auto;min-height:100dvh}.jp-active main#room{flex:none;height:max(540px,72dvh)}.jp-seats{display:grid;grid-template-columns:1fr 1fr;top:12%;height:60%}.jp-seat{width:100%}.jp-room .jp-press{width:30%}.jp-foot{height:22%}.jp-ending>.jp-press{left:35%}.jp-room .jp-slip{padding:6%}.jp-takings{top:14%}}
+@media(prefers-reduced-motion:reduce){.jp-room *{transition:none!important}}
+.jp-event{background:var(--scene) center 32%/cover}.jp-event>div{position:absolute;inset:auto 0 0;padding:1.5% 4%;background:#231d30ee;border-top:2px solid #916c56}.jp-event h2{position:static;font-size:clamp(20px,2.8cqw,38px)}.jp-event p{margin:.35em 0 .6em;font-size:clamp(13px,1.75cqw,24px)}
+.jp-event button,.jp-rooms button{background:var(--art-journey-slip) center/100% 100% no-repeat;color:#322330;padding:.6em 1.2em;font-weight:bold;margin-right:.4em}.jp-event button small,.jp-rooms small{display:block}.jp-event button:disabled{filter:grayscale(1);opacity:.65}
+.jp-inn{background:var(--art-inn) center/100% 100%}.jp-rooms{position:absolute;inset:20% 2% 15%;display:flex;align-items:stretch}.jp-rooms button{flex:1;background:none;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;color:#ffebc5;text-shadow:0 2px 3px #211c30}.jp-rooms b{background:var(--art-journey-slip) center/100% 100% no-repeat;color:#382832;text-shadow:none;padding:8px 16px}.jp-inn>p{position:absolute;bottom:2%;width:100%;text-align:center;color:#fae6b8}
+.jp-room button:hover:enabled:not(:focus-visible){outline:none}
+.jp-room .jp-find:hover:enabled span,.jp-room .jp-press:hover:enabled{filter:brightness(1.09)}
+.jp-taken{background:transparent var(--art-journey-won) center/100% 100% no-repeat;border:0;padding:.32em .6em}
