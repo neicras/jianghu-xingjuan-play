@@ -2,8 +2,7 @@ import {supportArt} from './art-library/support-files.js';
 // These rooms use real journey state. The artwork carries no labels or quantities.
 import {teachers, wares, spoils, fieldPractice, bagCapacity} from './journey.js';
 import {byName,effect} from './catalogue.js';
-import {pickedBooks,picksLeft,purse,trainingChance} from './rules.js';
-import {xpPerWin} from './manuscripts.js';
+import {pickedBooks,picksLeft,rewardAmount,trainingChance} from './rules.js';
 
 const art=(id,cls='')=>'<img alt="" draggable="false" class="'+cls+'" src="'+supportArt("journey-"+id)+'">';
 const ware=n=>'<img alt="" draggable="false" src="'+supportArt("item-"+wares[n].tile)+'">';
@@ -15,10 +14,11 @@ export function departure(selected,btn){
  const seats=Object.entries(hosts).map(([k,label])=>'<button class="jp-seat" data-action="seat/'+k+'" aria-pressed="'+(k===id)+'">'+art('host-'+k)+'<span>'+label+'</span></button>').join('');
  return '<section class="jp-room jp-depart"><h2>臨行贈禮</h2><div class="jp-seats">'+seats+'</div><div class="jp-foot"><div class="jp-slip"><b>'+(teachers[id]||hosts[id])+'</b><p>'+notes+'</p></div>'+btn('gift/'+id,'啟程','jp-press')+'</div></section>';
 }
-const resourceNames={gold:'銅錢 '+purse+' 文',xp:'歷練 '+xpPerWin+' 點',ticket:'校書籤 ×1'};
+
 const resourceArt={gold:'coins',xp:'diary',ticket:'bookmark'};
 export function rewardPile(s,btn){
  const r=s.route,available=spoils(s),practice=fieldPractice(s),left=picksLeft(s),picked=pickedBooks(s);
+ const resourceNames={gold:'銅錢 '+rewardAmount(s,'gold')+' 文',xp:'歷練 '+rewardAmount(s,'xp')+' 點',ticket:'校書籤 ×1'};
  const resources=Object.keys(resourceNames).filter(k=>Object.hasOwn(s.rewards,k)).map(k=>{
   const claimed=s.rewards[k],label=resourceNames[k];
   return btn('claim/'+k,(claimed?'<i class="jp-taken">已領</i>':art(resourceArt[k]))+'<span>'+label+'</span>','jp-find',claimed);
@@ -29,10 +29,10 @@ export function rewardPile(s,btn){
   if(!names.length)return '';
   return btn('pickGear/'+i,'<i>'+names.slice(0,2).map(ware).join('')+'</i><span>'+group+' · 選一件</span>','jp-find');
  }).join('');
- const books=btn('books',art('manuals')+'<span>'+(left?'挑選秘笈 · 尚可取 '+left+' 冊':'已取 '+picked.length+' 冊')+'</span>','jp-find jp-manuals',!left);
+ const books=!s.offer.length?'':btn('books',art('manuals')+'<span>'+(left?'挑選秘笈 · 尚可取 '+left+' 冊':'已取 '+picked.length+' 冊')+'</span>','jp-find jp-manuals',!left);
  const learn=practice.map(n=>btn('train/'+n,'試演《'+n+'》 · '+trainingChance(s,byName.get(n))+'%','jp-study')).join('');
  const unclaimed=left||available.length||Object.values(s.rewards).includes(false);
- const message=escape(r.last)||([5,10].includes(r.floor)?'守關得勝，額外 8 歷練已入袋。':'挑一件，收入行囊。');
+ const message=escape(r.last)||([5,10].includes(r.floor)?'守關得勝，可挑一件守關信物。':!s.offer.length?'這回沒尋到抄本。下一場比武得勝，便可再挑秘笈。':'點選想帶走的戰利品。');
  return '<section class="jp-room jp-loot"><h2>戰後所得</h2><div class="jp-takings">'+resources+'</div>'+books+'<div class="jp-drops">'+bundles+'</div><div class="jp-drug">'+(drug?btn(s.bag.length>=bagCapacity?'swap/'+drug:'pack/'+drug,ware(drug)+'<span>'+drug+(s.bag.length>=bagCapacity?' · 換藥':'')+'</span>','jp-find'):'')+'</div><div class="jp-foot"><div class="jp-slip" aria-live="polite"><p>'+message+'</p>'+learn+'</div>'+btn('leave',unclaimed?'留下餘物上路':'繼續上路','jp-press')+'</div></section>';
 }
 export function gearOffers(s,index,btn){

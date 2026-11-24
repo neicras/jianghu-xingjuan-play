@@ -1,5 +1,5 @@
 {
-  "release": "2026-11-24.4",
+  "release": "2026-11-24.5",
   "direction": "directions/manual-ink/v1",
   "characters": [
     {
@@ -1482,6 +1482,33 @@
       "use": "翻閱秘笈 · 兩面內頁",
       "file": "artwork.webp",
       "method": "參照已選書封生成透明雙頁"
+    },
+    {
+      "id": "binding-sound",
+      "name": "保存良好書殼",
+      "revision": "v1",
+      "category": "介面道具",
+      "use": "戰後抄本 · 六篇存況",
+      "file": "artwork.webp",
+      "method": "依線裝書殼生成三種保存狀況，逐本切出透明圖"
+    },
+    {
+      "id": "binding-worn",
+      "name": "舊抄本書殼",
+      "revision": "v1",
+      "category": "介面道具",
+      "use": "戰後抄本 · 六篇存況",
+      "file": "artwork.webp",
+      "method": "依線裝書殼生成三種保存狀況，逐本切出透明圖"
+    },
+    {
+      "id": "binding-torn",
+      "name": "殘破本書殼",
+      "revision": "v1",
+      "category": "介面道具",
+      "use": "戰後抄本 · 六篇存況",
+      "file": "artwork.webp",
+      "method": "依線裝書殼生成三種保存狀況，逐本切出透明圖"
     }
   ]
 }

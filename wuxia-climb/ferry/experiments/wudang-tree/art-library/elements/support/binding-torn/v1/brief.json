@@ -1,0 +1,13 @@
+{
+  "id": "binding-torn",
+  "name": "殘破本書殼",
+  "revision": "v1",
+  "category": "介面道具",
+  "use": "戰後抄本 · 六篇存況",
+  "file": "artwork.webp",
+  "method": "依線裝書殼生成三種保存狀況，逐本切出透明圖",
+  "direction": "manual-ink/v1",
+  "reference": "elements/support/book-shell/v1/artwork.webp",
+  "prompt": "A production sprite atlas for the approved stylized illustrated wuxia card game. Reference image is the approved closed book, match the bold economical ink outline with flat printed teal cloth, ochre paper and purple-black shadows. One horizontal triptych showing the SAME front cover of a Chinese thread-bound martial arts manual in three increasing states of damage. Three equally spaced isolated objects in three equal columns on transparent alpha, each entire object strictly front-on upright with rectangular proportions 2:3, parallel edges, its own generous clear gutter. LEFT immaculate deep dark turquoise linen, intact gold stitches along the right edge, neat cream leaves. CENTRE rubbed linen, one torn corner revealing folded buff leaves, two repairs. RIGHT substantial ragged broken lower corner, missing paper bundles and large cross-stitched repair in the upper corner, snapped binding. Exactly the same empty vertical buff title slip on the left of each; leave middle 50% of cloth EMPTY for technique illustrations to be printed later. No writing, no calligraphy, no letters or labels, no table or scenery, no cast shadow. Strong tactile silhouettes readable at 90 pixels. Limited screenprint palette, no photographic gradients.",
+  "column": 3
+}

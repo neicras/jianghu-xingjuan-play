@@ -21,7 +21,7 @@ function injury(b,name,pile){
 export function forecast(b,e){
  const [,hits,guard,stance]=intent(b,e);
  if(stance==='charge'&&e.pressure>=8)return '蓄勁已被打斷 · 本回合不會出手。';
- if(stance==='charge')return '蓄勁中 · 再打掉 '+Math.max(0,8-(e.pressure||0))+' 氣血可破招。蓄成後下次每擊 +5。';
+ if(stance==='charge')return '蓄勁中 · 再打掉 '+Math.max(0,8-(e.pressure||0))+' 氣血可破招。下次每擊 +5'+(e.sealsBreath?'，並令你氣短、抽到《岔氣》':'')+'。';
  if(stance==='counter')return '聽勁反打 · 此時每打中他一下，他便還手 3 點。收勢後他得 '+guard+' 護體。';
  if(stance==='feint')return '虛晃一招 · 令你露出破綻，下回合受擊加重一半。';
  if(stance==='disrupt')return '截脈 · 下回合你會氣短，並抽到一張《岔氣》。'+(guard?'對手得 '+guard+' 護體。':'');
@@ -207,7 +207,10 @@ export function endRound(b,onMove){
  const oldHP=b.hp;b.log=[];let feinted=false,disrupted=false;
  for(const e of living(b)){
   const [,hits,guard,stance]=intent(b,e);
-  if(stance==='charge'){const broken=e.pressure>=8;if(!broken)e.force=(e.force||0)+5;b.log.push(e.name+(broken?'被你打斷，這一口勁沒能蓄成。':'蓄勁已成，下次每擊加重 5 點。'))}
+  if(stance==='charge'){const broken=e.pressure>=8;if(!broken){
+   e.force=(e.force||0)+5;
+   if(e.sealsBreath){disrupted=true;injury(b,'岔氣',b.draw);b.log.push('劍宗封住氣口，《岔氣》置於抽牌堆頂。')}
+  }b.log.push(e.name+(broken?'被你打斷，這一口勁沒能蓄成。':'蓄勁已成，下次每擊加重 5 點。'))}
   if(stance==='disrupt'){disrupted=true;injury(b,'岔氣',b.draw);b.log.push(e.name+'截住氣脈，《岔氣》置於抽牌堆頂。')}
   if(stance==='feint'){feinted=true;b.log.push(e.name+'虛晃一招，你下回合露出破綻。')}
   e.block+=guard;if(guard)b.log.push(e.name+'架勢穩固，護體增加 '+guard+'。');

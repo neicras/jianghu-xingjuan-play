@@ -11,18 +11,19 @@ const editions={
 };
 export function acquisition(s,name){
  const kind=s.rerolled?'archive':s.drawInfo[name]?.kind==='focus'?'traced':s.drawInfo[name]?.kind==='opening'?'field':'loose';
- return {kind,round:s.wins};
+ return {kind,round:s.wins,...(s.route?.floor?{floor:s.route.floor}:{})};
 }
 export function editionInfo(a,source){
  const kind=source?.kind||'old', type=editions[kind];
+ const site=!source?.floor||source.floor<=4?'渡口':source.floor<=9?'竹關':'焚天壇山道';
  const accounts={
    teacher:'第 '+source?.floor+' 站回到師門，隨師兄練功時抄下的講義。',
    old:'此冊早已收在行囊裏，舊藏沒有記下得書處。',
    primer:'出發時已帶在行囊裏的橋頭習劍手冊，頁角還留著翻讀的摺痕。',
    field:notes[a.name]+'這段見聞記在戰後所得的手記裏。',
-   traced:'託人專尋《'+a.name+'》，在渡口抄書攤尋得一冊摹本，章末留有原本的行款。',
-   loose:'比武散場，在渡口的舊書席拾得一包散頁。包紙上題著《'+a.name+'》。',
-   archive:'在渡口書攤另覓同名抄本所得，抄書人把辨得清的字又校了一遍。'
+   traced:'託人專尋《'+a.name+'》，在'+site+'的抄書攤尋得一冊摹本，章末留有原本的行款。',
+   loose:'比武散場，在'+site+'的舊書席拾得一包散頁。包紙上題著《'+a.name+'》。',
+   archive:'在'+site+'書攤另覓同名抄本所得，抄書人把辨得清的字又校了一遍。'
  };
  const inscription=['traced','loose','archive'].includes(kind)?' 頁邊另記一事：'+notes[a.name]:'';
  return {label:type.label,icon:'<svg class="edition-mark" viewBox="0 0 24 24" aria-hidden="true"><path d="'+type.path+'"/></svg>',

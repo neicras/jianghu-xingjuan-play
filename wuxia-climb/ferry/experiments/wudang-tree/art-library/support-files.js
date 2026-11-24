@@ -126,6 +126,9 @@ const paths={
  "volume-coat": "elements/support/volume-coat/v1/artwork.webp",
  "book-shell": "elements/support/book-shell/v1/artwork.webp",
  "book-satchel": "elements/support/book-satchel/v1/artwork.webp",
- "open-manuscript": "elements/support/open-manuscript/v1/artwork.webp"
+ "open-manuscript": "elements/support/open-manuscript/v1/artwork.webp",
+ "binding-sound": "elements/support/binding-sound/v1/artwork.webp",
+ "binding-worn": "elements/support/binding-worn/v1/artwork.webp",
+ "binding-torn": "elements/support/binding-torn/v1/artwork.webp"
 };
 export function supportArt(id){if(!Object.hasOwn(paths,id))throw Error("未知素材 "+id);return new URL(paths[id],import.meta.url).href}

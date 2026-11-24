@@ -89,16 +89,16 @@ export const injuries=[
 export const byName=new Map([...arts,...basics,...injuries].map(a=>[a.name,a]));
 // These traits are shared by the card face, draw/discard rules and balance audit.
 const traits={
- 起手:['五步梅花樁','抱元守一'],
- 保留:['武當丹劍','武當鐵布衫','太極拳','武當綿掌','武當鐵拂塵'],
+ 起手:['吐納','五步梅花樁','抱元守一'],
+ 保留:['踏浪步','武當丹劍','武當鐵布衫','太極拳','武當綿掌','武當鐵拂塵'],
  虛無:['太乙神功','無極劍式'],
- 消耗:['洗髓金經','太乙神功'],
+ 消耗:['吐納','洗髓金經','太乙神功'],
  運功:['武當太和功','一字混元樁','武當混元功','純陽無極功','元始先天功','三才劍陣','陰陽周天法','三華聚頂','純陽劍意'],
  穿勁:['武當綿掌','先天少陽劍氣'],
 };
 export function hasKeyword(card,term){
  if(traits[term]?.includes(card.name))return true;
- if(card.star&&((term==='起手'&&card.name==='吐納')||(term==='保留'&&card.name==='橫劍當胸')))return true;
+ if(card.star&&term==='保留'&&card.name==='橫劍當胸')return true;
  return byName.get(card.name)?.tags?.includes(term)||false;
 }
 export function effect(a,star=false,showChanges=false){

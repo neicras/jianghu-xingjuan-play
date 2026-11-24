@@ -50,17 +50,17 @@ export function linked(floor,from,to){
 const duels={
  fighter:[0],guard:[1],pair:[2],
  elite1:[1,[['鐵衣堂主',71,7,[[8,1,0],[0,0,7],[6,2,0]]]]],
- elite2:[2,[['青煞',33,0,[[7,1,0],[4,2,0]]],['白煞',36,4,[[0,0,5],[9,1,0]]]]],
+ elite2:[2,[['青煞',46,0,[[7,1,0],[4,2,0]]],['白煞',42,4,[[0,0,5],[9,1,0]]]]],
  boss:[0,[['守壇劍宗',110,8,[[12,1,0],[7,2,0],[0,0,10],[19,1,0]]]]]
 };
 // Each pattern is announced throughout the player's turn and resolved on 收勢.
 const patterns={
  '蒙眼刺客':[[7,1,0,'wound'],[0,0,6,'disrupt'],[5,2,0,'wound']],
  '鐵衣客':[[0,0,0,'charge'],[7,2,0],[0,0,6,'counter'],[15,1,0]],
- '鐵衣堂主':[[0,0,7,'counter'],[15,1,0],[0,0,0,'charge'],[10,2,0]],
+ '鐵衣堂主':[[0,0,7,'counter'],[15,1,0],[0,0,0,'charge'],[9,2,0,'wound']],
  '前哨':[[5,1,0],[4,2,0,'wound']],'後哨':[[0,0,0,'feint'],[7,1,0]],
- '青煞':[[8,1,0],[5,2,0]],'白煞':[[0,0,0,'feint'],[10,1,0],[0,0,4,'counter']],
- '守壇劍宗':[[13,1,0],[0,0,0,'charge'],[8,3,0],[0,0,8,'counter'],[20,1,0]]
+ '青煞':[[9,1,0,'wound'],[6,2,0]],'白煞':[[0,0,0,'feint'],[8,1,0],[0,0,4,'disrupt']],
+ '守壇劍宗':[[13,1,0],[0,0,0,'charge'],[8,3,0],[0,0,8,'counter'],[18,1,0,'wound']]
 };
 export function prepareJourney(s){
  // Keep an already-dealt reward on its original terms until the player leaves.
@@ -73,7 +73,7 @@ export function prepareJourney(s){
  b.relics=[...s.relics];
  for(const e of b.foes){
   if(patterns[e.name])e.moves=patterns[e.name];
-  if(e.name==='蒙眼刺客'&&s.route.floor===1)e.moves=[[5,1,0,'wound'],[0,0,4,'disrupt'],[3,2,0,'wound']];
+  if(e.name==='蒙眼刺客'&&s.route.floor===1)e.moves=[[7,1,0,'wound'],[0,0,4,'disrupt'],[4,2,0,'wound']];
   if(e.openings){e.exposed=1;delete e.openings}
  }
  b.strength??=Number(s.relics.includes('青鋼劍'));
@@ -99,16 +99,32 @@ export function buyMedicine(s,name){
  if(s.route.phase!=='inn'||!Object.hasOwn(apothecary,name)||purchaseLimit(s,name,apothecary[name]))return false;
  pay(s,name,apothecary[name]);s.route.phase='map';return true;
 }
+// Roll once on victory. A separate stream keeps rewards stable through reloads,
+ // inspections and training, without consuming the six rehearsal dice.
+function victoryLoot(s,enemySeed){
+ const r=s.route,first=r.floor===1,gate=r.floor===5||r.floor===10;
+ const kind=road[r.floor-1][r.path.at(-1)], hard=kind==='pair'||kind==='guard';
+ let seed=(enemySeed^Math.imul(r.floor,0x9e3779b1))>>>0;
+ const roll=()=>{seed=(Math.imul(1664525,seed)+1013904223)>>>0;return seed/4294967296};
+ const range=(lo,hi)=>lo+Math.floor(roll()*(hi-lo+1));
+ const gold=gate?range(13,19):hard?range(8,13):range(5,9);
+ const xp=gate?range(14,19):hard?range(8,12):range(5,9);
+ const books=first||gate||r.missedBooks||roll()<(hard?.82:.65);
+ const gear=first||gate||roll()<(hard?.55:.25);
+ const medicine=roll()<(gate?.8:hard?.6:.45)?(roll()<.6?'金創藥':'軟筋散'):null;
+ return {gold,xp,books:Boolean(books),gear,medicine};
+}
 export function spoils(s){
  const r=s.route;
  if(r.phase!=='reward')return [];
  const items=[];
- if(!s.relics.some(n=>wares[n]?.source==='戰後選裝'))items.push('青鋼劍','竹編護臂');
+ if((!r.loot||r.loot.gear)&&!s.relics.some(n=>wares[n]?.source==='戰後選裝'))items.push('青鋼劍','竹編護臂');
  if([5,10].includes(r.floor)&&!r.tookRelic){
   items.push(...Object.keys(wares).filter(n=>wares[n].source==='守關獎勵'&&!s.relics.includes(n)));
   if(!s.relics.includes('劍穗'))items.push('劍穗');
  }
- if(!r.tookItem)items.push(s.wins%2?'金創藥':'軟筋散');
+ const drug=r.loot?r.loot.medicine:(s.wins%2?'金創藥':'軟筋散');
+ if(!r.tookItem&&drug)items.push(drug);
  return items;
 }
 export function pack(s,name,replace){
@@ -153,13 +169,14 @@ export function drill(s){
 export function enter(s,lane){
  const r=s.route,floor=r.floor+1;
  if(r.phase!=='map'||!Number.isInteger(lane)||!road[floor-1]?.[lane]||!linked(floor,r.path.at(-1),lane))return false;
- const id=road[floor-1][lane];r.floor=floor;r.path.push(lane);r.free=null;r.last='';r.tookRelic=false;r.tookItem=false;delete r.purchases;delete r.stop;
+ const id=road[floor-1][lane];r.floor=floor;r.path.push(lane);r.free=null;r.last='';r.tookRelic=false;r.tookItem=false;delete r.loot;delete r.purchases;delete r.stop;
  if(duels[id]){
   const [profile,enemies]=duels[id];
   const b=startBout(s,profile,Math.floor(random(s)*4294967296));b.maxHp=r.maxHp;b.hp=r.hp;
   if(enemies)b.foes=enemies.map(([name,hp,block,moves])=>({name,hp,maxHp:hp,block,moves}));
   if(id==='elite1'||id==='boss')b.foes[0].reads={};
-  if(floor===1){b.foes[0].hp=b.foes[0].maxHp=23;b.foes[0].moves=[[5,1,0],[0,0,4],[3,2,0]]}
+  if(id==='boss')b.foes[0].sealsBreath=true;
+  if(floor===1){b.foes[0].hp=b.foes[0].maxHp=34}
   s.bout=b;prepareJourney(s);if(s.relics.includes('銅護腕'))b.block+=6;r.phase='fight';
  }else{r.phase=id;if(id==='cache')prepareStop(s)}
  return true;
@@ -181,7 +198,10 @@ export function finishFight(s){
   }
   s.wins=1;s.rewards={gold:false,xp:false,ticket:false}}
  else win(s,()=>random(s));
- if(r.floor===5||r.floor===10){s.rewards.ticket=false;s.xp+=8}
+ r.loot=victoryLoot(s,b.seed);
+ if(!r.loot.books){s.offer=[];s.finds={};s.drawInfo={}}
+ r.missedBooks=!r.loot.books;
+ if(r.floor===5||r.floor===10)s.rewards.ticket=false;
  r.phase='reward';return true;
 }
 export function receive(s,name){

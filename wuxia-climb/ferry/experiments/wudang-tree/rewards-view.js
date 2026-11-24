@@ -1,3 +1,6 @@
+import {descriptions} from './annotations.js';
+import {acquisition,editionInfo} from './editions.js';
+import {moveNames} from './rehearsal.js';
 import {cardRarity} from './card-face.js';
 import {supportArt} from './art-library/support-files.js';
 import {arts,byName,ranks,effect} from './catalogue.js';
@@ -40,7 +43,7 @@ function manuscript(s,name){
  const oldPrice=cost(a,prior), newPrice=cost(a,combined),extra=s.learned.includes(name)?4:0;
  const gained=chapters.flatMap((n,i)=>combined[i]>prior[i]?['第'+n+'篇']:[]);
  const complete=incoming.filter(q=>q===2).length;
- const info=s.drawInfo[name], preparedSample=info?.kind==='opening'&&['武當丹劍','白虹劍法'].includes(name)&&!s.rerolled;
+ const info=s.drawInfo[name], preparedSample=info?.kind==='opening'&&['武當丹劍','白虹劍法','八卦步'].includes(name)&&!s.rerolled;
  const showCopyOdds=!s.legacyFinds&&!preparedSample&&(info||s.rerolled);
  const availability=s.learned.includes(name)?(s.stars.includes(name)?'已學成 · 已精練':'已學成 · 可供精練'):!a.parent?'入門功法':s.learned.includes(a.parent)?'先修已成':'可越級。先學《'+a.parent+'》，把握可達 '+percent(combinedOdds(gateOdds(s,a,combined,true)))+'%';
  const foundationNote=!s.learned.includes(name)&&hasNoviceFoundation(s,a)?'。根基已足，殘篇也較易讀通。':'';
@@ -64,19 +67,19 @@ function copySummary(sections){
 }
 function openCopy(s,book,btn){
  const {a,known,incoming,prior,combined,taken}=book;
+ const names=moveNames(a),origin=editionInfo(a,acquisition(s,a));
  const leaves=incoming.map((q,i)=>{
   const improves=known.length>0&&!taken&&combined[i]>prior[i];
-  return '<li data-quality="'+q+'"><span>第'+chapters[i]+'篇</span><i aria-hidden="true"></i><b>'+chapterState[q]+'</b>'+
-   (improves?'<em>補</em>':'')+'</li>';
+  return '<li data-quality="'+q+'"><button type="button" class="read-leaf" data-leaf="'+i+'" aria-expanded="false"><span>'+chapters[i]+' · '+names[i]+'</span><i aria-hidden="true"></i><b>'+chapterState[q]+'</b>'+(improves?'<em>補</em>':'')+'</button></li>';
  }).join('');
  const better=known.length&&!taken?chapters.filter((_,i)=>combined[i]>prior[i]):[];
  const note=taken?'已收入書囊':!known.length?'首次得見此書':better.length?'可補原藏第'+better.join('、')+'篇':'原藏已涵蓋此本';
  const pose=copyFace(a,incoming,ranks[a.rank]);
  return '<div class="book-reader"><article class="spread" aria-labelledby="pick-title">'+
   '<div class="spread-pages"><section class="illustrated-leaf"><small>武當 · '+a.branch+' · '+ranks[a.rank]+'品 · '+cardRarity(a)+'</small>'+
-  '<h2 id="pick-title" tabindex="-1">'+a.name+'</h2><img class="leaf-print" alt="" src="'+a.image+'"><p>'+effect(a)+'</p></section>'+
-  '<section class="contents-leaf"><h3>此本存篇</h3><ol>'+leaves+'</ol><strong>'+note+'</strong><small>'+book.library+' · '+(s.learned.includes(a.name)?'師門藏本':'合參後練成把握 '+trainingChance(s,a,combined)+'%')+'</small>'+
-  '<details class="copy-colophon"><summary>詳閱此冊</summary><div>'+book.detail+'<ul>'+book.odds+'</ul></div></details></section></div>'+
+  '<h2 id="pick-title" tabindex="-1">'+a.name+'</h2><img class="leaf-print" alt="" src="'+a.image+'"><p class="leaf-lore">'+descriptions[a.name]+'</p><p>'+effect(a)+'</p></section>'+
+  '<section class="contents-leaf"><h3>六篇招訣</h3><ol>'+leaves+'</ol><p class="leaf-gloss" aria-live="polite">點篇名，細讀這一式。</p><strong>'+note+'</strong><small>'+book.library+' · '+(s.learned.includes(a.name)?'師門藏本':'合參後練成把握 '+trainingChance(s,a,combined)+'%')+'</small>'+
+  '<details class="copy-colophon"><summary>抄本來歷與研習</summary><div><p>'+origin.account+'</p>'+book.detail+'<ul>'+book.odds+'</ul></div></details></section></div>'+
   '<div class="turn-cover" aria-hidden="true"><div class="turn-front">'+pose+'</div><div class="turn-back"></div></div></article>'+
   '<div class="reader-actions">'+btn('putBack','放回書案','return-copy')+btn('take/'+a.name,taken?'已收入書囊':'收入書囊','red-seal',taken||!picksLeft(s))+'</div></div>';
 }
@@ -90,7 +93,7 @@ export function choices(s,btn,selected){
   return '<button class="shelf-volume" aria-label="翻閱《'+name+'》，'+grade+'品，'+cardRarity(b.a)+'，'+copySummary(b.incoming)+(b.taken?'，已收入書囊':'')+
    '" data-action="browse/'+name+'">'+copyFace(b.a,b.incoming,grade)+(b.taken?'<i class="volume-mark">收</i>':'')+'</button>';
  }).join('');
- return '<div class="book-table closed-shelf"><div class="book-heading"><h2 id="pick-title">挑選秘笈</h2><p>翻開一冊，細看存篇。</p></div>'+
+ return '<div class="book-table closed-shelf"><div class="book-heading"><h2 id="pick-title">挑選秘笈</h2><p>看書角辨殘舊，看書籤辨品級。</p></div>'+
   '<div class="book-rack">'+rack+'<div class="book-pouch">'+pouch()+'<span><small>書囊</small><b>'+kept+'／'+(kept+left)+'</b></span></div></div>'+
   '<aside class="shelf-note"><b>尚可取 '+left+' 冊</b><span>素籤普通　青籤精良　金籤稀有</span></aside>'+
   '<div class="book-links">'+btn('back','返回戰後所得')+btn('reroll',s.rerolled?'本場已換過':s.tickets?'用校書籤換抄本':'另覓抄本 · '+rerollFee+' 文','',!!s.claimed||s.rerolled||(!s.tickets&&s.gold<rerollFee))+'</div></div>';
@@ -113,6 +116,19 @@ export function displayBookDialog(s,btn,selected,returnTo){
    spread.style.setProperty('--fly-scale',String(origin.height/rect.height));
    reader.classList.add('unfolding');
   }
+  const a=byName.get(selected),pages=s.finds[selected],prior=collate(collection(s,selected));
+  const combined=collate(mergedCopies(s,a,pages)),odds=gateOdds(s,a,combined), names=moveNames(a);
+  reader.querySelector('.contents-leaf ol').addEventListener('click',event=>{
+   const button=event.target.closest('[data-leaf]');if(!button)return;
+   const i=Number(button.dataset.leaf),quality=pages[i];
+   for(const leaf of reader.querySelectorAll('[data-leaf]'))leaf.setAttribute('aria-expanded',String(leaf===button));
+   const evidence=['只剩篇名，招圖已佚。','圖訣斷了一截，須自己推敲。','圖訣首尾俱全，可依譜演練。'][quality];
+   const collation=prior[i]>quality?'舊藏可補這一篇。':'';
+   const gloss=reader.querySelector('.leaf-gloss');
+   button.after(gloss);
+   gloss.textContent='「'+names[i]+'」'+evidence+collation+'演練此關把握 '+odds[i]+'%。';
+   gloss.scrollIntoView({block:'nearest'});
+  });
   reader.querySelector('h2').focus({preventScroll:true});
  }else if(returnTo){
   Array.from(body.querySelectorAll('.shelf-volume')).find(b=>b.dataset.action==='browse/'+returnTo)?.focus({preventScroll:true});

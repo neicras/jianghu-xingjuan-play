@@ -162,7 +162,7 @@ export async function paintBout(b,action,playback=false){
  const token={};paintings.set(canvas,token);
  try{
   const stage=Object.hasOwn(stages,b.environment)?b.environment:'court';
-  const [cast,environment]=await Promise.all([battleScene(b.foes,stage),scenery(stage).catch(()=>null)]);
+  const [cast,environment]=await Promise.all([battleScene(b.foes,stage),Promise.resolve(scenery(stage)).catch(()=>null)]);
   const res={...cast,scenery:environment};
   if(!canvas.isConnected)return;
   const ctx=canvas.getContext('2d'),reduce=matchMedia('(prefers-reduced-motion: reduce)');

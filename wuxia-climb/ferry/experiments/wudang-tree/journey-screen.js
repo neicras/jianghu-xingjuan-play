@@ -6,12 +6,13 @@ import {newJourney,gift,enter,finishFight,receive,train,rest,leave,prepareJourne
 import {play,endRound,settleChoice} from './combat.js';
 import {manual,navigateRegister} from './manual.js';
 import {editionSheet} from './book-view.js';
-import {arena,paintBout,animateBout,pileSheet} from './arena.js?phoneLayout=2';
+import {arena,paintBout,animateBout,pileSheet} from './arena.js?gates=1';
 import {displayBookDialog} from './rewards-view.js';
 import {rehearsalResult} from './rehearsal.js';
 import {deck,picksLeft,attemptFee,claimReward,trainingChance,ready,equip} from './rules.js';
 import {estimate,reroll} from './manuscripts.js';
 import {frames,reviewJourney} from './review-frames.js';
+import {descriptions} from './annotations.js';
 import {effect,byName} from './catalogue.js';
 import {keywords,statuses,marked,glyph} from './vocabulary.js';
 import {cardFace} from './card-face.js';
@@ -25,6 +26,12 @@ const requestedFrame=new URLSearchParams(location.search).get('preview');
 const preview=frames.some(([id])=>id===requestedFrame)?requestedFrame:null;
 const record=preview?()=>{}:(await import('./journey-log.js')).record;
 let s=preview?reviewJourney(preview,new URLSearchParams(location.search).get('sample')):newJourney(),animating=false,reading=preview==='tree',fromBooks=false,selected='武當丹劍';
+const gate=new URLSearchParams(location.search).get('gate');
+if(preview==='fight'&&['1','5','10','15'].includes(gate)){
+ const response=await fetch(new URL('./gate-drills.json',import.meta.url));
+ if(!response.ok)throw Error('未能載入關口試招');
+ s=(await response.json()).snapshots[gate];
+}
 if(!preview)try{const saved=JSON.parse(localStorage.getItem(key));if(saved?.route)s=saved}catch{}
 prepareJourney(s);
 function save(){if(preview)return;try{localStorage.setItem(key,JSON.stringify(s))}catch{}}
@@ -96,7 +103,7 @@ function inventory(){
 }
 function deckDialog(){
  const cards=deck(s),variants=[...new Map(cards.map(c=>[c.name+':'+s.stars.includes(c.id),c])).values()],canEquip=['map','inn','school','reward','cache'].includes(s.route.phase);
- modal('<h2>本輪牌組 · '+cards.length+' 張</h2><div class="travel-deck">'+variants.map(c=>{const star=s.stars.includes(c.id);return '<div>'+cardFace(byName.get(c.name),star)+'<small>× '+cards.filter(x=>x.name===c.name&&s.stars.includes(x.id)===star).length+'</small></div>'}).join('')+'</div>'+
+ modal('<h2>本輪牌組 · '+cards.length+' 張</h2><div class="travel-deck">'+variants.map(c=>{const star=s.stars.includes(c.id);return '<div>'+btn('deckNote/'+c.id,cardFace(byName.get(c.name),star),'deck-leaf')+'<small>× '+cards.filter(x=>x.name===c.name&&s.stars.includes(x.id)===star).length+'</small></div>'}).join('')+'</div>'+
  (canEquip&&s.learned.length?'<h3>已學功法</h3>'+s.learned.map(n=>btn('equip/'+n,(s.equipped.includes(n)?'移出':'加入')+'《'+n+'》')).join(''):''));
 }
 function practiceCopies(){
@@ -190,7 +197,7 @@ function render(){
 }
 document.addEventListener('click',async e=>{
  if(animating)return;
- const term=e.target.closest('.battle-hand .rule-word,.travel-deck .rule-word');
+ const term=e.target.closest('.travel-deck .rule-word');
  if(term){fieldGuide(term.textContent);return}
  const button=e.target.closest('button[data-action]');if(!button||button.disabled)return;
  const [action,v,i]=button.dataset.action.split('/'),r=s.route,b=s.bout;
@@ -201,6 +208,10 @@ document.addEventListener('click',async e=>{
  }
  if(action==='tally'){modal('<h2>隨身盤點</h2><dl class="tally"><dt>氣血</dt><dd>'+(b?.hp??r.hp)+'／'+r.maxHp+'</dd><dt>歷練</dt><dd>'+s.xp+' 點</dd><dt>盤纏</dt><dd>'+s.gold+' 文</dd></dl>');return}
  if(action==='kit'){inventory();return}
+ if(action==='deckNote'){
+  const card=deck(s).find(c=>c.id===v);if(!card)return;
+  modal('<div class="full-card">'+cardFace(byName.get(card.name),s.stars.includes(card.id))+'</div><p>'+descriptions[card.name]+'</p>'+btn('deck','返回牌組'));return;
+ }
  if(action==='pile'&&b){modal(pileSheet(b,v));return}
  if(action==='guide'){fieldGuide();return}
  if(r.phase==='inn'){

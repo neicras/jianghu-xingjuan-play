@@ -101,10 +101,11 @@ function weight(s,a){
   return (gap?Math.pow(.68,9-a.rank):5) * (collection(s,a.name).length?2:1);
 }
 export const band=a=>a.rank>=7?'下三品':a.rank>=4?'中三品':'上三品';
+export const rewardAmount=(s,key)=>s.route?.loot?.[key]??({xp:xpPerWin,gold:purse,ticket:1})[key];
 export function claimReward(s,key){
   if(!Object.hasOwn(s.rewards,key)||s.rewards[key]!==false)return false;
-  if(key==='xp')s.xp+=xpPerWin;
-  else if(key==='gold')s.gold+=purse;
+  if(key==='xp')s.xp+=rewardAmount(s,key);
+  else if(key==='gold')s.gold+=rewardAmount(s,key);
   else if(key==='ticket')s.tickets++;
   else return false;
   s.rewards[key]=true;

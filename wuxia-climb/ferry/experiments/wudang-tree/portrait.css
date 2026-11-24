@@ -150,7 +150,7 @@
   .contents-leaf>strong {font-size:15px}
   .copy-colophon summary {min-height:40px;align-content:center}
   .book-reader .spread {background:var(--art-open-manuscript) left center/200% 100% no-repeat}
-  .book-reader .spread-pages {inset:6% 0 8%;padding:6px 10%;background:none;justify-content:flex-start}
+  .book-reader .spread-pages {inset:7% 0 13%;padding:6px 12%;background:none;justify-content:flex-start}
   .copy-colophon[open]>div {position:static;padding:4px 0;border:0;background:none;box-shadow:none}
   .book-links button,.book-links summary {min-height:42px;align-content:center;font-size:13px}
   .book-links details[open] .copy-notes {left:4%;width:92%;bottom:12%;max-height:56%}

@@ -65,3 +65,6 @@
 
 #potion-belt{min-width:0;overflow-x:auto}.worn-label{margin-left:8px;border-left:1px solid #8d805a;padding-left:8px}
 #potion-belt>*{flex-shrink:0}
+
+#folio .travel-deck .deck-leaf{display:block;width:100%;padding:0;border:0;background:transparent;color:inherit;font:inherit}
+#folio .travel-deck .deck-leaf:focus-visible{outline:2px solid #87622d}
