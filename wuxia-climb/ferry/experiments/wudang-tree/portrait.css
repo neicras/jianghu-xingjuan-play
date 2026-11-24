@@ -254,3 +254,28 @@
  .duel-board .arena-foes:has(button:nth-child(3)) meter {height:4px}
  .duel-board .arena-foes:has(button:nth-child(3)) .intent-scroll {margin:0}
 }
+
+/* Keep the way back in reach while the player reads down a long register. */
+.journey.studying .sect-heading{
+ position:sticky;top:env(safe-area-inset-top,0px);z-index:5;display:flex;
+ align-items:center;justify-content:flex-start;gap:clamp(7px,2vw,24px);height:auto;min-height:48px;
+ padding:4px 0;background:#302239 var(--art-journey-cloth) center/560px;
+ box-shadow:0 2px 0 #ae8753;
+}
+.journey.studying .sect-heading h2{margin:0;white-space:nowrap}
+.journey.studying .sect-nav{margin:0 0 0 auto;align-self:center}
+.journey.studying .study-return{
+ display:inline-flex;align-items:center;justify-content:center;gap:.25em;flex:none;min-height:44px;margin:0;
+ padding:6px 12px 6px 8px;border:1px solid #e4b974;border-radius:4px 12px 12px 4px;
+ color:#fff0d1;background:#773e30;font:700 clamp(15px,1.35vw,20px)/1.2 var(--serif);white-space:nowrap;
+}
+.study-return span{font:700 1.55em/1 Georgia,serif}
+.journey.studying .study-return:focus-visible{outline:2px solid #ffe7a3;outline-offset:-4px}
+.journey.studying .return-to-register,.journey.studying .technique{scroll-margin-top:65px}
+@media(max-width:760px) and (orientation:portrait){
+ .journey.studying .sect-heading h2{font-size:clamp(18px,5vw,24px);letter-spacing:.03em}
+ .journey.studying .sect-nav .balance{display:none}
+ .journey.studying .sect-nav .exit-link{font-size:13px;padding:4px}
+ .journey.studying .study-return{font-size:15px}
+}
+.journey.studying .register-key .balance{display:inline-flex;align-items:center;gap:3px;white-space:pre;color:inherit}.journey.studying .register-key .balance img{width:18px;height:18px;object-fit:contain}

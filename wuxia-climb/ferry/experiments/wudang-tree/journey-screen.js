@@ -4,7 +4,7 @@ import {atlas} from './route-scroll.js?map2';
 import {supportArt} from './art-library/support-files.js?branch=1';
 import {newJourney,gift,enter,finishFight,receive,train,rest,leave,prepareJourney,lessons,drill,goods,spoils,pack,useItem,wares,apothecary,buyMedicine,purchaseLimit,bagCapacity,exploreCave,caveRisk,escort,storyAt,storyLimit,marketRanges,stockAt,buyAtStall} from './journey.js?v=1124f';
 import {play,endRound,settleChoice} from './combat.js?v=1124f';
-import {manual,navigateRegister} from './manual.js?v=1124f';
+import {manual,navigateRegister} from './manual.js?folio3';
 import {editionSheet} from './book-view.js?v=1124f';
 import {arena,paintBout,animateBout,pileSheet} from './arena.js?v=1124f';
 import {displayBookDialog} from './rewards-view.js?v=1124f';
@@ -183,9 +183,15 @@ function eventRoom(){
  }).join('');
  return '<section class="jp-room jp-event" style="--scene:url('+scene+')"><div><h2>'+story.name+'</h2><p>'+story.text+'</p>'+actions+' '+btn('leave','告辭上路')+'</div></section>';
 }
+let beforeStudyY=0;
+function studyReturnLabel(r){
+ if(fromBooks)return '繼續選秘笈';
+ if(r.phase==='cache')return r.floor===2?'回到渡口':r.stop?.story==='cave'?'回到山洞':'回到貨郎';
+ return {gift:'回到餞行席',map:'回到地圖',fight:'回到比武',reward:'回到戰後所得',school:'回到師門',inn:'回到客棧',won:'回到結局',lost:'回到結局'}[r.phase]||'回到遊戲';
+}
 function treeButton(action,label,style,disabled){
  const [act,name]=action.split('/'),r=s.route;
- if(act==='tab')return name==='fight'?btn('closeTree',fromBooks?'返回選秘笈':'返回本站','exit-link'):name==='deck'?btn('deck','我的牌組','exit-link'):'';
+ if(act==='tab')return name==='deck'?btn('deck','我的牌組','exit-link'):'';
  if(act==='equip')return btn('toggle/'+name,label,style,!['map','inn','school','reward','cache'].includes(r.phase));
  if(act==='focus')return '';
  if(act==='study'||act==='star')return act==='star'?'<small>在客棧後院精練</small>':'';
@@ -201,8 +207,9 @@ function render(){
  document.body.classList.toggle('jp-active',!reading&&(['gift','reward','inn','won','lost','school','map'].includes(r.phase)||(r.phase==='cache'&&(r.floor===2||r.stop?.story==='cave'))));
  document.body.classList.toggle('at-market',!reading&&r.phase==='cache'&&r.floor!==2&&r.stop?.story!=='cave');
  if(reading){
-  $('room').innerHTML=manual(s,byName.get(selected),treeButton);
-  $('room').querySelector('.skill-detail').insertAdjacentHTML('afterbegin',btn('backToRegister','返回武學譜','return-to-register'));
+  const back=btn('closeTree','<span aria-hidden="true">‹</span> '+studyReturnLabel(r),'study-return');
+  $('room').innerHTML=manual(s,byName.get(selected),treeButton,back);
+  $('room').querySelector('.skill-detail').insertAdjacentHTML('afterbegin',btn('backToRegister','查看功法總表','return-to-register'));
   return;
  }
  let html='';
@@ -285,7 +292,10 @@ document.addEventListener('click',async e=>{
  }
  if(action==='tree'||action==='node'||action==='inspect'){
   const shelfLeft=$('room').querySelector('.register .shelf')?.scrollLeft||0;
+  const opening=!reading;
+  if(opening)beforeStudyY=window.scrollY;
   reading=true;if(v)selected=v;render();
+  if(opening&&!v){window.scrollTo(0,0);$('room').querySelector('.study-return').focus({preventScroll:true})}
   if(v){
    const shelf=$('room').querySelector('.register .shelf');
    if(shelf)shelf.scrollLeft=shelfLeft;
@@ -298,11 +308,13 @@ document.addEventListener('click',async e=>{
   return;
  }
  if(action==='bookStudy'&&r.phase==='reward'&&s.offer.includes(v)){
-  $('book-choice').close();fromBooks=true;reading=true;selected=v;render();return
+  beforeStudyY=window.scrollY;$('book-choice').close();fromBooks=true;reading=true;selected=v;render();
+  window.scrollTo(0,0);$('room').querySelector('.study-return').focus({preventScroll:true});return
  }
  if(action==='closeTree'){
-  reading=false;render();
+  reading=false;render();window.scrollTo(0,beforeStudyY);
   if(fromBooks&&r.phase==='reward'&&picksLeft(s)>0)bookDialog();
+  else $('trail-tools').querySelector('[data-action="tree"]').focus({preventScroll:true});
   fromBooks=false;return
  }
  if(action==='edition'){modal(editionSheet(s,byName.get(v),Number(i)));return}
@@ -352,6 +364,11 @@ document.addEventListener('click',async e=>{
   record(previous,button.dataset.action,prior,b&&previous.bout!==b?{outcome:b.phase,log:b.log,hp:b.hp,foes:b.foes}:null);
   if(s!==previous)record(s,'start');
   save();
+ }
+});
+document.addEventListener('keydown',e=>{
+ if(e.key==='Escape'&&reading&&!document.querySelector('dialog[open]')){
+  e.preventDefault();$('room').querySelector('.study-return').click();
  }
 });
 $('room').addEventListener('keydown',navigateRegister);

@@ -58,18 +58,19 @@ function details(state,a,button) {
     '<figure class="skill-card"><figcaption>學成招式</figcaption><button data-action="preview/'+a.name+'" aria-label="放大《'+a.name+'》卡面">'+cardFace(a,star)+'</button></figure></div></div></aside>';
 }
 
-export function manual(state,selected,button) {
+export function manual(state,selected,button,journeyBack) {
+  const balance='<span class="balance">'+objectImage('journey-xp')+'<span class="visually-hidden">歷練</span>'+state.xp+'　'+objectImage('journey-gold')+'<span class="visually-hidden">銅錢</span>'+state.gold+'</span>';
   const head=grades.map(rank=>'<th scope="col" class="tier-'+tier(rank)+'">'+ranks[rank]+'品</th>').join('');
   const rows=branches.map(branch=>{
     const path=arts.filter(art=>art.branch===branch);
     const cells=grades.map(rank=>cell(state,path.find(art=>art.rank===rank),selected)).join('');
     return '<tr><th scope="row">'+branch+'</th>'+cells+'</tr>';
   });
-  return '<div class="sect-heading"><div><h2>武當武學譜</h2></div>'+
-    '<div class="sect-nav"><span class="balance">'+objectImage('journey-xp')+'<span class="visually-hidden">歷練</span>'+state.xp+'　'+objectImage('journey-gold')+'<span class="visually-hidden">銅錢</span>'+state.gold+'</span>'+button('tab/loot','戰後所得','exit-link')+button('tab/deck','我的牌組','exit-link')+button('tab/fight','試武場','exit-link')+'</div></div>'+
+  return '<div class="sect-heading">'+(journeyBack||'')+'<div><h2>武當武學譜</h2></div>'+
+    '<div class="sect-nav">'+(journeyBack?'':balance)+''+button('tab/loot','戰後所得','exit-link')+button('tab/deck','我的牌組','exit-link')+(journeyBack?'':button('tab/fight','試武場','exit-link'))+'</div></div>'+
     '<div class="sect-body"><div class="register"><div class="shelf"><table aria-label="武當七脈九品武學總表"><colgroup><col class="discipline-column"></colgroup><colgroup span="3"></colgroup><colgroup span="3"></colgroup><colgroup span="3"></colgroup>'+
     '<thead><tr class="tier-bands"><td></td><th scope="colgroup" class="tier-common" colspan="3">下三品</th><th scope="colgroup" class="tier-fine" colspan="3">中三品</th><th scope="colgroup" class="tier-rare" colspan="3">上三品</th></tr><tr><th scope="col">武學</th>'+head+'</tr></thead><tbody>'+rows.join('')+'</tbody></table></div>'+
-    '<div class="register-key"><strong>已學 '+state.learned.length+'／'+arts.length+' 門</strong><span>◆ 先修</span><span>暗紋　未學</span><span class="key-ready">明紋　可練</span><span class="key-mastered">亮印　已學成</span></div></div>'+
+    '<div class="register-key">'+(journeyBack?balance:'')+'<strong>已學 '+state.learned.length+'／'+arts.length+' 門</strong><span>◆ 先修</span><span>暗紋　未學</span><span class="key-ready">明紋　可練</span><span class="key-mastered">亮印　已學成</span></div></div>'+
     details(state,selected,button)+'</div>';
 }
 
