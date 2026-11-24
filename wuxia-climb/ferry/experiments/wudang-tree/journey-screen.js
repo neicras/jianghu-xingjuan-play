@@ -31,12 +31,20 @@ function save(){if(preview)return;try{localStorage.setItem(key,JSON.stringify(s)
 record(s,s.route.journalId?'resume':s.route.phase==='gift'?'start':'resume-old-save');save();
 const btn=(action,label,style='',off=false)=>'<button data-action="'+action+'" class="'+style+'" '+(off?'disabled':'')+'>'+label+'</button>';
 const pane=(heading,copy,actions)=>'<section class="way-room"><h2>'+heading+'</h2><p>'+copy+'</p>'+actions+'</section>';
+const portraitPhone=matchMedia('(orientation:portrait) and (max-width:760px)');
+function locateTrail(root){
+ const trail=root.querySelector('.trail-window');
+ const stop=trail?.querySelector('.available')||trail?.querySelector('.here');
+ if(!stop||!portraitPhone.matches)return;
+ trail.scrollTop+=stop.getBoundingClientRect().top-trail.getBoundingClientRect().top-trail.clientHeight*.25;
+}
+portraitPhone.addEventListener('change',()=>requestAnimationFrame(()=>locateTrail($('folio').open?$('folio'):$('room'))));
 function modal(content){
  const folio=$('folio'),pages=$('pages');pages.innerHTML=content;
  if(!folio.open)folio.showModal();
  const heading=pages.querySelector('h2');
  if(heading){heading.tabIndex=-1;heading.focus({preventScroll:true})}
- folio.scrollTop=0;pages.scrollTop=0;
+ folio.scrollTop=0;pages.scrollTop=0;locateTrail(pages);
 }
 let browsing,lessonName;
 function bookDialog(returnTo){displayBookDialog(s,btn,browsing,returnTo)}
@@ -149,7 +157,11 @@ function render(){
  document.body.classList.toggle('studying',reading);
  document.body.classList.toggle('jp-active',!reading&&(['gift','reward','inn','won','lost','school','map'].includes(r.phase)||(r.phase==='cache'&&r.floor===2)));
  document.body.classList.toggle('at-market',!reading&&r.phase==='cache'&&r.floor!==2);
- if(reading){$('room').innerHTML=manual(s,byName.get(selected),treeButton);return}
+ if(reading){
+  $('room').innerHTML=manual(s,byName.get(selected),treeButton);
+  $('room').querySelector('.skill-detail').insertAdjacentHTML('afterbegin',btn('backToRegister','返回武學譜','return-to-register'));
+  return;
+ }
  let html='';
  switch(r.phase){
  case 'gift':html=departure(seat,btn);break;
@@ -167,6 +179,7 @@ function render(){
  case 'won':case 'lost':html=ending(s,btn);break;
  }
  $('room').innerHTML=html;
+ if(r.phase==='map')locateTrail($('room'));
  if(r.phase==='fight')paintBout(b);
 }
 document.addEventListener('click',async e=>{
@@ -209,7 +222,24 @@ document.addEventListener('click',async e=>{
  if(action==='pickGear'&&r.phase==='reward'){modal(gearOffers(s,Number(v),btn));return}
  if(action==='pack'&&pack(s,v)&&$('folio').open)$('folio').close();
  if(action==='use'&&useItem(s,Number(v))&&$('folio').open)$('folio').close();
- if(action==='tree'||action==='node'||action==='inspect'){reading=true;if(v)selected=v;render();if(v)$('room').querySelector('.technique[aria-pressed=true]')?.focus({preventScroll:true});return}
+ if(action==='backToRegister'){
+  const tile=$('room').querySelector('.technique[aria-pressed=true]');
+  tile?.scrollIntoView({block:'center',inline:'nearest'});tile?.focus({preventScroll:true});return;
+ }
+ if(action==='tree'||action==='node'||action==='inspect'){
+  const shelfLeft=$('room').querySelector('.register .shelf')?.scrollLeft||0;
+  reading=true;if(v)selected=v;render();
+  if(v){
+   const shelf=$('room').querySelector('.register .shelf');
+   if(shelf)shelf.scrollLeft=shelfLeft;
+   const tile=$('room').querySelector('.technique[aria-pressed=true]');
+   if(portraitPhone.matches){
+    const back=$('room').querySelector('.return-to-register');
+    back?.scrollIntoView({block:'start'});back?.focus({preventScroll:true});
+   }else tile?.focus({preventScroll:true});
+  }
+  return;
+ }
  if(action==='bookStudy'&&r.phase==='reward'&&s.offer.includes(v)){
   $('book-choice').close();fromBooks=true;reading=true;selected=v;render();return
  }
