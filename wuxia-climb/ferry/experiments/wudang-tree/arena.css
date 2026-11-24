@@ -1,5 +1,6 @@
 @import url("../../altar-duel/piles.css");
 
+.arena-picture {display:contents}
 .duel-board {
   color:#f5e5bd;
   background:#30251d var(--art-journey-cloth) center/520px;

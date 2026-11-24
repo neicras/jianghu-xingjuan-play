@@ -114,7 +114,7 @@ export function arena(state,btn){
   b.pending?(b.pending==='必留'?'':btn('skip','略過')):btn('endRound','收勢');
  const message=b.phase==='won'?'比武得勝。'+b.log.join(' '):prompt[b.pending]||b.log.join(' ')||(b.foes.some(e=>e.reads)?'對手會識招。同一招再打，每擊少 1 點，最多減 3 點。交替用幾門攻招，可以遲些被看穿。':'點選手牌出招。');
  return (b.loan?'<div class="loan-bar">借招試打 · '+b.loan+'　'+btn('returnBook','還卷離場','exit-link')+'</div>':'')+
- '<section class="duel-board"><div class="arena-stage"><canvas width="900" height="560" aria-label="焚天壇比武"></canvas><div class="arena-hero">'+plaque('斗篷客',b)+(effects.length?'<small>'+effects.join(' · ')+'</small>':'')+'</div><div class="arena-foes">'+foes+'</div></div>'+
+ '<section class="duel-board"><div class="arena-stage"><div class="arena-picture"><canvas width="900" height="560" aria-label="比武交手"></canvas></div><div class="arena-hero">'+plaque('斗篷客',b)+(effects.length?'<small>'+effects.join(' · ')+'</small>':'')+'</div><div class="arena-foes">'+foes+'</div></div>'+
  '<div class="duel-table"><div class="duel-rail"><b>第 '+b.turn+' 回合</b><span class="duel-energy">'+glyph('qi')+'內力 '+b.energy+'</span>'+(b.exhaust.length?btn('pile/exhaust','消耗 '+b.exhaust.length,'ash-count'):'')+'</div>'+
  pileButton(b,'draw',btn)+'<div class="battle-hand" aria-label="手牌">'+(b.phase==='playing'?hand:'')+'</div>'+pileButton(b,'discard',btn)+'</div>'+
  '<div class="duel-command"><p class="arena-log" role="status">'+message+'</p>'+command+'</div></section>';
@@ -176,7 +176,7 @@ export async function paintBout(b,action,playback=false){
    try{
    const progress=Math.max(0,(now-start)/beat),move=moves[Math.floor(progress)];
    while(playback&&nextContact<moves.length&&progress>=nextContact+.38){
-    showContact(canvas.parentElement,b,moves[nextContact++]);
+    showContact(canvas.closest('.arena-stage'),b,moves[nextContact++]);
    }
    if(playback&&!move){done();return}
    const still=reduce.matches;

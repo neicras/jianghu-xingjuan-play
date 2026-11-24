@@ -6,7 +6,7 @@ import {newJourney,gift,enter,finishFight,receive,train,rest,leave,prepareJourne
 import {play,endRound,settleChoice} from './combat.js';
 import {manual,navigateRegister} from './manual.js';
 import {editionSheet} from './book-view.js';
-import {arena,paintBout,animateBout,pileSheet} from './arena.js';
+import {arena,paintBout,animateBout,pileSheet} from './arena.js?phoneLayout=2';
 import {displayBookDialog} from './rewards-view.js';
 import {rehearsalResult} from './rehearsal.js';
 import {deck,picksLeft,attemptFee,claimReward,trainingChance,ready,equip} from './rules.js';
@@ -32,6 +32,12 @@ record(s,s.route.journalId?'resume':s.route.phase==='gift'?'start':'resume-old-s
 const btn=(action,label,style='',off=false)=>'<button data-action="'+action+'" class="'+style+'" '+(off?'disabled':'')+'>'+label+'</button>';
 const pane=(heading,copy,actions)=>'<section class="way-room"><h2>'+heading+'</h2><p>'+copy+'</p>'+actions+'</section>';
 const portraitPhone=matchMedia('(orientation:portrait) and (max-width:760px)');
+$('book-choice').addEventListener('toggle',event=>{
+ const note=event.target;
+ if(!note.matches?.('.copy-colophon[open]')||!portraitPhone.matches)return;
+ const page=note.closest('.spread-pages');
+ if(page)page.scrollTop+=note.getBoundingClientRect().top-page.getBoundingClientRect().top-6;
+},true);
 function locateTrail(root){
  const trail=root.querySelector('.trail-window');
  const stop=trail?.querySelector('.available')||trail?.querySelector('.here');
