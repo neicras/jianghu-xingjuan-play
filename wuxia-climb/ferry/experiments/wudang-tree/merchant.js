@@ -9,13 +9,14 @@ export function merchant(s, chosen, journey=false) {
   const sold=n=>s.route.purchases?.includes(n);
   const limit=stallLimit(s,name);
   const tags=names.map(n=>{
-    const blocked=stallLimit(s,n), taken=sold(n);
+    const blocked=stallLimit(s,n), taken=sold(n)||blocked==='今日藥材已用完';
     return '<button type="button" class="mk-lot" data-action="inspectWare/'+n+'" aria-pressed="'+(n===name)+'" aria-label="'+
       n+'，'+stock[n]+' 文'+(blocked?'，'+blocked:'')+'">'+
       '<span class="mk-object">'+(taken?'<span class="mk-stamp">售罄</span>':'<img src="'+supportArt('item-'+wares[n].tile)+'" alt="">')+'</span>'+
       '<span class="mk-tag"><b>'+n+'</b><small>'+stock[n]+' 文</small></span></button>';
   }).join('');
-  const description=sold(name)?'已收入行囊。這件貨已經賣出。':wares[name].text;
+  const dose=s.route.stop.sharedMedicine&&wares[name].kind==='藥物';
+  const description=sold(name)?'已收入行囊。這件貨已經賣出。':wares[name].text+(dose?' 今日的藥材只夠配一劑，兩方任選其一。':'');
   const kit=s.relics.concat(s.bag).join('、')||'尚未攜帶物品';
   const links=journey?'<div class="mk-links">'+trailTools()+'<button data-action="map">路線</button></div>':'';
   return '<section class="mk-market" aria-label="山道貨郎"><h1 class="mk-banner"><span>山道貨郎</span></h1>'+

@@ -21,6 +21,10 @@ export function reviewJourney(id,sample){
   r.path=banner?[0,1,1,0,0,1,1]:[0,0,0,0,0];r.floor=r.path.length;s.wins=3;
   enter(s,banner?3:4);return s;
  }
+ if(id==='school'&&sample==='advance'){
+  r.path=[0,1,1,0,0,1,1,0];r.floor=8;
+  enter(s,1);return s;
+ }
  if(mixed)s.wins=2;
  const floor=mixed?5:{shop:6,story:2,inn:4,refine:4,school:3,won:15,lost:5}[id]||1;
  r.floor=floor-1;r.path=Array(r.floor).fill(0);r.hp=31;

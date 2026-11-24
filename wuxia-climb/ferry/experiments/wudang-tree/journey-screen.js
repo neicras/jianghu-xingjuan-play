@@ -197,8 +197,8 @@ function render(){
  case 'inn':html=inn();break;
  case 'school':{
   const shelf=lessons(s),chosen=shelf.find(row=>row.a.name===lessonName)||shelf[0];
-  const volumes=shelf.map(({a,borrowed})=>'<button class="lesson-volume" data-action="lesson/'+a.name+'" aria-label="翻閱《'+a.name+'》" aria-pressed="'+(a===chosen?.a)+'">'+cover(a)+'<small>'+(borrowed?'師兄講義':'隨身藏書')+'</small></button>').join('');
-  const notes=chosen?'<strong>'+chosen.a.name+'</strong><p>'+effect(chosen.a)+'</p><small>練成把握 '+trainingChance(chosen.preview,chosen.a)+'%　·　學成用 '+chosen.cost+' 歷練，失手用 '+attemptFee(chosen.cost)+'</small>':'<strong>切磋所學</strong><p>今日可跟師兄拆招，增長歷練。</p>';
+  const volumes=shelf.map(({a,borrowed,continuation})=>'<button class="lesson-volume" data-action="lesson/'+a.name+'" aria-label="翻閱《'+a.name+'》" aria-pressed="'+(a===chosen?.a)+'">'+cover(a)+'<small>'+(continuation?'進階講義':borrowed?'師兄講義':'隨身藏書')+'</small></button>').join('');
+  const notes=chosen?'<strong>'+chosen.a.name+'</strong><p>'+(chosen.continuation?'承接你所習的《'+chosen.a.parent+'》。':'')+effect(chosen.a)+'</p><small>練成把握 '+trainingChance(chosen.preview,chosen.a)+'%　·　學成用 '+chosen.cost+' 歷練，失手用 '+attemptFee(chosen.cost)+'</small>':'<strong>切磋所學</strong><p>今日可跟師兄拆招，增長歷練。</p>';
   html='<section class="school-court"><div class="school-title"><h2>師門請益</h2></div><div class="lesson-shelf" aria-label="可請教的功法">'+volumes+'</div><div class="school-slip"><div>'+notes+'</div>'+ (chosen?btn('train/'+chosen.a.name,s.xp<chosen.cost?'尚欠 '+(chosen.cost-s.xp)+' 歷練':'請師兄指點','red-seal',s.xp<chosen.cost):'')+'</div><div class="lesson-links"><span>本次只可請益或拆招一次</span>'+btn('drill','跟師兄拆招 · 得 8 歷練')+btn('leave','辭別上路')+'</div></section>';break;
  }
  case 'cache':html=r.stop?.story==='cave'?caveRoom():r.floor===2?eventRoom():merchant(s,heldWare,true);break;

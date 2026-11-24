@@ -156,11 +156,14 @@ export function lessons(s){
  const own=arts.filter(a=>!s.learned.includes(a.name)&&collection(s,a.name).length);
  const loan=arts.filter(a=>!s.learned.includes(a.name)&&!collection(s,a.name).length)
  .sort((a,b)=>Number(!!b.parent&&s.learned.includes(b.parent))-Number(!!a.parent&&s.learned.includes(a.parent))||b.rank-a.rank);
+ // Later teachers offer one continuation of a technique the player already carries.
+ const continuation=s.route.floor>=6?loan.filter(a=>s.equipped.includes(a.parent)).sort((a,b)=>a.rank-b.rank)[0]:null;
+ if(continuation)loan.unshift(loan.splice(loan.indexOf(continuation),1)[0]);
  const shortlist=loan.filter((a,i)=>loan.findIndex(x=>x.branch===a.branch)===i).slice(0,s.route.curriculum?.schoolLoans??2);
  return [...own,...shortlist].map(a=>{
   const borrowed=!collection(s,a.name).length;
   const preview=borrowed?{...s,books:{...s.books,[a.name]:[lessonPages]}}:s;
-  return {a,borrowed,cost:estimate(preview,a),preview};
+  return {a,borrowed,continuation:a===continuation,cost:estimate(preview,a),preview};
  });
 }
 export function drill(s){
@@ -292,9 +295,9 @@ const stories={
    {id:'watch',label:'坐在廊下看拳',xp:5,result:'你看了幾輪才發現，每逢小徒抬肩，師父便早一步讓開。回到路上，你試著把肩放鬆了些。'}]}
 };
 export const marketRanges={
- '青鋼劍':[12,19],'竹編護臂':[10,16],'銅護腕':[13,20],
- '三才玉環':[20,30],'藥葫蘆':[15,23],'針灸匣':[11,17],
- '金創藥':[8,12],'軟筋散':[6,10]
+ '青鋼劍':[18,24],'竹編護臂':[16,22],'銅護腕':[22,30],
+ '三才玉環':[24,32],'藥葫蘆':[26,34],'針灸匣':[14,20],
+ '金創藥':[12,16],'軟筋散':[9,13]
 };
 function prepareStop(s){
  const r=s.route;if(r.stop)return;
@@ -316,7 +319,7 @@ function prepareStop(s){
   return selected;
  };
  const names=[...pick('裝備',2),...pick('信物',1),'金創藥','軟筋散'];
- r.stop={stock:Object.fromEntries(names.map(n=>{const [min,max]=marketRanges[n];return [n,min+roll(max-min+1)]}))};
+ r.stop={sharedMedicine:true,stock:Object.fromEntries(names.map(n=>{const [min,max]=marketRanges[n];return [n,min+roll(max-min+1)]}))};
 }
 export function storyAt(s){prepareStop(s);return stories[s.route.stop.story]}
 export function storyLimit(s,c){
@@ -346,6 +349,7 @@ function pay(s,name,price){
 export function stallLimit(s,name){
  if(s.route.phase!=='cache'||s.route.floor===2||!Object.hasOwn(stockAt(s)??{},name))return '此處沒有這件貨品';
  if(s.route.purchases?.includes(name))return '已售出';
+ if(s.route.stop.sharedMedicine&&wares[name].kind==='藥物'&&s.route.purchases?.some(n=>wares[n]?.kind==='藥物'))return '今日藥材已用完';
  return purchaseLimit(s,name,stockAt(s)[name]);
 }
 export function buyAtStall(s,name){
