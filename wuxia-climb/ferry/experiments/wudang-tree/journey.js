@@ -1,10 +1,10 @@
 import {duels,patterns,openingMoves} from './encounter-tables.js?v=1124f';
-import {companionFor,variationFor} from './book-pairings.js?forms6';
+import {companionFor,variationFor} from './book-pairings.js?forms7';
 import {balance} from './balance-settings.js?v=1124f';
-import {fresh,win,take,study,rehearse,equip,ready,deck,archiveCopy} from './rules.js?forms6';
-import {startBout} from './combat.js?forms6';
-import {arts,byName} from './catalogue.js?forms6';
-import {collection,estimate,rollCopy} from './manuscripts.js?forms6';
+import {fresh,win,take,study,rehearse,equip,ready,deck,archiveCopy} from './rules.js?forms7';
+import {startBout} from './combat.js?forms7';
+import {arts,byName} from './catalogue.js?forms7';
+import {collection,estimate,rollCopy} from './manuscripts.js?forms7';
 
 export const road=[
  ['fighter'],['fighter','cache','inn'],['school','pair','guard'],['inn','school'],['elite1','bypass'],

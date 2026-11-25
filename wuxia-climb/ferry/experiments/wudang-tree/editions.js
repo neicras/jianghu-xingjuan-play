@@ -1,4 +1,4 @@
-import {notes} from './annotations.js?forms6';
+import {notes} from './annotations.js?forms7';
 
 const editions={
  cave:{label:'鏢局抄本',path:'M4 4h16v16H4z M7 4v16m4-11h6m-6 4h4'},

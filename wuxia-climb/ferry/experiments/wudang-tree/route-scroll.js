@@ -1,4 +1,4 @@
-import {road,linked,roomName} from './journey.js?forms6';
+import {road,linked,roomName} from './journey.js?forms7';
 
 const legend=['普通比武','繞路','精英','守壇劍宗','客棧','貨郎','師門','江湖偶遇'];
 const marks={bypass:1,fighter:0,guard:0,pair:0,banner:2,cave:7,elite1:2,elite2:2,boss:3,inn:4,cache:5,school:6};

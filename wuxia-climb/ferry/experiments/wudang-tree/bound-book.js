@@ -1,4 +1,4 @@
-import {cardRarity} from './card-face.js?forms6';
+import {cardRarity} from './card-face.js?forms7';
 import {supportArt} from './art-library/support-files.js';
 
 const editions = {

@@ -1,5 +1,5 @@
 // The first two book tables teach exchanges the combat rules already resolve.
-import {basics} from './catalogue.js?forms6';
+import {basics} from './catalogue.js?forms7';
 
 const variations=[
  ['拂塵功','周天回元式','同一回合先揮拂塵，再運周天。回元式會補回剛花的一點內力，抽到的牌還有機會打出。'],

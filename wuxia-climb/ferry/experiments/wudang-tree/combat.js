@@ -1,7 +1,7 @@
 import {balance} from './balance-settings.js?v=1124f';
 // A bout snapshots this exact library deck, including refinement of individual copies.
-import {byName,hasKeyword} from './catalogue.js?forms6';
-import {deck} from './rules.js?forms6';
+import {byName,hasKeyword} from './catalogue.js?forms7';
+import {deck} from './rules.js?forms7';
 import {profiles} from './encounter-tables.js?v=1124f';
 export const encounters=profiles.map(p=>p.title);
 export function intent(b,e){
@@ -76,7 +76,7 @@ export function followupReady(b,name){
  case '武當丹劍':return Boolean(b.seen.護體||b.seen.軟兵);
  case '白虹劍法':return Boolean(b.seen.劍法);
  case '遊身八卦掌':return canLinkStep(b);
- case '三才守中式':return b.hand.some(c=>hasKeyword(c,'保留'));
+ case '三才守中式':return b.hand.some(c=>c.name!==name&&(hasKeyword(c,'保留')||b.retain.includes(c.id)));
  case '周天回元式':return Boolean(b.seen.軟兵);
  default:return false;
  }
