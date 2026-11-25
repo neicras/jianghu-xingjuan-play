@@ -1,14 +1,14 @@
-import {exchangeFor,matchupNote} from './book-pairings.js?v=1124f';
-import {nextBookFight} from './journey.js?inn4';
-import {descriptions} from './annotations.js';
-import {acquisition,editionInfo} from './editions.js?branch=1';
-import {moveNames} from './rehearsal.js?v=1124f';
-import {cardRarity} from './card-face.js?v=1124f';
+import {exchangeFor,matchupNote} from './book-pairings.js?forms6';
+import {nextBookFight} from './journey.js?forms6';
+import {descriptions} from './annotations.js?forms6';
+import {acquisition,editionInfo} from './editions.js?forms6';
+import {moveNames} from './rehearsal.js?forms6';
+import {cardRarity} from './card-face.js?forms6';
 import {supportArt} from './art-library/support-files.js';
-import {arts,byName,ranks,effect} from './catalogue.js?v=1124f';
-import {band,purse,picksLeft,pickedBooks,hasNoviceFoundation,trainingChance,mergedCopies,percent,combinedOdds,gateOdds} from './rules.js?v=1124f';
-import {chapters,qualities,collection,collate,cost,intactChance,missingChance,xpPerWin,rerollFee} from './manuscripts.js?v=1124f';
-import {copyFace,pouch} from './bound-book.js?v=1124f';
+import {arts,byName,ranks,effect} from './catalogue.js?forms6';
+import {band,purse,picksLeft,pickedBooks,hasNoviceFoundation,trainingChance,mergedCopies,percent,combinedOdds,gateOdds} from './rules.js?forms6';
+import {chapters,qualities,collection,collate,cost,intactChance,missingChance,xpPerWin,rerollFee} from './manuscripts.js?forms6';
+import {copyFace,pouch} from './bound-book.js?forms6';
 
 const icons={lesson:'journey-diary',coins:'journey-coins',ledger:'journey-bookmark',breath:'journey-manuals'};
 const prizes=[

@@ -1,6 +1,10 @@
 // The first two book tables teach exchanges the combat rules already resolve.
-import {basics} from './catalogue.js?v=1124f';
+import {basics} from './catalogue.js?forms6';
 
+const variations=[
+ ['拂塵功','周天回元式','同一回合先揮拂塵，再運周天。回元式會補回剛花的一點內力，抽到的牌還有機會打出。'],
+ ['武當丹劍','三才守中式','丹劍可以保留。先把劍留在手上，守中式除了護身，還能多抽一張；先出劍就失去這個機會。']
+];
 const exchanges=[
  ['八卦步','遊身八卦掌','八卦步換走手上不合用的牌。今輪或下輪接掌，就能省一點內力，再抽一張。'],
  ['拂塵功','武當丹劍','同一回合先揮拂塵，再出丹劍。拂絲收回時，丹劍便能趁勢加重一刺。'],
@@ -8,9 +12,14 @@ const exchanges=[
  ['武當鐵布衫','武當丹劍','同一回合先運鐵布衫，再出丹劍。即使對手還沒出手，劍勁也已蓄足。'],
  ['橫劍當胸','武當丹劍','同一回合先橫劍護身，再出丹劍，便能打出牌上較高的傷害。'],
  ['橫劍當胸','武當長拳','先橫劍擋下攻擊，下回合再出長拳。擋下多少，拳勁便能借多少，最多四點。'],
- ['踏浪步','遊身八卦掌','先踏浪使對手露出破綻，再趁勢出掌。步勢能留到下一回合。']
+ ['踏浪步','遊身八卦掌','先踏浪使對手露出破綻，再趁勢出掌。步勢能留到下一回合。'],
+ ...variations
 ];
 const basicNames=new Set(basics.map(a=>a.name));
+export function variationFor(s){
+ const choices=variations.filter(([held,other])=>s.equipped.includes(held)&&!s.learned.includes(other));
+ return choices.length?choices[(s.route.worldSeed>>>0)%choices.length][1]:null;
+}
 export function companionFor(s){
  for(const [first,second] of exchanges){
   for(const [held,other] of [[first,second],[second,first]]){

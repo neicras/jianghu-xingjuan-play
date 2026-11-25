@@ -1,7 +1,7 @@
 import {balance} from './balance-settings.js?v=1124f';
 // A bout snapshots this exact library deck, including refinement of individual copies.
-import {byName,hasKeyword} from './catalogue.js?v=1124f';
-import {deck} from './rules.js?v=1124f';
+import {byName,hasKeyword} from './catalogue.js?forms6';
+import {deck} from './rules.js?forms6';
 import {profiles} from './encounter-tables.js?v=1124f';
 export const encounters=profiles.map(p=>p.title);
 export function intent(b,e){
@@ -71,6 +71,16 @@ function openTurn(b){
 }
 const branch=a=>a.branch==='輕功'?'身法':a.branch;
 export const canLinkStep=b=>Boolean(b.seen?.身法||b.lastTurnStep);
+export function followupReady(b,name){
+ switch(name){
+ case '武當丹劍':return Boolean(b.seen.護體||b.seen.軟兵);
+ case '白虹劍法':return Boolean(b.seen.劍法);
+ case '遊身八卦掌':return canLinkStep(b);
+ case '三才守中式':return b.hand.some(c=>hasKeyword(c,'保留'));
+ case '周天回元式':return Boolean(b.seen.軟兵);
+ default:return false;
+ }
+}
 export function price(b,c){
  if(hasKeyword(c,'無法打出'))return c.name==='劍傷'&&b.relics?.includes('針灸匣')?0:Infinity;
  const a=byName.get(c.name);
@@ -109,7 +119,7 @@ export function play(b,id,onMove){
  b.energy-=cost;delete b.discount[family];b.hand.splice(i,1);
  if(a.branch==='傷勢'){b.exhaust.push(c);b.log=['針灸匣生效，消耗《'+name+'》。'];return true}
  const pair=a.rule.match(/\[(\d+)\|(\d+)\]/),v=Number(pair[c.star?2:1]);
- const prev=b.seen[family]||0,p=b.powers;
+ const prev=b.seen[family]||0,p=b.powers,linked=followupReady(b,name);
  const priorHP=b.foes.reduce((n,f)=>n+f.hp,0), oldBlock=b.block;
  const recognized=readPenalty(e,name);
  const openings=[];
@@ -163,6 +173,8 @@ export function play(b,id,onMove){
  case '一字混元樁':case '武當混元功':case '純陽無極功':case '元始先天功':
  case '三才劍陣':case '陰陽周天法':case '三華聚頂':case '純陽劍意':
   p[name]=v;break;
+ case '三才守中式':blockFromCard(v);if(linked)draw(b,1);break;
+ case '周天回元式':draw(b,v);if(linked)b.energy++;break;
  case '抱元守一':blockFromCard(v);b.nextEnergy++;break;
  case '羅天真訣十二樁':draw(b,v);if(b.hand.length)b.pending='必留';break;
  case '洗髓金經':b.hp=Math.min(b.maxHp,b.hp+v);break;
@@ -184,15 +196,15 @@ export function play(b,id,onMove){
  case '武當長拳':hit(v+Math.min(4,b.savedBlock));blockFromCard(1);break;
  case '追風雲環掌':case '連環劍':hit(v,2);break;
  case '武當綿掌':case '先天少陽劍氣':hit(v,1,{pierce:true});break;
- case '遊身八卦掌':hit(v);if(canLinkStep(b))draw(b,1);break;
+ case '遊身八卦掌':hit(v);if(linked)draw(b,1);break;
  case '太乙逍遙掌':hit(v);b.discount.身法=1;break;
  case '玄功神拳':hit(v+2*b.hand.filter(x=>byName.get(x.name).branch==='內功').length);break;
  case '武當純陽拳':hit(v);b.palmBonus+=3;break;
  case '紫陽正氣拳':hit(v);blockFromCard(6);break;
  case '太極拳':hit(v+Math.min(8,b.savedBlock));break;
- case '武當丹劍':hit(b.seen.護體||b.seen.軟兵?v:6);break;
+ case '武當丹劍':hit(linked?v:6);break;
  case '武當逍遙劍':hit(v);if(b.hand.length)b.pending='可留';break;
- case '白虹劍法':hit(v+(prev?3:0),2);break;
+ case '白虹劍法':hit(v+(linked?3:0),2);break;
  case '太乙玄門劍':hit(v);b.discount.內功=1;break;
  case '真武遊龍劍':hit(v,3);break;
  case '太極劍法':hit(v);blockFromCard(6);break;

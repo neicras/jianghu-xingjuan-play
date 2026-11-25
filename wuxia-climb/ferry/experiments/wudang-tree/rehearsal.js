@@ -10,7 +10,7 @@ const movements={
   劍法:['起劍','引鋒','轉腕','送劍','回鋒','收劍'],
   軟兵:['垂拂','引絲','翻腕','展拂','迴環','收拂']
 };
-import {chapters} from './manuscripts.js?v=1124f';
+import {chapters} from './manuscripts.js?forms6';
 export const moveNames=a=>movements[a.branch];
 const setbacks={
   內功:['心神游移，沒能入定','呼吸漸急，調不回原來的節奏','想引氣往下，卻想不起師訣的下半句','氣息忽長忽短，接不上下一段','只走了半個周天，便亂了節拍','末了一口氣沒能平復，只好先歇息'],

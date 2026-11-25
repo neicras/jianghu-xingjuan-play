@@ -1,7 +1,7 @@
 import {balance} from './balance-settings.js?v=1124f';
-import {arts, basics, byName} from "./catalogue.js?v=1124f";
-import {collection,collate,estimate,withCopy,deal,xpPerWin,pageOdds} from "./manuscripts.js?v=1124f";
-import {acquisition} from "./editions.js";
+import {arts, basics, byName} from "./catalogue.js?forms6";
+import {collection,collate,estimate,withCopy,deal,xpPerWin,pageOdds} from "./manuscripts.js?forms6";
+import {acquisition} from "./editions.js?forms6";
 export const purse=8, fee=24;
 export function fresh(rng=Math.random){
   const s={version:4,editions:{"武當丹劍":[{kind:"primer"}]},gateNotes:{},wins:1,gold:0,xp:6,tickets:0,rewards:{xp:false,gold:false,ticket:false},drawInfo:{},books:{"武當丹劍":[[2,2,0,2,1,2]]},learned:[],equipped:[],stars:[],focus:null,

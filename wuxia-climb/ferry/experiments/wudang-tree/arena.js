@@ -1,8 +1,8 @@
 import {supportArt} from './art-library/support-files.js';
 import {activeStates,glyph} from './vocabulary.js';
-import {cardFace} from './card-face.js?v=1124f';
-import {byName} from './catalogue.js?v=1124f';
-import {encounters,forecast,intent,price,readPenalty} from './combat.js?inn4';
+import {cardFace} from './card-face.js?forms6';
+import {byName} from './catalogue.js?forms6';
+import {encounters,forecast,intent,price,readPenalty,followupReady} from './combat.js?forms6';
 import {drawScene,loadScene,DURATION} from '../../altar-duel/scene.js?fixedLight=1';
 import {frame,neutral} from '../../altar-duel/action-frame.js';
 
@@ -107,8 +107,14 @@ export function arena(state,btn){
  const hand=b.hand.map(c=>{
   const cost=price(b,c);
   const penalty=readPenalty(b.foes[b.target],c.name);
+  const a=byName.get(c.name),isLinked=!b.pending&&followupReady(b,c.name);
+  let hint='';
+  if(isLinked){
+   const match=a.rule.match(/\[(\d+)\|(\d+)\]/),value=Number(match[c.star?2:1]);
+   hint=({'武當丹劍':'劍招 6 → '+value,'白虹劍法':'每劍 '+value+' → '+(value+3),'遊身八卦掌':'步勢未盡 · 可補牌','三才守中式':'留招在手 · 再抽一張','周天回元式':'收拂 · 回復一內力'})[c.name];
+  }
   const face=cardFace(byName.get(c.name),c.star,cost,c.name==='劍傷'&&cost===0?'針灸匣：可打出並消耗。':undefined);
-  return btn((b.pending?'pick/':'cast/')+c.id,face+(penalty?'<span class="read-note">已識破 · 每擊 −'+penalty+'</span>':''),'battle-card',!b.pending&&cost>b.energy);
+  return btn((b.pending?'pick/':'cast/')+c.id,face+(hint?'<span class="link-note">'+hint+'</span>':'')+(penalty?'<span class="read-note">已識破 · 每擊 −'+penalty+'</span>':''),'battle-card'+(isLinked?' linked-card':''),!b.pending&&cost>b.energy);
  }).join('');
  const prompt={'換牌':'選一張手牌棄掉，再抽一張。','精練換牌':'選一張手牌換走。若選傷勢牌，會將它消耗。','必留':'選一張手牌留到下回合。','可留':'可選一張手牌留到下回合。'};
  const command=b.phase==='won'?(b.loan?btn('returnBook','還卷離場'):btn('collect',state.route?.floor===15?'完成第一卷':'領取戰後所得')):

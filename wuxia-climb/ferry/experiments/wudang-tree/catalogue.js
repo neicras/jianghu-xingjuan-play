@@ -30,7 +30,9 @@ const groups = [
   ]],
   ["奇竅","奇竅","formation",[
     [8,"三才劍陣","本場每回合打出第三張劍法後，獲得 [6|9] 點護體。"],
+    [7,"三才守中式","獲得 [4|6] 點護體。若手上仍有保留牌，再抽一張。"],
     [6,"陰陽周天法","本場每回合出過護體牌後，首次攻擊抽 [1|2] 張牌。"],
+    [5,"周天回元式","抽 [1|2] 張牌。若本回合已出軟兵，回復 1 點內力。"],
     [4,"真武蕩魔陣","本回合往後每出一張武當牌，對所選敵人造成 [3|4] 點傷害。"],
     [2,"三華聚頂","本場每回合首次打齊三類武功時，回復 [1|2] 點內力。"]
   ]],
@@ -68,11 +70,14 @@ const groups = [
   ]]
 ];
 export const ranks="〇一二三四五六七八九";
+// Demo variations share their parent manual's illustration; the historical chain stays intact.
+const variationArt={'三才守中式':'formation-8','周天回元式':'formation-6'};
+const originalParents={'陰陽周天法':'三才劍陣','真武蕩魔陣':'陰陽周天法'};
 export const arts=groups.flatMap(([category,branch,art,rows])=>rows.map(([rank,name,rule,cost=1],i)=>({
   name,rank,category,branch,rule,cost,
-  parent:i?rows[i-1][1]:branch==="奇竅"?"武當太和功":null,
+  parent:originalParents[name]??(i?rows[i-1][1]:branch==="奇竅"?"武當太和功":null),
   need:rank>=7?2:rank>=4?3:4,
-  image:cardFiles[art+"-"+rank]
+  image:cardFiles[variationArt[name]??(art+"-"+rank)]
 })));
 export const branches=groups.map(g=>g[1]);
 export const basics=[

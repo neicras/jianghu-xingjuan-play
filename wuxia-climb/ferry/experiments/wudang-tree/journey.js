@@ -1,10 +1,10 @@
 import {duels,patterns,openingMoves} from './encounter-tables.js?v=1124f';
-import {companionFor} from './book-pairings.js?v=1124f';
+import {companionFor,variationFor} from './book-pairings.js?forms6';
 import {balance} from './balance-settings.js?v=1124f';
-import {fresh,win,take,study,rehearse,equip,ready,deck,archiveCopy} from './rules.js?v=1124f';
-import {startBout} from './combat.js?inn4';
-import {arts,byName} from './catalogue.js?v=1124f';
-import {collection,estimate,rollCopy} from './manuscripts.js?v=1124f';
+import {fresh,win,take,study,rehearse,equip,ready,deck,archiveCopy} from './rules.js?forms6';
+import {startBout} from './combat.js?forms6';
+import {arts,byName} from './catalogue.js?forms6';
+import {collection,estimate,rollCopy} from './manuscripts.js?forms6';
 
 export const road=[
  ['fighter'],['fighter','cache','inn'],['school','pair','guard'],['inn','school'],['elite1','bypass'],
@@ -277,7 +277,12 @@ export function finishFight(s){
    s.finds[name]=rollCopy(()=>random(s));s.drawInfo[name]={kind:'opening'};
   }
   s.wins=1;s.rewards={gold:false,xp:false,ticket:false}}
- else win(s,()=>random(s),r.loot.books&&r.bookTables===1?companionFor(s):null);
+ else {
+  let partner=null;
+  if(r.loot.books&&r.bookTables===1)partner=companionFor(s);
+  if(r.loot.books&&r.bookTables===3)partner=variationFor(s);
+  win(s,()=>random(s),partner);
+ }
  if(r.loot.books&&s.offer.length)r.bookTables++;
  if(!r.loot.books){s.offer=[];s.finds={};s.drawInfo={}}
  r.missedBooks=!r.loot.books;

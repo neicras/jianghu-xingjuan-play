@@ -1,4 +1,4 @@
-import {newJourney,gift,enter,finishFight,receive,train,leave} from './journey.js?inn4';
+import {newJourney,gift,enter,finishFight,receive,train,leave} from './journey.js?forms6';
 
 export const frames=[
  ['gift','餞行席'],['map','江湖路線'],['fight','比武出招'],['reward','戰後所得'],
@@ -14,10 +14,15 @@ export function reviewJourney(id,sample){
  if(id==='fight'&&sample==='exposed'){
   const s=newJourney(5);gift(s,'sword');enter(s,0);return s;
  }
- // Seed 176 draws all three rank bands through the ordinary fifth-station reward.
+ if(id==='fight'&&sample==='links'){
+  const s=newJourney(304);gift(s,'health');
+  s.learned.push('周天回元式','三才守中式','拂塵功','武當丹劍');s.equipped=[...s.learned];
+  enter(s,0);s.bout.log=['借招試打：先揮拂塵。再看手上的丹劍和回元式。'];return s;
+ }
+ // Seed 4 draws all three rank bands through the ordinary fifth-station reward.
  const mixed=id==='books'&&sample==='grades';
  const stepLesson=id==='books'&&sample==='steps';
- const s=newJourney(stepLesson?40:mixed?176:sample==='cave'?2618:2401),r=s.route;
+ const s=newJourney(stepLesson?40:mixed?4:sample==='cave'?2618:2401),r=s.route;
  if(id==='gift')return s;
  gift(s,'sword');
  s.gold=32;s.xp=16;s.bag=['金創藥'];s.relics.push('竹編護臂');

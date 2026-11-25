@@ -299,3 +299,6 @@
  .inn-plaque{left:6px;bottom:4px;transform:none;text-align:left;padding:.2em .7em .28em}
  .jp-room.jp-inn .inn-sign{position:static;justify-self:center;transform:none;margin:0}
 }
+
+.battle-card.linked-card .print{outline:2px solid #eec674;outline-offset:-3px}
+.battle-card .link-note{position:absolute;z-index:2;top:49%;left:4%;right:4%;padding:2px;text-align:center;background:#304b44;color:#fff2bc;border-block:1px solid #d3b776;font:700 clamp(10px,1vw,14px)/1.2 var(--serif);pointer-events:none}
