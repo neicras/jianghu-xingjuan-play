@@ -112,6 +112,7 @@ export function play(b,id,onMove){
  const prev=b.seen[family]||0,p=b.powers;
  const priorHP=b.foes.reduce((n,f)=>n+f.hp,0), oldBlock=b.block;
  const recognized=readPenalty(e,name);
+ const openings=[];
  let attacked=false,reflected=0,counters=0;
  function hit(base,count=1,{pierce=false,all=false}={}){
   attacked=true;
@@ -122,9 +123,19 @@ export function play(b,id,onMove){
   for(const target of all?living(b):[e]){
    const penalty=readPenalty(target,name);
    if(target.reads)target.reads[name]=Math.min(3,(target.reads[name]||0)+1);
+   const power=Math.max(0,base+bonus+force-penalty),impact=attackValue(power,b,target);
+   if(target.exposed&&target.hp>0&&b.hp>0){
+    const terms=[String(base)];
+    if(bonus)terms.push('招式加成 '+bonus);
+    if(force)terms.push('劍穗 '+force);
+    let sum=terms.join(' + ')+(penalty?' − 識招 '+penalty:'');
+    if(base+bonus+force<penalty)sum='0';
+    if(b.strength)sum+=(b.strength>0?' + 勁力 ':' − 勁力 ')+Math.abs(b.strength);
+    openings.push(target.name+'每擊：（'+sum+'）'+(b.weak?' × 氣短 0.75':'')+' × 破綻 1.5 → '+impact+' 傷害。');
+   }
    for(let j=0;j<count&&target.hp>0&&b.hp>0;j++){
    const beforeHP=target.hp,beforeBlock=target.block;
-   harm(target,attackValue(Math.max(0,base+bonus+force-penalty),b,target),pierce);
+   harm(target,impact,pierce);
    contact(b,onMove,target,{who:'hero',kind:'strike',name,slash:family==='劍法'&&j%2===1,
     ordinal:count>1?j+1:0,lost:beforeHP-target.hp,absorbed:beforeBlock-target.block,blocked:target.hp===beforeHP&&target.block<beforeBlock});
    if(target.hp>0&&intent(b,target)[3]==='counter'){
@@ -208,6 +219,7 @@ export function play(b,id,onMove){
  const permanent=hasKeyword(c,'運功');
  (permanent||hasKeyword(c,'消耗')?b.exhaust:b.discard).push(c);
  const damage=priorHP-b.foes.reduce((n,f)=>n+f.hp,0);b.log=['使出《'+name+'》。'+(attacked||damage?'對手失去 '+damage+' 氣血。':'')+(b.block>oldBlock?'護體增加 '+(b.block-oldBlock)+'。':'')];
+ if(openings.length)b.log.unshift(...openings);
  if(hasKeyword(c,'穿勁')&&e.block>0)b.log.push('勁力穿過護體，'+e.name+'仍有 '+e.block+' 點護體。');
  if(attacked&&b.attacks%3===0&&b.relics?.includes('三才玉環'))b.log.push('三才玉環生效，守勁增加 1。');
  if(attacked&&recognized)b.log.push(e.name+'已認得《'+name+'》，此招每擊減去 '+recognized+' 點力道。');

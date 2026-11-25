@@ -1,5 +1,5 @@
 import {exchangeFor,matchupNote} from './book-pairings.js?v=1124f';
-import {nextBookFight} from './journey.js?v=1124f';
+import {nextBookFight} from './journey.js?inn4';
 import {descriptions} from './annotations.js';
 import {acquisition,editionInfo} from './editions.js?branch=1';
 import {moveNames} from './rehearsal.js?v=1124f';

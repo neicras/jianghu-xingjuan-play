@@ -2,7 +2,7 @@ import {duels,patterns,openingMoves} from './encounter-tables.js?v=1124f';
 import {companionFor} from './book-pairings.js?v=1124f';
 import {balance} from './balance-settings.js?v=1124f';
 import {fresh,win,take,study,rehearse,equip,ready,deck,archiveCopy} from './rules.js?v=1124f';
-import {startBout} from './combat.js?v=1124f';
+import {startBout} from './combat.js?inn4';
 import {arts,byName} from './catalogue.js?v=1124f';
 import {collection,estimate,rollCopy} from './manuscripts.js?v=1124f';
 
@@ -311,9 +311,10 @@ export function train(s,name){
  if(paid)r.phase='map';
  return true;
 }
+export function innRecovery(r){return Math.min(r.maxHp-r.hp,Math.ceil(r.maxHp*balance.innHealFraction))}
 export function rest(s,choice){
  const r=s.route;if(r.phase!=='inn')return false;
- if(choice==='heal'){const n=Math.min(r.maxHp-r.hp,Math.ceil(r.maxHp*balance.innHealFraction));r.hp+=n;r.last='在客棧歇了一晚，回復 '+n+' 氣血。'}
+ if(choice==='heal'){const n=innRecovery(r);r.hp+=n;r.last='在客棧歇了一晚，回復 '+n+' 氣血。'}
  else if(choice==='casebook'){s.xp+=4;r.last='你替郎中把散亂的醫案按年排好，聽他講了一夜舊事，得 4 點歷練。'}
  else if(choice.startsWith('refine:')){
   const id=choice.slice(7);

@@ -279,3 +279,23 @@
  .journey.studying .study-return{font-size:15px}
 }
 .journey.studying .register-key .balance{display:inline-flex;align-items:center;gap:3px;white-space:pre;color:inherit}.journey.studying .register-key .balance img{width:18px;height:18px;object-fit:contain}
+
+/* The three bays of the painted inn are the destinations themselves. */
+.jp-room.jp-inn{background:var(--art-inn) center/100% 100% no-repeat #292033}
+.inn-courtyard{position:absolute;inset:25% 1% 24%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+.jp-inn .inn-place{position:relative;display:block;margin:0;padding:0;background:transparent;border:0;border-radius:0;box-shadow:none;color:#fff0cb;font-family:var(--serif)}
+.inn-plaque{position:absolute;left:50%;bottom:-5%;transform:translateX(-50%);white-space:nowrap;display:grid;padding:.32em .95em .45em;line-height:1.2;background:#3a2633f5;border-block:2px solid #d2a264;box-shadow:0 3px 4px #25192666}
+.inn-plaque b{font-size:clamp(17px,2.3cqw,31px);letter-spacing:.1em}.inn-plaque small{font-size:clamp(12px,1.3cqw,17px);color:#f2d69d}
+.inn-place:is(:hover,:focus-visible){background-color:#f0ad3c1c;outline:2px solid #f1cd8f;outline-offset:-3px}
+.inn-place:is(:hover,:focus-visible) .inn-plaque{background:#6e3d31}
+.inn-bedside{height:clamp(56px,17dvh,150px);background:radial-gradient(ellipse at 44% 6%,#ffe1986b,transparent 56%),var(--art-inn) 0% 58%/285% auto;border-bottom:2px solid #a87943}
+@media(orientation:portrait) and (max-width:760px){
+ .jp-room.jp-inn{display:grid;grid-template-rows:auto minmax(0,1fr) auto;padding:9px 9px 7px;gap:5px;box-sizing:border-box;background:#2a2131 var(--art-journey-cloth) center/540px}
+ .jp-room.jp-inn h2{position:static;margin:0 0 2px 5px}
+ .inn-courtyard{display:grid;position:static;grid-template-columns:1fr;grid-template-rows:repeat(3,minmax(0,1fr));gap:6px;min-height:0}
+ .jp-inn .inn-place{overflow:hidden;border-block:2px solid #a27b52;background-image:var(--art-inn);background-size:285% auto;background-repeat:no-repeat;background-position:1% 61%}
+ .jp-inn .inn-place:nth-child(2){background-position:51% 62%}
+ .jp-inn .inn-place:nth-child(3){background-position:100% 61%}
+ .inn-plaque{left:6px;bottom:4px;transform:none;text-align:left;padding:.2em .7em .28em}
+ .jp-room.jp-inn .inn-sign{position:static;justify-self:center;transform:none;margin:0}
+}

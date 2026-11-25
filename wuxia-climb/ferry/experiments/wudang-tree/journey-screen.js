@@ -1,24 +1,24 @@
 import {trailTools,wallet,objectImage} from './trail-hud.js';
 import {cover} from './bound-book.js?v=1124f';
-import {atlas} from './route-scroll.js?map2';
+import {atlas} from './route-scroll.js?inn4';
 import {supportArt} from './art-library/support-files.js?branch=1';
-import {newJourney,gift,enter,finishFight,receive,train,rest,leave,prepareJourney,lessons,drill,goods,spoils,pack,useItem,wares,apothecary,buyMedicine,purchaseLimit,bagCapacity,exploreCave,caveRisk,escort,storyAt,storyLimit,marketRanges,stockAt,buyAtStall} from './journey.js?v=1124f';
-import {play,endRound,settleChoice} from './combat.js?v=1124f';
+import {newJourney,gift,enter,finishFight,receive,train,rest,innRecovery,leave,prepareJourney,lessons,drill,goods,spoils,pack,useItem,wares,apothecary,buyMedicine,purchaseLimit,bagCapacity,exploreCave,caveRisk,escort,storyAt,storyLimit,marketRanges,stockAt,buyAtStall} from './journey.js?inn4';
+import {play,endRound,settleChoice} from './combat.js?inn4';
 import {manual,navigateRegister} from './manual.js?folio3';
 import {editionSheet} from './book-view.js?v=1124f';
-import {arena,paintBout,animateBout,pileSheet} from './arena.js?v=1124f';
-import {displayBookDialog} from './rewards-view.js?v=1124f';
+import {arena,paintBout,animateBout,pileSheet} from './arena.js?inn4';
+import {displayBookDialog} from './rewards-view.js?inn4';
 import {rehearsalResult} from './rehearsal.js?v=1124f';
 import {deck,picksLeft,attemptFee,claimReward,trainingChance,ready,equip} from './rules.js?v=1124f';
 import {estimate,reroll} from './manuscripts.js?v=1124f';
-import {frames,reviewJourney} from './review-frames.js?v=1124f';
+import {frames,reviewJourney} from './review-frames.js?inn4';
 import {descriptions} from './annotations.js';
 import {effect,byName} from './catalogue.js?v=1124f';
 import {keywords,statuses,marked,glyph} from './vocabulary.js';
 import {cardFace} from './card-face.js?v=1124f';
 
-import {merchant} from './merchant.js?v=1124f';
-import {departure,rewardPile,gearOffers,ending} from './journey-plates.js?v=1124f';
+import {merchant} from './merchant.js?inn4';
+import {departure,rewardPile,gearOffers,ending} from './journey-plates.js?inn4';
 let heldWare=null, seat='sword';
 
 const key='wudang-journey-15-v1',$=id=>document.getElementById(id);
@@ -147,10 +147,11 @@ function compareCopy(id){
  '<div class="practice-actions">'+btn('shelf','重選招式','ink-action')+' '+btn('polish/'+id,already?'這張已精練':'精練這張牌並上路','primary',already)+'</div></div></div>');
 }
 function inn(){
- const hp=Math.min(s.route.maxHp-s.route.hp,Math.ceil(s.route.maxHp*.3));
- return '<section class="jp-room jp-inn"><h2>山腳客棧</h2><div class="jp-rooms">'+
-  btn('nap','<b>回房歇息</b><small>回復 '+hp+' 點氣血</small>')+btn('dispensary','<b>拜訪郎中</b><small>買藥或聽醫案</small>')+
-  btn('shelf','<b>後院練招</b><small>精練一張牌</small>')+'</div><p class="inn-sign">明早趕路，今晚只夠辦一件事。</p></section>';
+ const r=s.route,healed=r.hp+innRecovery(r);
+ const place=(action,title,hint)=>btn(action,'<span class="inn-plaque"><b>'+title+'</b><small>'+hint+'</small></span>','inn-place');
+ return '<section class="jp-room jp-inn"><h2>山腳客棧</h2><div class="inn-courtyard">'+
+  place('nap','客房',healed===r.hp?'氣血已滿':'氣血 '+r.hp+' → '+healed)+place('dispensary','藥櫃','買藥・聽醫案')+
+  place('shelf','後院','精練招式')+'</div><p class="inn-sign">今晚只夠辦一件事。</p></section>';
 }
 function dispensary(){
  const offers=Object.entries(apothecary).map(([n,cost])=>{
@@ -256,7 +257,7 @@ document.addEventListener('click',async e=>{
   if(action==='shelf'){practiceShelf();return}
   if(action==='compare'){compareCopy(v);return}
   if(action==='dispensary'){dispensary();return}
-  if(action==='nap'){modal('<h2>回房歇息</h2><p>卸下行裝，安心睡到天亮。氣血 '+r.hp+' → '+Math.min(r.maxHp,r.hp+Math.ceil(r.maxHp*.3))+'／'+r.maxHp+'。</p>'+btn('rest/heal','就寢，明早上路','primary'));return}
+  if(action==='nap'){modal('<div class="inn-bedside" aria-hidden="true"></div><h2>回房歇息</h2><p>氣血 '+r.hp+' → '+(r.hp+innRecovery(r))+'／'+r.maxHp+'。今晚住下，明早便要上路。</p>'+btn('rest/heal','就寢，明早上路','primary')+' '+btn('innBack','再看看','ink-action'));return}
   if(action==='innBuy'&&buyMedicine(s,v))$('folio').close();
  }
  if(action==='inspectWare'&&r.phase==='cache'&&r.floor!==2&&Object.hasOwn(stockAt(s)??{},v)){

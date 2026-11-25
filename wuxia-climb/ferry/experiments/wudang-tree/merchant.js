@@ -1,7 +1,7 @@
 import {trailTools} from './trail-hud.js';
 import {supportArt} from './art-library/support-files.js';
 // The journey and the standalone study use the same merchant and purchase rules.
-import {stockAt,stallLimit,wares} from './journey.js?v=1124f';
+import {stockAt,stallLimit,wares} from './journey.js?inn4';
 
 export function merchant(s, chosen, journey=false) {
   const stock=stockAt(s), names=Object.keys(stock);

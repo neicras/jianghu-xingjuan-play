@@ -1,4 +1,4 @@
-import {newJourney,gift,enter,finishFight,receive,train,leave} from './journey.js?v=1124f';
+import {newJourney,gift,enter,finishFight,receive,train,leave} from './journey.js?inn4';
 
 export const frames=[
  ['gift','餞行席'],['map','江湖路線'],['fight','比武出招'],['reward','戰後所得'],
@@ -10,6 +10,10 @@ export const frames=[
 // Fixed examples used only by the frame viewer. Build rooms with the same
 // entry and reward functions as a run, then allow normal interaction in memory.
 export function reviewJourney(id,sample){
+ // A regular opening draw for replaying the tassel and exposed damage calculation.
+ if(id==='fight'&&sample==='exposed'){
+  const s=newJourney(5);gift(s,'sword');enter(s,0);return s;
+ }
  // Seed 176 draws all three rank bands through the ordinary fifth-station reward.
  const mixed=id==='books'&&sample==='grades';
  const stepLesson=id==='books'&&sample==='steps';

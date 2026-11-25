@@ -1,6 +1,6 @@
 import {supportArt} from './art-library/support-files.js';
 // These rooms use real journey state. The artwork carries no labels or quantities.
-import {teachers, mentorBasics, wares, spoils, fieldPractice, bagCapacity} from './journey.js?v=1124f';
+import {teachers, mentorBasics, wares, spoils, fieldPractice, bagCapacity} from './journey.js?inn4';
 import {byName,effect} from './catalogue.js?v=1124f';
 import {pickedBooks,picksLeft,rewardAmount,trainingChance} from './rules.js?v=1124f';
 
