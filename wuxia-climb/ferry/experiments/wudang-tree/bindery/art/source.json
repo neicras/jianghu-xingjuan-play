@@ -1,0 +1,32 @@
+{
+  "status": "desktop layout and art study",
+  "style_inputs_in_order": [
+    {
+      "file": "app/remixdock/public/wuxia-climb/ferry/experiments/wudang-tree/art-library/directions/manual-ink/v1/references/card-colour-key.jpg",
+      "sha256": "d10e42d5961e0ee1352a1c36f37c27c02dba7a755ca8ff69d55a702b81a0885d"
+    },
+    {
+      "file": "app/remixdock/public/wuxia-climb/ferry/experiments/wudang-tree/art-library/directions/manual-ink/v1/references/manuscript-screen.jpg",
+      "sha256": "65a1e49cb6d0d5c317c177649c7e33e109e0906dd74201115a1fcb82782aa003"
+    }
+  ],
+  "interface_references": [
+    "https://store.steampowered.com/app/1574580/Strange_Horticulture/",
+    "https://weatherfactory.biz/a-peep-into-futurity/"
+  ],
+  "external_media": "External game screenshots were inspected and linked only. The playable art uses project references and newly generated transparent assets.",
+  "sheets": {
+    "bindings": {
+      "prompt": "Original wuxia deckbuilding game asset, match attached card colour key for angular carved ink contour, three-value flat print, warm antique paper highlights; second reference for composition and economy of shapes. Exact straight-on orthographic view. No text, numbers, glyphs or watermarks. No detached shadows. A game asset atlas, wide landscape 3:2 canvas with exactly THREE separate tall Chinese thread-bound manuscript books equidistant on ONE horizontal line, centered at x 17%, 50%, 83%. Large generous transparent gutters. Complete uncut objects with identical proportions and size, same flat frontal view. A striking central wide plain midnight indigo cloth area for a large later printed emblem, leave upper and middle of cloth blank. Empty small antique title slip along left inside front cover, ochre cord along right edge. Left: master copy, immaculate smooth tight silk cover, neat parallel cord and crisp even folded cream paper edges. Middle: frequently handled woodblock copy, broken lower corner, visibly repaired strip of pale linen with three chunky hand stitches, one frayed cord loop, loose page corner peeking. Right: barely surviving ancient stitched fascicle; large diagonal lower third of front cloth missing exposing layered tan rag paper, torn uneven ragged silhouette, loose splayed pages bound with crooked red repair cord. Distinct immediately at thumbnail. Flat boldly painted physical books. Entire lower fragment attached. Straight alpha transparent background.",
+      "raw_file": "workdir/game-dev/wuxia-climb/bindery-art-v1/bindings.png",
+      "sha256": "86c973eae1908d64e86b6f333a665c055859b845ac7521c132fe9770e666caed"
+    },
+    "emblems": {
+      "prompt": "Original wuxia deckbuilding game asset, match attached card colour key for angular carved ink contour, three-value flat print, warm antique paper highlights; second reference for composition and economy of shapes. Exact straight-on orthographic view. No text, numbers, glyphs or watermarks. No detached shadows. Create a square production atlas of 9 separate LARGE two-ink woodblock pictograms, in a precisely aligned 3 column by 3 row regular grid. Transparent ground, no enclosing disk, rectangle, frame, badge, lettering, decorative dots or shared grid lines. Each silhouette fills its own cell with 16% padding, perfectly separate. Each mark uses pale parchment body, a dark plum keyline, and ONE tiny vermilion accent. Chunky bold forms readable at 50px. Row1 left a single straight Chinese jian sword with unmistakable hilt, diagonal slant and trailing red tassel; row1 middle one soft cloth shoe in profile over a curved footprint wake; row1 right one closed fist in three-quarter view with cuff. Row2 left a chest cuirass with crossed protective sleeves; row2 middle a seated breathing figure with one curling wisp of breath; row2 right a fly-whisk with short grip and long sweeping hairs. Row3 left seven stars arranged as the Big Dipper linked by fine lines (formation); row3 middle a tied red silk bookmark knot; row3 right two complementary torn paper halves joining into one sheet. No gradients. Do not repeat motifs.",
+      "raw_file": "workdir/game-dev/wuxia-climb/bindery-art-v1/emblems.png",
+      "sha256": "41d2812dd2c4c5f2be403441e0a2e843669f85ac3247ca21d39fb9385a26d575"
+    }
+  },
+  "binding_extraction": "Three horizontal cells. Crop alpha with threshold 48 and a four-pixel gutter. Keep the sound, worn and torn shells distinct. Jade and gold variants recolour only the indigo fabric.",
+  "emblem_extraction": "Three by three grid, row-major: sword, step, palm, guard, breath, whisk, array, bookmark knot and joining leaves."
+}
