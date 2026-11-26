@@ -1,0 +1,30 @@
+/* Small leaves laid into the book. A missing leaf leaves an empty impression. */
+.book-table.closed-shelf {grid-template-rows:auto minmax(0,1fr) auto}
+.book-reader .fragment-set {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.4em .55em;margin:.55em 0}
+.fragment-set li {min-width:0}
+.contents-leaf .fragment-set .read-leaf {display:flex;position:relative;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:44px;padding:3px 0;color:#442d27}
+.fragment-set .leaf-fragment {isolation:isolate;position:relative;display:grid;place-items:center;width:78%;max-width:82px;aspect-ratio:1.5;transform:rotate(-3deg)}
+.fragment-set li:nth-child(even) .leaf-fragment {transform:rotate(2deg)}
+.fragment-set .leaf-fragment::before {content:"";z-index:-1;position:absolute;inset:0;background:linear-gradient(115deg,#efdcb3,#c79e66);box-shadow:inset 0 0 0 1px #80623a;clip-path:polygon(1% 3%,96% 0,100% 93%,85% 96%,57% 94%,3% 100%)}
+.fragment-set [data-quality="1"] .leaf-fragment::before {clip-path:polygon(2% 2%,95% 0,94% 28%,74% 36%,86% 47%,74% 62%,82% 70%,66% 95%,3% 99%)}
+.fragment-set [data-quality="0"] .leaf-fragment::before {clip-path:none;background:transparent;box-shadow:none;border:1px dashed #977c58}
+.contents-leaf .fragment-set .leaf-fragment i {position:absolute;inset:17% 12% 18% auto;width:16%;height:auto;clip-path:none;background:repeating-linear-gradient(to right,#775738 0 1px,transparent 1px 4px);opacity:.55}
+.fragment-set li[data-quality="1"] .leaf-fragment i,.fragment-set li[data-quality="0"] .leaf-fragment i {display:none}
+.fragment-set .leaf-fragment b {font:800 clamp(19px,2.2cqw,34px)/1 var(--serif);color:#482f22}
+.fragment-set [data-quality="0"] .leaf-fragment b {color:#82664a}
+.contents-leaf .fragment-set small {font:600 clamp(12px,1.25cqw,18px)/1.2 var(--serif);color:#593923}
+.contents-leaf .fragment-set em {position:absolute;right:2%;top:0;color:#922e22;border:1px solid currentColor;font:800 clamp(12px,1.4cqw,20px)/1 var(--serif);padding:2px;transform:rotate(8deg);background:#efc88f}
+.fragment-set button:is([aria-expanded="true"],:focus-visible) {outline:2px solid #944033;outline-offset:-2px}
+.contents-leaf .reading-chance {font-weight:700;font-size:clamp(14px,1.8cqw,25px)}
+.book-reader .copy-colophon {width:100%}
+.book-reader .copy-colophon>summary {cursor:pointer}
+.book-reader .copy-colophon[open]>div {position:static;max-height:none;background:none;border:0;box-shadow:none;padding:0;font-size:clamp(14px,1.5cqw,20px)}
+@media(orientation:portrait) {
+ .book-reader .fragment-set {gap:3px 8px;margin:4px 0}
+ .book-reader .leaf-fragment {max-width:60px;aspect-ratio:1.8}
+ .book-reader .reading-chance {font-size:16px}
+}
+@media(orientation:landscape) and (max-height:520px) {
+ .book-reader .fragment-set {grid-template-columns:repeat(6,minmax(0,1fr));gap:2px}
+ .book-reader .leaf-fragment {width:92%}
+}
