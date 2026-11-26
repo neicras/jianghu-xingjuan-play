@@ -1,6 +1,7 @@
 import {glyph} from './vocabulary.js';
 // The third movement borrows a transition from the foundation art. The sixth
 // returns to its ending posture. The other four can be read straight from text.
+import {figureBooks} from './bindery/figures.js';
 const movements={
   內功:['定神','調息','引氣','行氣','周流','歸元'],
   身法:['立身','移步','換步','轉身','落足','定步'],
@@ -22,7 +23,7 @@ const setbacks={
   軟兵:['拂絲未垂定','拂絲纏在一處','手腕翻過，拂梢卻遲了一拍','拂梢只展開了一半','迴環時絲尾打了個結','手已停下，拂梢仍收不回來']
 };
 export function rehearsalResult(a,last){
-  const names=moveNames(a), passed=last.failed<0;
+  const book=figureBooks[a.name],names=book?.names??moveNames(a), passed=last.failed<0;
   const rows=last.odds.map((p,i)=>{
     const die=last.rolls[i];
     const status=die==null?'未練到':die<=p?'過關':'失手';
@@ -31,7 +32,8 @@ export function rehearsalResult(a,last){
   const traces=names.map((name,i)=>{
     const state=i>=last.rolls.length?'waiting':i===last.failed?'fail':'pass';
     const quality=last.sections?['缺頁','殘頁','全篇'][last.sections[i]]+' · ':'';
-    return '<li class="gate-'+state+'" style="--beat:'+i+'"><small>'+chapters[i]+'</small><b>'+name+'</b><span>'+quality+last.odds[i]+'%</span><strong>'+({pass:'已通',fail:'受阻',waiting:'未至'}[state])+'</strong></li>';
+    const image=book&&state!=='waiting'?'<i aria-hidden="true" class="jd-result-pose" style="--plate:url(./bindery/art/figures/'+book.plate+'.webp);--y:'+i*20+'%;--beat:'+i+'"></i>':'';
+    return '<li class="gate-'+state+'" style="--beat:'+i+'"><small>'+chapters[i]+'</small><b>'+name+'</b><span>'+quality+last.odds[i]+'%</span>'+image+'<strong>'+({pass:'已通',fail:'受阻',waiting:'未至'}[state])+'</strong></li>';
   }).join('');
   const i=last.failed,sections=last.sections;
   const cause=i<0?'':last.foundation===false&&(i===2||i===5)?'此處承接《'+a.parent+'》；未學前功，這一式較難接上。':sections&&sections[i]<2?'手上各冊的第'+chapters[i]+'篇'+(sections[i]===0?'都是缺頁':'仍有缺字')+'，值得另找一冊參照。':'';

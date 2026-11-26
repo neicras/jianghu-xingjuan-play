@@ -7,8 +7,8 @@ import {play,endRound,settleChoice} from './combat.js?folio26';
 import {manual,navigateRegister} from './manual.js?folio26';
 import {editionSheet} from './book-view.js?forms7';
 import {arena,paintBout,animateBout,pileSheet} from './arena.js?folio26';
-import {displayBookDialog} from './rewards-view.js?readingtable4';
-import {rehearsalResult} from './rehearsal.js?folio26';
+import {displayBookDialog} from './rewards-view.js?journeyVerses1';
+import {rehearsalResult} from './rehearsal.js?journeyVerses1';
 import {deck,picksLeft,attemptFee,claimReward,trainingChance,ready,equip} from './rules.js?folio26';
 import {estimate,reroll} from './manuscripts.js?forms7';
 import {frames,reviewJourney} from './review-frames.js?folio26';
@@ -224,7 +224,7 @@ function render(){
   const shelf=lessons(s),chosen=shelf.find(row=>row.a.name===lessonName)||shelf[0];
   const volumes=shelf.map(({a,borrowed,continuation})=>'<button class="lesson-volume" data-action="lesson/'+a.name+'" aria-label="翻閱《'+a.name+'》" aria-pressed="'+(a===chosen?.a)+'">'+cover(a)+'<small>'+(continuation?'進階講義':borrowed?'師兄講義':'隨身藏書')+'</small></button>').join('');
   const notes=chosen?'<strong>'+chosen.a.name+'</strong><p>'+(chosen.continuation?'承接你所習的《'+chosen.a.parent+'》。':'')+effect(chosen.a)+'</p><small>練成把握 '+trainingChance(chosen.preview,chosen.a)+'%　·　學成用 '+chosen.cost+' 歷練，失手用 '+attemptFee(chosen.cost)+'</small>':'<strong>切磋所學</strong><p>今日可跟師兄拆招，增長歷練。</p>';
-  html='<section class="school-court"><div class="school-title"><h2>師門請益</h2></div><div class="lesson-shelf" aria-label="可請教的功法">'+volumes+'</div><div class="school-slip"><div>'+notes+'</div>'+ (chosen?btn('train/'+chosen.a.name,s.xp<chosen.cost?'尚欠 '+(chosen.cost-s.xp)+' 歷練':'請師兄指點','red-seal',s.xp<chosen.cost):'')+'</div><div class="lesson-links"><span>本次只可請益或拆招一次</span>'+btn('drill','跟師兄拆招 · 得 8 歷練')+btn('leave','辭別上路')+'</div></section>';break;
+  html='<section class="school-court"><div class="school-title"><h2>師門請益</h2></div><div class="lesson-shelf" aria-label="可請教的功法">'+volumes+'</div><div class="school-slip"><div>'+notes+'</div>'+ (chosen?btn('openLesson/'+chosen.a.name,'展卷請益','red-seal'):'')+'</div><div class="lesson-links"><span>本次只可請益或拆招一次</span>'+btn('drill','跟師兄拆招 · 得 8 歷練')+btn('leave','辭別上路')+'</div></section>';break;
  }
  case 'cache':html=r.stop?.story==='cave'?caveRoom():r.floor===2?eventRoom():merchant(s,heldWare,true);break;
  case 'won':case 'lost':html=ending(s,btn);break;
@@ -282,6 +282,11 @@ document.addEventListener('click',async e=>{
   modal('<h2>騰一格給'+v+'</h2><p>選一份藥留下。合上便保留現有三份藥。</p>'+s.bag.map((n,j)=>btn('replace/'+v+'/'+j,itemIcon(n)+' 留下'+n,'item-offer')).join(''));return
  }
  if(action==='replace'&&pack(s,v,Number(i)))$('folio').close();
+ if(action==='openLesson'&&r.phase==='school'){
+  const lesson=lessons(s).find(row=>row.a.name===v);
+  if(lesson){browsing=null;displayBookDialog(s,btn,v,null,null,lesson)}
+  return;
+ }
  if(action==='lesson'&&r.phase==='school'){lessonName=v;render();$('room').querySelector('.lesson-volume[aria-pressed=true]')?.focus({preventScroll:true});return}
  if(action==='drill')drill(s);
  if(action==='pickGear'&&r.phase==='reward'){modal(gearOffers(s,Number(v),btn));return}
@@ -353,7 +358,11 @@ document.addEventListener('click',async e=>{
  if(action==='back'){$('book-choice').close();return}
  if(action==='reroll'&&r.phase==='reward'&&reroll(s))bookDialog();
  if(action==='take'&&receive(s,v)){browsing=null;if(picksLeft(s))bookDialog();else $('book-choice').close()}
- if(action==='train'&&train(s,v))modal(rehearsalResult(byName.get(v),s.lastPractice)+'<p>'+r.last+'</p>');
+ if((action==='train'||(action==='takeStudy'&&receive(s,v)))&&train(s,v)){
+  browsing=null;
+  if($('book-choice').open)$('book-choice').close();
+  modal(rehearsalResult(byName.get(v),s.lastPractice)+'<p>'+r.last+'</p>');
+ }
  if(action==='rest'&&rest(s,v))$('folio').close();
  if(action==='polish'&&rest(s,'refine:'+v))$('folio').close();
  if(action==='leave'){heldWare=null;leave(s)}

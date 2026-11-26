@@ -9,6 +9,8 @@ import {band,purse,picksLeft,pickedBooks,hasNoviceFoundation,trainingChance,merg
 import {chapters,qualities,collection,collate,cost,intactChance,missingChance,xpPerWin,rerollFee} from './manuscripts.js?forms7';
 import {clothDyes,copyFace,pouch} from './bound-book.js?readingtable4';
 
+import {journeyDesk,lessonManuscript,deskVolume} from './journey-bindery.js';
+const reader=(s,book,btn,view)=>s.route?journeyDesk(s,book,btn,view):copyDesk(s,book,btn,view);
 const icons={lesson:'journey-diary',coins:'journey-coins',ledger:'journey-bookmark',breath:'journey-manuals'};
 const prizes=[
  ['xp','武學歷練','lesson','研習與精練所用',xpPerWin+' 點'],
@@ -84,7 +86,7 @@ function scouting(next){
 export function choices(s,btn,selected){
  const books=s.offer.map(name=>manuscript(s,name)),current=books.find(b=>b.a.name===selected);
  if(!books.length)return btn('back','返回戰利品');
- if(current)return copyDesk(s,current,btn);
+ if(current)return reader(s,current,btn);
  const left=picksLeft(s),kept=pickedBooks(s).length,next=readingAhead(s);
  const rack=books.map(b=>{
   const name=b.a.name,grade=ranks[b.a.rank];
@@ -92,7 +94,7 @@ export function choices(s,btn,selected){
   const link=next&&exchangeFor(s,name);
   const mark=!b.taken&&link&&['牌中已有','同案已取'].includes(link.state);
   return '<button class="shelf-volume" aria-label="翻閱《'+name+'》，'+grade+'品，'+cardRarity(b.a)+'，'+copySummary(b.incoming)+(b.taken?'，已收入書囊':gain?'，可補 '+gain+' 篇':mark?'，可接《'+link.other+'》':'')+
-   '" data-action="browse/'+name+'">'+copyFace(b.a,b.incoming,grade,true)+(b.taken?'<i class="volume-mark">收</i>':'')+'</button>';
+   '" data-action="browse/'+name+'">'+(s.route?deskVolume(b.a,b.incoming):copyFace(b.a,b.incoming,grade,true))+(s.route?'<span class="jd-shelf-label">武當 · '+b.a.branch+' · '+grade+'品<br>'+(b.taken?'已收入書囊':b.known.length?(gain?'可補 '+gain+' 篇':'已有同本'):'初次得見')+'</span>':'')+(b.taken?'<i class="volume-mark">收</i>':'')+'</button>';
  }).join('');
  return '<div class="book-table closed-shelf">'+clothDyes()+'<div class="book-heading"><h2 id="pick-title">挑選秘笈</h2><p>選 '+left+' 冊入囊</p></div>'+
   '<div class="book-rack">'+rack+'<div class="book-pouch">'+pouch()+'<span><small>書囊</small><b>'+kept+'／'+(kept+left)+'</b></span></div></div>'+
@@ -100,23 +102,23 @@ export function choices(s,btn,selected){
 }
 
 // Keep opening and putting back identical in the journey and standalone study.
-export function displayBookDialog(s,btn,selected,returnTo,found){
+export function displayBookDialog(s,btn,selected,returnTo,found,lesson){
  const dialog=document.getElementById('book-choice'),body=document.getElementById('book-body');
  const a=byName.get(selected);
  const foundBook=found&&{a,known:found.prior,editions:[],incoming:found.sections,prior:collate(found.prior),
   combined:collate(collection(s,selected)),taken:true,source:{kind:'cave',floor:s.route.floor},
   note:found.kept?'已收入書囊':'舊藏的三冊已足以補齊此本',library:s.learned.includes(selected)?'已學成':'可回師門研習',
   detail:'<p>鏢師分冊抄錄。同名的殘篇可以互補。</p>',odds:''};
- body.innerHTML=foundBook?copyDesk(s,foundBook,btn):choices(s,btn,selected);
+ const book=lesson?lessonManuscript(s,lesson):foundBook??(selected?manuscript(s,selected):null);
+ body.innerHTML=book?reader(s,book,btn):choices(s,btn,selected);
  if(!dialog.open)dialog.showModal();
  if(selected){
-  const book=foundBook??manuscript(s,selected);
   function bindDesk(){
    const desk=body.querySelector('.manuscript-desk');
    desk.querySelector('h2').focus({preventScroll:true});
    desk.addEventListener('click',e=>{
     const control=e.target.closest('[data-desk]');if(!control)return;
-    body.innerHTML=copyDesk(s,book,btn,control.dataset.desk);bindDesk();
+    body.innerHTML=reader(s,book,btn,control.dataset.desk);bindDesk();
    });
   }
   bindDesk();
