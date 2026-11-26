@@ -1,13 +1,13 @@
 import {exchangeFor,matchupNote} from './book-pairings.js?forms7';
 import {nextBookFight} from './journey.js?folio26';
-import {copyDesk} from './copy-desk.js?readingtable3';
+import {copyDesk} from './copy-desk.js?readingtable4';
 import {acquisition,editionInfo} from './editions.js?forms7';
 import {cardRarity} from './card-face.js?forms7';
 import {supportArt} from './art-library/support-files.js';
 import {arts,byName,ranks,effect} from './catalogue.js?forms7';
 import {band,purse,picksLeft,pickedBooks,hasNoviceFoundation,trainingChance,mergedCopies,percent,combinedOdds,gateOdds} from './rules.js?folio26';
 import {chapters,qualities,collection,collate,cost,intactChance,missingChance,xpPerWin,rerollFee} from './manuscripts.js?forms7';
-import {clothDyes,copyFace,pouch} from './bound-book.js?readingtable3';
+import {clothDyes,copyFace,pouch} from './bound-book.js?readingtable4';
 
 const icons={lesson:'journey-diary',coins:'journey-coins',ledger:'journey-bookmark',breath:'journey-manuals'};
 const prizes=[

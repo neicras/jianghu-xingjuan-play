@@ -30,7 +30,7 @@ export function bindingState(sections){
 }
 // Dye only the blue-green binding cloth. Paper, gilt stitching and the art
 // printed over it retain their original colours on all three painted shells.
-const dyes={'劍法':['sword','#323657'],'身法':['step','#3c665d'],'護體':['guard','#714d38'],'拳掌':['palm','#854743'],'內功':['breath','#516353'],'奇竅':['array','#654b6d'],'軟兵':['whisk','#575475']};
+const dyes={'普通':['common','#3e4661'],'精良':['uncommon','#397b6b'],'稀有':['rare','#9b6c30']};
 export function clothDyes(){
  return '<svg class="cloth-dyes" width="0" height="0" aria-hidden="true"><defs>'+Object.values(dyes).map(([id,colour])=>
   '<filter id="book-dye-'+id+'" color-interpolation-filters="sRGB"><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -4 0 4 0 -0.04" result="cloth"/><feFlood flood-color="'+colour+'"/><feComposite in2="cloth" operator="in"/><feComposite in2="SourceGraphic" operator="atop"/></filter>'
@@ -38,7 +38,7 @@ export function clothDyes(){
 }
 export function copyFace(art,sections,grade,desk=false){
   const [binding,condition]=bindingState(sections),rarity=cardRarity(art);
-  const cloth={'普通':'#b7af93','精良':'#68afa4','稀有':'#f1bc59'}[rarity];
+  const cloth={'劍法':'#b9b3a2','身法':'#a1bf9e','護體':'#c1a77e','拳掌':'#ca9682','內功':'#a3b498','奇竅':'#ba9dbb','軟兵':'#b1a1bf'}[art.branch];
   const picture=desk&&binding==='torn'?'3,2 115,0 112,55 93,69 100,85 83,119 55,115 49,141 6,150':desk&&binding==='worn'?'3,1 117,2 116,121 99,138 68,136 60,149 2,151':'0,0 119,0 119,154 0,154';
   const tooling={
     '劍法':'M75 0l-50 12 5-6z','身法':'M12 11q13-14 25-8t30-1q-8 11-23 6T12 11','護體':'M22 0h29v6l-14 7-15-7z',
@@ -48,7 +48,7 @@ export function copyFace(art,sections,grade,desk=false){
   const thread=desk?'<path d="M63 39l127-3-3 26-124 3z" fill="'+cloth+'" stroke="#4c3b3d" stroke-width="2"/><path transform="translate(79 42)" d="'+tooling[art.branch]+'" fill="#4d3641" stroke="#4d3641" stroke-width="1.4"/>':'';
   const patch=desk&&binding!=='sound'?'<path d="M62 247l24-12 9 19-26 12z" fill="#c5ad81" stroke="#72583f"/><path d="m65 245 4 6m2-10 4 6m4-11 4 6m2-8 4 6" stroke="#665238" stroke-width="2"/>':'';
   return '<span class="copy-face'+(desk?' desk-cover':'')+'" data-binding="'+binding+'" data-rarity="'+rarity+'"><svg class="bound-print" viewBox="0 0 220 325" aria-hidden="true">'+
-    '<image href="'+supportArt('binding-'+binding)+'" '+(desk?'filter="url(#book-dye-'+dyes[art.branch][0]+')"':'')+' width="220" height="325" preserveAspectRatio="none"/>'+
+    '<image href="'+supportArt('binding-'+binding)+'" '+(desk?'filter="url(#book-dye-'+dyes[rarity][0]+')"':'')+' width="220" height="325" preserveAspectRatio="none"/>'+
     '<svg class="cover-print" x="67" y="77" width="119" height="154" viewBox="0 0 119 154">'+
     '<image href="'+art.image+'" width="119" height="154" preserveAspectRatio="xMidYMid slice" style="clip-path:polygon('+picture.split(' ').map(pair=>{const [x,y]=pair.split(',');return x+'px '+y+'px'}).join(',')+')"/></svg>'+thread+patch+
     '<text x="37" y="27" writing-mode="vertical-rl" fill="#332536" font-family="serif" font-weight="bold" font-size="'+Math.min(21,150/art.name.length)+'">'+art.name+'</text></svg>'+

@@ -1,7 +1,7 @@
 import {cardFace,cardRarity} from './card-face.js';
-import {clothDyes,copyFace,bindingState} from './bound-book.js?readingtable3';
+import {clothDyes,copyFace,bindingState} from './bound-book.js?readingtable4';
 import {acquisition,editionInfo} from './editions.js';
-import {manualVerses} from './manual-verses.js?readingtable3';
+import {manualVerses} from './manual-verses.js?readingtable4';
 import {chapters} from './manuscripts.js';
 import {ranks} from './catalogue.js';
 import {trainingChance,gateOdds,picksLeft} from './rules.js';
@@ -40,7 +40,7 @@ export function copyDesk(s,book,btn,view='desk'){
   surface='<div class="desk-arrangement"><div class="desk-volumes">'+books+'</div><figure class="desk-technique"><figcaption>學成招式</figcaption><button class="card-object" data-desk="card" aria-label="端詳《'+a.name+'》招式牌">'+cardFace(a,s.stars.includes(a.name))+'</button></figure></div>'+
    '<div class="desk-rubbing"><div><small>'+grade+' · '+a.branch+'</small><strong>'+(learned?'已學成':'練成把握　'+chance)+'</strong>'+(book.redundant?'<small>書囊三冊已足。取此冊仍佔一次選書。</small>':'')+'</div>'+local('joined',known.length&&(!taken||source)?'看合讀本':'讀六句招訣')+
    (copies.length>1?local('compare','攤開對讀'):'')+'</div>'+
-   '<details class="desk-imprint"><summary>卷印</summary><div>'+rank+' · '+grade+' · '+a.branch+'。'+bindingState(incoming)[1]+'。'+editionInfo(a,source??acquisition(s,a.name)).account+'<p>書衣紋樣辨門類；布帶分三等：素布為下三品，青玉為中三品，金織為上三品。</p>'+(book.detail||'')+(book.odds?'<ul>'+book.odds+'</ul>':'')+'</div></details>';
+   '<details class="desk-imprint"><summary>卷印</summary><div>'+rank+' · '+grade+' · '+a.branch+'。'+bindingState(incoming)[1]+'。'+editionInfo(a,source??acquisition(s,a.name)).account+'<p>書衣以靛青、玉綠、赭金分下、中、上三品。書眉上的紋樣辨門類。</p>'+(book.detail||'')+(book.odds?'<ul>'+book.odds+'</ul>':'')+'</div></details>';
  }else if(view==='card'){
   surface='<div class="card-on-cloth">'+cardFace(a,s.stars.includes(a.name))+'</div>';
  }else if(view==='compare'){

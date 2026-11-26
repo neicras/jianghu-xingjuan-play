@@ -4,7 +4,7 @@ import {reviewJourney} from './review-frames.js?folio26';
 import {receive} from './journey.js?folio26';
 import {equip,mergedCopies,pickedBooks,picksLeft} from './rules.js?folio26';
 import {collection,collate} from './manuscripts.js';
-import {openingVerses as verses} from './manual-verses.js?readingtable3';
+import {openingVerses as verses} from './manual-verses.js?readingtable4';
 export {verses};
 const readings={
  八卦步:{index:5,clue:'你手上有一張傷勢牌。八卦步能讓你棄一張，再抽一張。',other:'循原路折返',preview:'這樣會把原來那張牌帶回手中。',match:'舊牌棄去，另抽一張，正合「另尋新徑」。'},
