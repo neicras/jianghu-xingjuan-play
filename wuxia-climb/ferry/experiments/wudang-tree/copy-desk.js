@@ -1,10 +1,10 @@
-import {cardFace,cardRarity} from './card-face.js';
-import {clothDyes,copyFace,bindingState} from './bound-book.js?readingtable4';
-import {acquisition,editionInfo} from './editions.js';
+import {cardFace,cardRarity} from './card-face.js?paper1';
+import {clothDyes,copyFace,bindingState} from './bound-book.js?paper1';
+import {acquisition,editionInfo} from './editions.js?paper1';
 import {manualVerses} from './manual-verses.js?readingtable4';
-import {chapters} from './manuscripts.js';
-import {ranks} from './catalogue.js';
-import {trainingChance,gateOdds,picksLeft} from './rules.js';
+import {chapters} from './manuscripts.js?paper1';
+import {ranks} from './catalogue.js?paper1';
+import {trainingChance,gateOdds,picksLeft} from './rules.js?paper1';
 
 function deskCopies(s,book){
  const {a,known,incoming,taken,source}=book;

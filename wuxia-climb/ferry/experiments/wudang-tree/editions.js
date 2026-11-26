@@ -2,6 +2,7 @@ import {notes} from './annotations.js?forms7';
 
 const editions={
  cave:{label:'鏢局抄本',path:'M4 4h16v16H4z M7 4v16m4-11h6m-6 4h4'},
+ printer:{label:'墨師傅親筆',path:'M4 4h16v16H4z M7 4v16m4-11h6m-6 4h4'},
  teacher:{label:'師門講義',path:'M4 4h16v16H4z M8 4v16m2-11h7m-7 4h5'},
  old:{label:'舊藏本',path:'M4 5h15v15H4z M7 5v15m3-10h5'},
  primer:{label:'隨身本',path:'M5 3h14v18H5z M8 3v18m3-13h5m-5 4h4'},
@@ -11,7 +12,7 @@ const editions={
  archive:{label:'校本',path:'M3 4h8l2 2 2-2h6v15h-7l-2 2-2-2H3z M12 7v12'}
 };
 export function acquisition(s,name){
- const kind=s.rerolled?'archive':s.drawInfo[name]?.kind==='focus'?'traced':s.drawInfo[name]?.kind==='opening'?'field':'loose';
+ const kind=s.drawInfo[name]?.kind==='printer'?'printer':s.rerolled?'archive':s.drawInfo[name]?.kind==='focus'?'traced':s.drawInfo[name]?.kind==='opening'?'field':'loose';
  return {kind,round:s.wins,...(s.route?.floor?{floor:s.route.floor}:{})};
 }
 export function editionInfo(a,source){
@@ -19,6 +20,7 @@ export function editionInfo(a,source){
  const site=!source?.floor||source.floor<=4?'渡口':source.floor<=9?'竹關':'焚天壇山道';
  const accounts={
    cave:'第 '+source?.floor+' 站，在竹關山洞的鏢囊裏找到。紙上還蓋著鏢局的朱印。',
+   printer:'紙坊認印時，你接穩墨師傅的試掌。他在刻桌旁親筆寫下收勢。',
    teacher:'第 '+source?.floor+' 站回到師門，隨師兄練功時抄下的講義。',
    old:'此冊早已收在行囊裏，舊藏沒有記下得書處。',
    primer:'出發時已帶在行囊裏的橋頭習劍手冊，頁角還留著翻讀的摺痕。',

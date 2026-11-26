@@ -1,31 +1,34 @@
 import {trailTools,wallet,objectImage} from './trail-hud.js';
-import {cover} from './bound-book.js?readingtable4';
-import {atlas} from './route-scroll.js?folio26';
+import {cover} from './bound-book.js?paper1';
+import {atlas,scout} from './route-scroll.js?paper1';
 import {supportArt} from './art-library/support-files.js?branch=1';
-import {newJourney,gift,enter,finishFight,receive,train,rest,innRecovery,leave,prepareJourney,lessons,drill,goods,spoils,pack,useItem,wares,apothecary,buyMedicine,purchaseLimit,bagCapacity,exploreCave,caveRisk,escort,storyAt,storyLimit,marketRanges,stockAt,buyAtStall} from './journey.js?folio26';
-import {play,endRound,settleChoice} from './combat.js?folio26';
-import {manual,navigateRegister} from './manual.js?folio26';
-import {editionSheet} from './book-view.js?forms7';
-import {arena,paintBout,animateBout,pileSheet} from './arena.js?folio26';
-import {displayBookDialog} from './rewards-view.js?journeyVerses1';
-import {rehearsalResult} from './rehearsal.js?journeyVerses1';
-import {deck,picksLeft,attemptFee,claimReward,trainingChance,ready,equip} from './rules.js?folio26';
-import {estimate,reroll} from './manuscripts.js?forms7';
-import {frames,reviewJourney} from './review-frames.js?folio26';
+import {newJourney,gift,enter,finishFight,receive,train,rest,innRecovery,leave,prepareJourney,lessons,drill,goods,spoils,pack,useItem,wares,apothecary,buyMedicine,purchaseLimit,bagCapacity,exploreCave,caveRisk,escort,storyAt,storyLimit,marketRanges,stockAt,buyAtStall} from './journey.js?paper1';
+import {play,endRound,settleChoice} from './combat.js?paper1';
+import {manual,navigateRegister} from './manual.js?paper1';
+import {editionSheet} from './book-view.js?paper1';
+import {arena,paintBout,animateBout,pileSheet} from './arena.js?paper1';
+import {displayBookDialog} from './rewards-view.js?paper1';
+import {rehearsalResult} from './rehearsal.js?paper1';
+import {deck,picksLeft,attemptFee,claimReward,trainingChance,ready,equip} from './rules.js?paper1';
+import {estimate,reroll} from './manuscripts.js?paper1';
+import {frames,reviewJourney} from './review-frames.js?paper1';
 import {descriptions} from './annotations.js?forms7';
-import {effect,byName} from './catalogue.js?forms7';
+import {effect,byName} from './catalogue.js?paper1';
 import {keywords,statuses,marked,glyph} from './vocabulary.js';
-import {cardFace} from './card-face.js?forms7';
+import {cardFace} from './card-face.js?paper1';
 
-import {merchant} from './merchant.js?folio26';
-import {fightNotes,departure,rewardPile,gearOffers,ending} from './journey-plates.js?folio26';
+import {merchant} from './merchant.js?paper1';
+import {fightNotes,departure,rewardPile,gearOffers,ending} from './journey-plates.js?paper1';
+import {crossingRoom,forkMap,paperRecap,volumeReview} from './paper-road-view.js?paper1';
+import {episode} from './chapter-road.js?paper1';
 let heldWare=null, seat='sword';
 
-const key='wudang-journey-15-v1',$=id=>document.getElementById(id);
+const paperTrial=new URLSearchParams(location.search).get('trial')==='paper';
+const key=paperTrial?'jianghu-paper-road-trial-v1':'wudang-journey-15-v1',$=id=>document.getElementById(id);
 const requestedFrame=new URLSearchParams(location.search).get('preview');
 const preview=frames.some(([id])=>id===requestedFrame)?requestedFrame:null;
 const record=preview?()=>{}:(await import('./journey-log.js')).record;
-let s=preview?reviewJourney(preview,new URLSearchParams(location.search).get('sample')):newJourney(),animating=false,reading=preview==='tree',fromBooks=false,selected='武當丹劍';
+let s=preview?reviewJourney(preview,new URLSearchParams(location.search).get('sample')):newJourney(paperTrial?302:undefined),animating=false,reading=preview==='tree',fromBooks=false,selected='武當丹劍';
 const gate=new URLSearchParams(location.search).get('gate');
 const tempo=new URLSearchParams(location.search).get('tempo');
 if(preview==='fight'&&['counter','kill','survive','break','short'].includes(tempo)){
@@ -205,8 +208,8 @@ function render(){
  $('balance').innerHTML=wallet(b?.hp??r.hp,r.maxHp,s.xp,s.gold);
  $('potion-belt').innerHTML=belt();
  document.body.classList.toggle('studying',reading);
- document.body.classList.toggle('jp-active',!reading&&(['gift','reward','inn','won','lost','school','map'].includes(r.phase)||(r.phase==='cache'&&(r.floor===2||r.stop?.story==='cave'))));
- document.body.classList.toggle('at-market',!reading&&r.phase==='cache'&&r.floor!==2&&r.stop?.story!=='cave');
+ document.body.classList.toggle('jp-active',!reading&&(['gift','reward','inn','won','lost','school','map'].includes(r.phase)||(r.phase==='cache'&&(r.floor===2||r.stop?.story==='cave'||r.stop?.story==='crossing'))||r.phase==='paperEnd'));
+ document.body.classList.toggle('at-market',!reading&&r.phase==='cache'&&r.floor!==2&&!r.stop?.story);
  if(reading){
   const back=btn('closeTree','<span aria-hidden="true">‹</span> '+studyReturnLabel(r),'study-return');
   $('room').innerHTML=manual(s,byName.get(selected),treeButton,back);
@@ -215,8 +218,9 @@ function render(){
  }
  let html='';
  switch(r.phase){
- case 'gift':html=departure(seat,btn);break;
- case 'map':html=atlas(r);break;
+ case 'gift':html=departure(seat,btn);if(paperTrial)html=html.replace('臨行贈禮','夜渡 · 紙坊試玩').replace('啟程</button>','前往第五站</button>');break;
+ case 'map':html=r.floor===4||(paperTrial&&r.floor===5)?forkMap(r):atlas(r);break;
+ case 'paperEnd':html=paperRecap(s,btn);break;
  case 'fight':html=arena(s,btn);break;
  case 'reward':html=rewardPile(s,btn);break;
  case 'inn':html=inn();break;
@@ -226,7 +230,7 @@ function render(){
   const notes=chosen?'<strong>'+chosen.a.name+'</strong><p>'+(chosen.continuation?'承接你所習的《'+chosen.a.parent+'》。':'')+effect(chosen.a)+'</p><small>練成把握 '+trainingChance(chosen.preview,chosen.a)+'%　·　學成用 '+chosen.cost+' 歷練，失手用 '+attemptFee(chosen.cost)+'</small>':'<strong>切磋所學</strong><p>今日可跟師兄拆招，增長歷練。</p>';
   html='<section class="school-court"><div class="school-title"><h2>師門請益</h2></div><div class="lesson-shelf" aria-label="可請教的功法">'+volumes+'</div><div class="school-slip"><div>'+notes+'</div>'+ (chosen?btn('openLesson/'+chosen.a.name,'展卷請益','red-seal'):'')+'</div><div class="lesson-links"><span>本次只可請益或拆招一次</span>'+btn('drill','跟師兄拆招 · 得 8 歷練')+btn('leave','辭別上路')+'</div></section>';break;
  }
- case 'cache':html=r.stop?.story==='cave'?caveRoom():r.floor===2?eventRoom():merchant(s,heldWare,true);break;
+ case 'cache':html=r.stop?.story==='crossing'?crossingRoom(r,btn):r.stop?.story==='cave'?caveRoom():r.floor===2?eventRoom():merchant(s,heldWare,true);break;
  case 'won':case 'lost':html=ending(s,btn);break;
  }
  $('room').innerHTML=html;
@@ -325,10 +329,12 @@ document.addEventListener('click',async e=>{
  }
  if(action==='edition'){modal(editionSheet(s,byName.get(v),Number(i)));return}
  if(action==='preview'){modal('<div class="full-card">'+cardFace(byName.get(v),s.stars.includes(v))+'</div>');return}
+ if(action==='volumeNotes'){modal(volumeReview(s));return}
  if(action==='boutNotes'&&r.fightReport){modal(fightNotes(r.fightReport));return}
  if(action==='record'){modal(rehearsalResult(byName.get(v),s.lastPractice));return}
  if(action==='toggle'&&['map','inn','school','reward','cache'].includes(r.phase))equip(s,byName.get(v));
- if(action==='map'){modal(atlas(r));return}
+ if(action==='map'||action==='backToTrail'){modal(atlas(r));return}
+ if(action==='scout'){const note=scout(s,Number(v),btn);if(note)modal(note);return}
  if(action==='restartPrompt'){
   modal('<h2>從頭再走一次？</h2><p>你會回到啟程前，重新選一份餞行禮。今次行程的氣血、牌組和行囊會重新開始計算。</p>'+btn('continueRun','繼續這一局','primary')+' '+btn('restart','從頭開始'));
   $('pages').querySelector('[data-action="continueRun"]').focus();return
@@ -338,7 +344,14 @@ document.addEventListener('click',async e=>{
  if(action==='equip'&&!['fight','won','lost','gift'].includes(r.phase)){equip(s,byName.get(v));deckDialog()}
  if(action==='enter'&&enter(s,Number(v))){reading=false;if($('folio').open)$('folio').close()}
  if(action==='seat'&&r.phase==='gift'){seat=v;render();$('room').querySelector('.jp-seat[aria-pressed=true]')?.focus({preventScroll:true});return}
- if(action==='gift')gift(s,v);
+ if(action==='gift'&&gift(s,v)&&paperTrial){
+  r.floor=4;r.path=[0,0,1,0];s.wins=2;r.bookTables=1;
+  for(const name of ['武當逍遙劍','武當鐵拂塵','武當鐵布衫']){
+   if(!s.learned.includes(name)){s.learned.push(name);equip(s,byName.get(name))}
+  }
+  s.books['武當長拳']=[[1,2,1,2,0,0]];s.editions['武當長拳']=[{kind:'old'}];
+  s.bag=['金創藥'];s.relics.push('青鋼劍');s.gold=22;s.xp+=16;
+ }
  if(action==='target'&&b?.phase==='playing'&&b.foes[v]?.hp>0)b.target=Number(v);
  if((action==='cast'||action==='endRound')&&b){
   animating=true;
@@ -365,9 +378,13 @@ document.addEventListener('click',async e=>{
  }
  if(action==='rest'&&rest(s,v))$('folio').close();
  if(action==='polish'&&rest(s,'refine:'+v))$('folio').close();
- if(action==='leave'){heldWare=null;leave(s)}
- if(action==='restart'||(action==='retry'&&['won','lost'].includes(r.phase))){
-  s=newJourney();seat='sword';reading=false;fromBooks=false;selected='武當丹劍';
+ if(action==='leave'){
+  const recap=paperTrial&&r.phase==='reward'&&r.encounter==='press';
+  heldWare=null;if(leave(s)&&recap&&episode(r,'woodblock'))r.phase='paperEnd';
+ }
+ if(action==='onward'&&r.phase==='paperEnd')r.phase='map';
+ if((action==='paperAgain'&&r.phase==='paperEnd')||action==='restart'||(action==='retry'&&['won','lost'].includes(r.phase))){
+  s=newJourney(paperTrial?302:undefined);seat='sword';reading=false;fromBooks=false;selected='武當丹劍';
   if($('folio').open)$('folio').close();
  }
  render();

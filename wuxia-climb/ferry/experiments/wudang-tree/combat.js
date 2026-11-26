@@ -1,8 +1,8 @@
 import {balance} from './balance-settings.js?folio26';
 // A bout snapshots this exact library deck, including refinement of individual copies.
-import {byName,hasKeyword} from './catalogue.js?forms7';
-import {deck} from './rules.js?folio26';
-import {profiles} from './encounter-tables.js?v=1124f';
+import {byName,hasKeyword} from './catalogue.js?paper1';
+import {deck} from './rules.js?paper1';
+import {profiles} from './encounter-tables.js?paper1';
 export const encounters=profiles.map(p=>p.title);
 export function intent(b,e){
  if(e.rallies&&b.foes.some(f=>f.scout&&f.hp<=0))return [0,0,0,'rally'];
@@ -19,6 +19,7 @@ function injury(b,name,pile){
 }
 export function forecast(b,e){
  const [,hits,guard,stance]=intent(b,e);
+ if(stance==='proof')return '試掌 '+Math.max(0,incoming(b,e)-(e.weaken||0))+' · 擋盡這一掌，他下回合露出破綻。'+(!b.proofTurn?'勝後贈長拳抄本。':'');
  if(stance==='rally')return '鳴哨增援 · 喚來 '+b.foes.filter(f=>f.scout&&f.hp<=0).length+' 名哨兵。旗主本回合停手，新兵下回合才出招。';
  if(stance==='charge'&&e.name==='鐵衣客'&&guard){
   const left=Math.max(0,8-(e.pressure||0));
@@ -73,6 +74,7 @@ const branch=a=>a.branch==='輕功'?'身法':a.branch;
 export const canLinkStep=b=>Boolean(b.seen?.身法||b.lastTurnStep);
 export function followupReady(b,name){
  switch(name){
+ case '武當長拳':return b.savedBlock>0;
  case '武當丹劍':return Boolean(b.seen.護體||b.seen.軟兵);
  case '白虹劍法':return Boolean(b.seen.劍法);
  case '遊身八卦掌':return canLinkStep(b);
@@ -101,7 +103,12 @@ export function settleChoice(b,id=null){
    (remove?b.exhaust:b.discard).push(c);draw(b,1);
    b.log=[(remove?'消耗':'棄掉')+'《'+c.name+'》，再抽一張。'];
   }
-  else b.retain.push(id);
+  else{
+   b.retain.push(id);
+   if(b.pending==='藏鋒'&&byName.get(b.hand[i].name).branch==='劍法'){
+    const guard=6+(b.dexterity||0);b.block+=guard;b.log=['留下《'+b.hand[i].name+'》，劍勢未盡，護體增加 '+guard+'。'];
+   }
+  }
  }
  b.pending=null;return true;
 }
@@ -214,14 +221,14 @@ export function play(b,id,onMove){
  case '紫陽正氣拳':hit(v);blockFromCard(6);break;
  case '太極拳':hit(v+Math.min(8,b.savedBlock));break;
  case '武當丹劍':hit(linked?v:6);break;
- case '武當逍遙劍':hit(v);if(b.hand.length)b.pending='可留';break;
- case '白虹劍法':hit(v+(linked?3:0),2);break;
+ case '武當逍遙劍':hit(v);if(b.hand.length)b.pending='藏鋒';break;
+ case '白虹劍法':{const parry=!linked&&intent(b,e)[1]>0;hit(v+(linked?3:0),2);if(parry)blockFromCard(5);break}
  case '太乙玄門劍':hit(v);b.discount.內功=1;break;
  case '真武遊龍劍':hit(v,3);break;
  case '太極劍法':hit(v);blockFromCard(6);break;
  case '無極劍式':hit(v+3*prev);break;
  case '拂塵功':{const surrounded=living(b).length>=2;hit(v);blockFromCard(surrounded?6:3);break}
- case '武當鐵拂塵':e.block=Math.max(0,e.block-v);hit(4);break;
+ case '武當鐵拂塵':{const strip=e.block>0&&e.block<=v;e.block=Math.max(0,e.block-v);hit(4);if(strip)b.discount.劍法=1;break}
  case '兩儀拂塵功':{const defended=e.block>0;hit(v);if(defended)draw(b,1);break}
  case '老君拂塵功':blockFromCard(v);e.weaken=(e.weaken||0)+2;break;
  case '錯倒陰陽拂塵':{const removed=Math.min(v,e.block);e.block-=removed;if(removed)blockFromCard(removed);break}
@@ -286,6 +293,10 @@ export function endRound(b,onMove){
    const blocked=Math.min(b.block,damage);b.block-=blocked;b.blocked+=blocked;
    const beforeHP=b.hp;b.hp=Math.max(0,b.hp-damage+blocked);b.log.push(e.name+'出招，護體抵去 '+blocked+'，你失去 '+(damage-blocked)+' 氣血。');
    contact(b,onMove,e,{who:'foe',kind:'strike',name:'來招',ordinal:hits>1?j+1:0,blocked:blocked===damage,lost:beforeHP-b.hp,absorbed:blocked});
+   if(stance==='proof'&&damage>0&&blocked===damage){
+    b.proofTurn??=b.turn;e.exposed=Math.max(e.exposed||0,2);
+    b.log.push('你接住試掌，墨師傅收手露出破綻。「記得這半句。比完我寫給你。」');
+   }
    if(stance==='wound'&&damage>blocked){injury(b,'劍傷',b.discard);b.log.push('《劍傷》入棄牌堆。')}
    if(b.onBlock){if(blocked===damage)b.nextDraw++;b.onBlock=0}
    if(b.riposte&&blocked===damage){

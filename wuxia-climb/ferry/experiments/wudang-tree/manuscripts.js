@@ -1,4 +1,4 @@
-import {byName} from './catalogue.js?forms7';
+import {byName} from './catalogue.js?paper1';
 // Section quality is ordered: missing, damaged, intact.
 export const chapters = ['一','二','三','四','五','六'];
 export const qualities = ['佚','殘','全'];

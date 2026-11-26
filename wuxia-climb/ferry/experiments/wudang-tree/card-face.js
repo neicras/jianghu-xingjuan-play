@@ -1,4 +1,4 @@
-import {effect} from "./catalogue.js?forms7";
+import {effect} from "./catalogue.js?paper1";
 import {marked} from "./vocabulary.js";
 export const cardRarity=a=>a.branch==="傷勢"?"傷勢":!a.rank||a.rank>=7?"普通":a.rank>=4?"精良":"稀有";
 export function cardFace(a,star=false,cost=a.cost,text=effect(a,star)){

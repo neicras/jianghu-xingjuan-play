@@ -1,8 +1,8 @@
 import {supportArt} from './art-library/support-files.js';
 // These rooms use real journey state. The artwork carries no labels or quantities.
-import {teachers, mentorBasics, wares, spoils, fieldPractice, bagCapacity} from './journey.js?folio26';
-import {byName,effect} from './catalogue.js?forms7';
-import {pickedBooks,picksLeft,rewardAmount,trainingChance} from './rules.js?folio26';
+import {teachers, mentorBasics, wares, spoils, fieldPractice, bagCapacity} from './journey.js?paper1';
+import {byName,effect} from './catalogue.js?paper1';
+import {pickedBooks,picksLeft,rewardAmount,trainingChance} from './rules.js?paper1';
 
 const art=(id,cls='')=>'<img alt="" draggable="false" class="'+cls+'" src="'+supportArt("journey-"+id)+'">';
 const ware=n=>'<img alt="" draggable="false" src="'+supportArt("item-"+wares[n].tile)+'">';
@@ -56,5 +56,5 @@ export function ending(s,btn){
  const path=points.map(p=>p.join(',')).join(' ');
  const trail='<svg class="jp-trail" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><polyline points="'+path+'" fill="none" stroke="#deb567" stroke-width="3" vector-effect="non-scaling-stroke"/>'+points.map(([x,y])=>'<circle cx="'+x+'" cy="'+y+'" r=".72" fill="#ffe2a0"/>').join('')+'</svg>';
  const label=won?'守壇告捷':'此行止步';
- return '<section class="jp-room jp-ending"><div class="jp-scroll">'+art('scroll','jp-roll')+trail+'<strong class="jp-result '+(won?'won':'lost')+'">'+label+'</strong>'+btn('deck','牌組','jp-tab')+'</div><div class="jp-endnote"><b>第 '+r.floor+' 站　·　'+s.wins+' 場勝仗　·　學成 '+s.learned.length+' 門</b><p>'+(won?'守壇劍宗收劍認輸。尚餘 '+r.hp+' 點氣血。':escape(r.last)+' 氣血耗盡。')+'</p>'+(r.fightReport?btn('boutNotes','翻看此戰手記','bout-entry'):'')+'</div>'+btn('retry','重新出發','jp-press')+'</section>';
+ return '<section class="jp-room jp-ending"><div class="jp-scroll">'+art('scroll','jp-roll')+trail+'<strong class="jp-result '+(won?'won':'lost')+'">'+label+'</strong>'+btn('deck','牌組','jp-tab')+'</div><div class="jp-endnote"><b>第 '+r.floor+' 站　·　'+s.wins+' 場勝仗　·　學成 '+s.learned.length+' 門</b><p>'+(won?'守壇劍宗收劍認輸。尚餘 '+r.hp+' 點氣血。':escape(r.last)+' 氣血耗盡。')+'</p>'+btn('volumeNotes','翻開本卷手記','bout-entry')+(r.fightReport?btn('boutNotes','翻看此戰手記','bout-entry'):'')+'</div>'+btn('retry','重新出發','jp-press')+'</section>';
 }

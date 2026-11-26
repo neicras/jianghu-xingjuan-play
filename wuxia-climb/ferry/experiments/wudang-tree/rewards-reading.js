@@ -1,14 +1,14 @@
-import {exchangeFor,matchupNote} from './book-pairings.js?forms7';
-import {nextBookFight} from './journey.js?forms7';
+import {exchangeFor,matchupNote} from './book-pairings.js?paper1';
+import {nextBookFight} from './journey.js?paper1';
 import {descriptions} from './annotations.js?forms7';
-import {acquisition,editionInfo} from './editions.js?forms7';
-import {moveNames} from './rehearsal.js?forms7';
-import {cardRarity} from './card-face.js?forms7';
+import {acquisition,editionInfo} from './editions.js?paper1';
+import {moveNames} from './rehearsal.js?paper1';
+import {cardRarity} from './card-face.js?paper1';
 import {supportArt} from './art-library/support-files.js';
-import {arts,byName,ranks,effect} from './catalogue.js?forms7';
-import {band,purse,picksLeft,pickedBooks,hasNoviceFoundation,trainingChance,mergedCopies,percent,combinedOdds,gateOdds} from './rules.js?forms7';
-import {chapters,qualities,collection,collate,cost,intactChance,missingChance,xpPerWin,rerollFee} from './manuscripts.js?forms7';
-import {copyFace,pouch} from './bound-book.js?forms7';
+import {arts,byName,ranks,effect} from './catalogue.js?paper1';
+import {band,purse,picksLeft,pickedBooks,hasNoviceFoundation,trainingChance,mergedCopies,percent,combinedOdds,gateOdds} from './rules.js?paper1';
+import {chapters,qualities,collection,collate,cost,intactChance,missingChance,xpPerWin,rerollFee} from './manuscripts.js?paper1';
+import {copyFace,pouch} from './bound-book.js?paper1';
 
 const icons={lesson:'journey-diary',coins:'journey-coins',ledger:'journey-bookmark',breath:'journey-manuals'};
 const prizes=[

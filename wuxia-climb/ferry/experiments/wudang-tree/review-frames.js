@@ -1,5 +1,5 @@
-import {play,endRound} from './combat.js?folio26';
-import {newJourney,gift,enter,finishFight,receive,train,leave} from './journey.js?folio26';
+import {play,endRound} from './combat.js?paper1';
+import {newJourney,gift,enter,finishFight,receive,train,leave} from './journey.js?paper1';
 
 export const frames=[
  ['gift','餞行席'],['map','江湖路線'],['fight','比武出招'],['reward','戰後所得'],

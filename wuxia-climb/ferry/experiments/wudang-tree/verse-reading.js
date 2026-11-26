@@ -1,10 +1,10 @@
-import {byName,ranks} from './catalogue.js';
-import {copyFace,pouch} from './bound-book.js';
-import {cardFace,cardRarity} from './card-face.js';
-import {chapters,collection} from './manuscripts.js';
-import {deck,picksLeft} from './rules.js';
-import {exchangeFor} from './book-pairings.js';
-import {startReading,visitBinder,inspect,keepCopy,learnVerse,verseLine,verses} from './verse-study.js';
+import {byName,ranks} from './catalogue.js?paper1';
+import {copyFace,pouch} from './bound-book.js?paper1';
+import {cardFace,cardRarity} from './card-face.js?paper1';
+import {chapters,collection} from './manuscripts.js?paper1';
+import {deck,picksLeft} from './rules.js?paper1';
+import {exchangeFor} from './book-pairings.js?paper1';
+import {startReading,visitBinder,inspect,keepCopy,learnVerse,verseLine,verses} from './verse-study.js?paper1';
 
 const desk=document.querySelector('#desk');
 let state=startReading(),name=null,source='合讀',pencil=false,trial='',bag=false,archive=false;

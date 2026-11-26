@@ -1,15 +1,15 @@
-import {exchangeFor,matchupNote} from './book-pairings.js?forms7';
-import {nextBookFight} from './journey.js?folio26';
-import {copyDesk} from './copy-desk.js?readingtable4';
-import {acquisition,editionInfo} from './editions.js?forms7';
-import {cardRarity} from './card-face.js?forms7';
+import {exchangeFor,matchupNote} from './book-pairings.js?paper1';
+import {nextBookFight} from './journey.js?paper1';
+import {copyDesk} from './copy-desk.js?paper1';
+import {acquisition,editionInfo} from './editions.js?paper1';
+import {cardRarity} from './card-face.js?paper1';
 import {supportArt} from './art-library/support-files.js';
-import {arts,byName,ranks,effect} from './catalogue.js?forms7';
-import {band,purse,picksLeft,pickedBooks,hasNoviceFoundation,trainingChance,mergedCopies,percent,combinedOdds,gateOdds} from './rules.js?folio26';
-import {chapters,qualities,collection,collate,cost,intactChance,missingChance,xpPerWin,rerollFee} from './manuscripts.js?forms7';
-import {clothDyes,copyFace,pouch} from './bound-book.js?readingtable4';
+import {arts,byName,ranks,effect} from './catalogue.js?paper1';
+import {band,purse,picksLeft,pickedBooks,hasNoviceFoundation,trainingChance,mergedCopies,percent,combinedOdds,gateOdds} from './rules.js?paper1';
+import {chapters,qualities,collection,collate,cost,intactChance,missingChance,xpPerWin,rerollFee} from './manuscripts.js?paper1';
+import {clothDyes,copyFace,pouch} from './bound-book.js?paper1';
 
-import {journeyDesk,lessonManuscript,deskVolume} from './journey-bindery.js';
+import {journeyDesk,lessonManuscript,deskVolume} from './journey-bindery.js?paper1';
 const reader=(s,book,btn,view)=>s.route?journeyDesk(s,book,btn,view):copyDesk(s,book,btn,view);
 const icons={lesson:'journey-diary',coins:'journey-coins',ledger:'journey-bookmark',breath:'journey-manuals'};
 const prizes=[
@@ -51,7 +51,7 @@ function manuscript(s,name){
  const showCopyOdds=!s.legacyFinds&&!preparedSample&&(info||s.rerolled);
  const availability=s.learned.includes(name)?(s.stars.includes(name)?'已學成 · 已精練':'已學成 · 可供精練'):!a.parent?'入門功法':s.learned.includes(a.parent)?'先修已成':'可越級。先學《'+a.parent+'》，把握可達 '+percent(combinedOdds(gateOdds(s,a,combined,true)))+'%';
  const foundationNote=!s.learned.includes(name)&&hasNoviceFoundation(s,a)?'。根基已足，殘篇也較易讀通。':'';
- const odds=info?.kind==='random'?'本位抽中'+band(a)+' '+pct(info.bandChance)+'；抽中此功 '+pct(info.nameChance):info?.kind==='companion'?'因應牌組中的招式，此冊留在書案上':info?.kind==='focus'?'尋卷保留此位':info?.kind==='opening'?'首場指定功法':'沿用舊存檔';
+ const odds=info?.kind==='printer'?'紙坊擋盡試掌，墨師傅親筆補訣':info?.kind==='random'?'本位抽中'+band(a)+' '+pct(info.bandChance)+'；抽中此功 '+pct(info.nameChance):info?.kind==='companion'?'因應牌組中的招式，此冊留在書案上':info?.kind==='focus'?'尋卷保留此位':info?.kind==='opening'?'首場指定功法':'沿用舊存檔';
  const practiceOdds=extra?'':'<div class="tome-cost"><span>練成把握</span><b>'+(known.length?trainingChance(s,a,prior)+'% → ':'')+trainingChance(s,a,combined)+'%</b></div>';
  const feeLine=s.route&&extra?'<div class="tome-cost"><span>已學成</span><b>'+(s.stars.includes(name)?'已精練':'可在客棧精練')+'</b></div>':'<div class="tome-cost"><span>'+(s.route?'師門研習':extra?'精練':'研習')+'耗費</span><b>'+(known.length?'<del>'+(oldPrice+extra)+'</del> → ':'')+(newPrice+extra)+' 歷練</b></div>';
  const taken=pickedBooks(s).includes(name);
@@ -65,7 +65,7 @@ function manuscript(s,name){
  const scoutingNote=nextFight?'<p>前路探報　'+scouting(nextFight)+' '+(matchupNote(name,nextFight.kind)||'')+'</p>':'';
  return {a,known,taken,complete,library,combined,incoming,prior,redundant:!taken&&!kept.includes(incoming),
  detail:pairing+scoutingNote+lineage+'<p>'+(known.length?(gained.length?'補得'+gained.join('、'):'原藏已涵蓋此本'):'首次收藏')+'</p>'+feeLine+practiceOdds+'<p>'+availability+foundationNote+'</p>',
- odds:'<li><b>'+name+'</b>　'+odds+'。'+(s.legacyFinds?'沿用舊存檔的章況。':preparedSample?'首場示例章況固定。':!showCopyOdds?'章況沿用舊存檔。':'隨機抄本恰有 '+complete+' 篇完整正文：'+pct(qualityChance(complete))+'。')+'</li>'};
+ odds:'<li><b>'+name+'</b>　'+odds+'。'+(s.legacyFinds?'沿用舊存檔的章況。':preparedSample?'首場示例章況固定。':info?.kind==='printer'?'親筆收勢，末兩篇完整。':!showCopyOdds?'章況沿用舊存檔。':'隨機抄本恰有 '+complete+' 篇完整正文：'+pct(qualityChance(complete))+'。')+'</li>'};
 }
 const chapterState=['缺失','殘缺','完整'];
 function copySummary(sections){
@@ -94,7 +94,7 @@ export function choices(s,btn,selected){
   const link=next&&exchangeFor(s,name);
   const mark=!b.taken&&link&&['牌中已有','同案已取'].includes(link.state);
   return '<button class="shelf-volume" aria-label="翻閱《'+name+'》，'+grade+'品，'+cardRarity(b.a)+'，'+copySummary(b.incoming)+(b.taken?'，已收入書囊':gain?'，可補 '+gain+' 篇':mark?'，可接《'+link.other+'》':'')+
-   '" data-action="browse/'+name+'">'+(s.route?deskVolume(b.a,b.incoming):copyFace(b.a,b.incoming,grade,true))+(s.route?'<span class="jd-shelf-label">武當 · '+b.a.branch+' · '+grade+'品<br>'+(b.taken?'已收入書囊':b.known.length?(gain?'可補 '+gain+' 篇':'已有同本'):'初次得見')+'</span>':'')+(b.taken?'<i class="volume-mark">收</i>':'')+'</button>';
+   '" data-action="browse/'+name+'">'+(s.route?deskVolume(b.a,b.incoming):copyFace(b.a,b.incoming,grade,true))+(s.route?'<span class="jd-shelf-label">武當 · '+b.a.branch+' · '+grade+'品<br>'+(s.drawInfo[name]?.kind==='printer'?'墨師傅親筆 · ':'')+(b.taken?'已收入書囊':b.known.length?(gain?'可補 '+gain+' 篇':'已有同本'):'初次得見')+'</span>':'')+(b.taken?'<i class="volume-mark">收</i>':'')+'</button>';
  }).join('');
  return '<div class="book-table closed-shelf">'+clothDyes()+'<div class="book-heading"><h2 id="pick-title">挑選秘笈</h2><p>選 '+left+' 冊入囊</p></div>'+
   '<div class="book-rack">'+rack+'<div class="book-pouch">'+pouch()+'<span><small>書囊</small><b>'+kept+'／'+(kept+left)+'</b></span></div></div>'+

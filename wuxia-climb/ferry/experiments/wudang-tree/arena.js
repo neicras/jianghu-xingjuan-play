@@ -1,8 +1,8 @@
 import {supportArt} from './art-library/support-files.js';
 import {activeStates,glyph} from './vocabulary.js';
-import {cardFace} from './card-face.js?forms7';
-import {byName} from './catalogue.js?forms7';
-import {encounters,forecast,intent,price,readPenalty,followupReady} from './combat.js?folio26';
+import {cardFace} from './card-face.js?paper1';
+import {byName} from './catalogue.js?paper1';
+import {encounters,forecast,intent,price,readPenalty,followupReady} from './combat.js?paper1';
 import {drawScene,loadScene,DURATION} from '../../altar-duel/scene.js?fixedLight=1';
 import {frame,neutral} from '../../altar-duel/action-frame.js';
 
@@ -23,7 +23,7 @@ async function actor(name){
  if(!actorsByName.has(name)){
   const pending=(async()=>{
    release??=readJson(new URL('release.json',library)).catch(error=>{release=null;throw error});
-   const artName=name==='巡山旗主'?'鐵衣堂主':name;
+   const artName=({'巡山旗主':'鐵衣堂主','墨師傅':'鐵衣客','短打教頭':'前哨'})[name]||name;
    const entry=(await release).characters.find(c=>c.name===artName);
    if(!entry)throw Error('角色圖錄缺少 '+name);
    const dir=new URL('elements/characters/'+entry.id+'/'+entry.revision+'/',library);
@@ -111,12 +111,13 @@ export function arena(state,btn){
   let hint='';
   if(isLinked){
    const match=a.rule.match(/\[(\d+)\|(\d+)\]/),value=Number(match[c.star?2:1]);
-   hint=({'武當丹劍':'劍招 6 → '+value,'白虹劍法':'每劍 '+value+' → '+(value+3),'遊身八卦掌':'步勢未盡 · 可補牌','三才守中式':'留招在手 · 再抽一張','周天回元式':'收拂 · 回復一內力'})[c.name];
+   hint=({'武當長拳':'借上回守勁 +'+Math.min(4,b.savedBlock),'武當丹劍':'劍招 6 → '+value,'白虹劍法':'每劍 '+value+' → '+(value+3),'遊身八卦掌':'步勢未盡 · 可補牌','三才守中式':'留招在手 · 再抽一張','周天回元式':'收拂 · 回復一內力'})[c.name];
   }
+  if(!b.pending&&c.name==='白虹劍法'&&!isLinked&&intent(b,b.foes[b.target])[1]>0)hint='首劍迎擊 · 護體 +5';
   const face=cardFace(byName.get(c.name),c.star,cost,c.name==='劍傷'&&cost===0?'針灸匣：可打出並消耗。':undefined);
   return btn((b.pending?'pick/':'cast/')+c.id,face+(hint?'<span class="link-note">'+hint+'</span>':'')+(penalty?'<span class="read-note">已識破 · 每擊 −'+penalty+'</span>':''),'battle-card'+(isLinked?' linked-card':''),!b.pending&&cost>b.energy);
  }).join('');
- const prompt={'換牌':'選一張手牌棄掉，再抽一張。','精練換牌':'選一張手牌換走。若選傷勢牌，會將它消耗。','必留':'選一張手牌留到下回合。','可留':'可選一張手牌留到下回合。'};
+ const prompt={'藏鋒':'選一張手牌保留。選劍法可得 6 護體。','換牌':'選一張手牌棄掉，再抽一張。','精練換牌':'選一張手牌換走。若選傷勢牌，會將它消耗。','必留':'選一張手牌留到下回合。','可留':'可選一張手牌留到下回合。'};
  const command=b.phase==='won'?(b.loan?btn('returnBook','還卷離場'):btn('collect',state.route?.floor===15?'完成第一卷':'領取戰後所得')):
   b.pending?(b.pending==='必留'?'':btn('skip','略過')):btn('endRound','收勢');
  const message=b.phase==='won'?'比武得勝。'+b.log.join(' '):prompt[b.pending]||b.log.join(' ')||(b.foes.some(e=>e.reads)?'對手會識招。同一招再打，每擊少 1 點，最多減 3 點。交替用幾門攻招，可以遲些被看穿。':'點選手牌出招。');
@@ -198,7 +199,7 @@ export async function paintBout(b,action,playback=false){
      if(!parried||still)pose.flashAge=-1;
      else {
       const opponent=b.foes[move.index].name;
-      const foeBlade=!['鐵衣客','鐵衣堂主','後哨'].includes(opponent);
+      const foeBlade=!['鐵衣客','鐵衣堂主','後哨','墨師傅'].includes(opponent);
       const heroBlade=move.who==='foe'||byName.get(move.name)?.branch==='劍法'||move.name==='順勢還擊';
       pose.contactBlade=move.who==='foe'?'hero':foeBlade?'foe':heroBlade?'hero':null;
       if(!pose.contactBlade)pose.flashAge=-1;

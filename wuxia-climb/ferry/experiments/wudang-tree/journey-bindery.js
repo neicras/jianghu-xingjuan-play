@@ -1,11 +1,11 @@
-import {cardFace} from './card-face.js';
-import {bindingState,clothDyes} from './bound-book.js';
-import {ranks} from './catalogue.js';
-import {chapters,collection,collate} from './manuscripts.js';
+import {cardFace} from './card-face.js?paper1';
+import {bindingState,clothDyes} from './bound-book.js?paper1';
+import {ranks} from './catalogue.js?paper1';
+import {chapters,collection,collate} from './manuscripts.js?paper1';
 import {manualVerses} from './manual-verses.js';
-import {editionInfo,acquisition} from './editions.js';
-import {trainingChance,gateOdds,picksLeft,attemptFee} from './rules.js';
-import {moveNames} from './rehearsal.js';
+import {editionInfo,acquisition} from './editions.js?paper1';
+import {trainingChance,gateOdds,picksLeft,attemptFee} from './rules.js?paper1';
+import {moveNames} from './rehearsal.js?paper1';
 import {figureBooks} from './bindery/figures.js';
 
 const condition=['缺頁','殘頁','完整'];

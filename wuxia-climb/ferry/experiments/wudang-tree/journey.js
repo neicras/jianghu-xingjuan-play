@@ -1,23 +1,26 @@
-import {duels,patterns,openingMoves} from './encounter-tables.js?v=1124f';
-import {companionFor,variationFor} from './book-pairings.js?forms7';
+import {duels,patterns,openingMoves} from './encounter-tables.js?paper1';
+import {companionFor,variationFor} from './book-pairings.js?paper1';
 import {balance} from './balance-settings.js?folio26';
-import {fresh,win,take,study,rehearse,equip,ready,deck,archiveCopy} from './rules.js?folio26';
-import {startBout} from './combat.js?folio26';
-import {arts,byName} from './catalogue.js?forms7';
-import {collection,collate,chapters,estimate,rollCopy} from './manuscripts.js?forms7';
+import {fresh,win,take,study,rehearse,equip,ready,deck,archiveCopy} from './rules.js?paper1';
+import {startBout} from './combat.js?paper1';
+import {arts,byName} from './catalogue.js?paper1';
+import {collection,collate,chapters,estimate,rollCopy} from './manuscripts.js?paper1';
+
+import {confirmCrossing,episode,remember} from './chapter-road.js?paper1';
 
 export const road=[
  ['fighter'],['fighter','cache','inn'],['school','pair','guard'],['inn','school'],['elite1','bypass'],
- ['cache','pair','school','inn','cave'],['school','inn','guard'],['guard','cache','pair','banner'],['inn','school'],['elite2','bypass'],
+ ['cache','pair','school','inn','cave','press'],['school','inn','guard'],['guard','cache','pair','banner'],['inn','school'],['elite2','bypass'],
  ['guard','cache','school','pair'],['school','pair','inn'],['fighter','school','cache'],['inn','guard'],['boss']
 ];
 export const rooms={
  fighter:'橋頭比武',guard:'鐵衣守擂',pair:'雙人合擊',inn:'客棧',school:'師門',cache:'山道貨郎',
- bypass:'繞過擂台',trio:'三人截路',banner:'巡山旗主',cave:'山洞遺鏢',elite1:'鐵衣堂主',elite2:'雙煞把關',boss:'守壇劍宗'
+ press:'紙坊認印',bypass:'繞過擂台',trio:'三人截路',banner:'巡山旗主',cave:'山洞遺鏢',elite1:'鐵衣堂主',elite2:'雙煞把關',boss:'守壇劍宗'
 };
 export const bagCapacity=3;
 const ordinaryRooms=['fighter','guard','pair'];
 export function roomName(type,floor){
+ if(type==='bypass')return floor===5?'隨石生過渡':'隨藥船過江';
  if(floor>1&&ordinaryRooms.includes(type))return '江湖比武';
  return type==='cache'&&floor===2?'江湖偶遇':rooms[type];
 }
@@ -56,7 +59,7 @@ export function gift(s,id){
 // Lane indices from the original journey retain their rooms and connections.
 const trails=[
  [[0,1,2]], [[0,1],[1,2],[2]], [[0],[0,1],[1]], [[0,1],[0,1]],
- [[0,1,2,3,4],[0,1,2,3,4]], [[0],[1],[1,2],[2],[1,2]], [[0],[0,1,3],[1,2,3]], [[0,1],[1],[1],[0,1]], [[0,1],[0,1]],
+ [[0,1,2,3,4,5],[0,1,2,3,4,5]], [[0],[1],[1,2],[2],[1,2],[0,1]], [[0],[0,1,3],[1,2,3]], [[0,1],[1],[1],[0,1]], [[0,1],[0,1]],
  [[0,1,2,3],[0,1,2,3]], [[0],[1],[1,2],[2]], [[0,1],[1],[1,2]], [[0],[0,1],[1]], [[0],[0]]
 ];
 export function linked(floor,from,to){
@@ -195,7 +198,7 @@ export function enter(s,lane){
  if(r.phase!=='map'||!Number.isInteger(lane)||!road[floor-1]?.[lane]||!linked(floor,r.path.at(-1),lane))return false;
  const id=road[floor-1][lane];r.floor=floor;r.path.push(lane);r.free=null;r.last='';r.tookRelic=false;r.tookItem=false;delete r.loot;delete r.fightReport;delete r.purchases;delete r.stop;
  delete r.encounter;
- if(id==='bypass'){r.phase='map';r.last='你沿擂台後的小徑繞行，保住氣血，放棄了這一擂的信物。'}
+ if(id==='bypass'){r.phase='cache';r.stop={story:'crossing'}}
  else if(duels[id])beginEncounter(s,floor>1&&ordinaryRooms.includes(id)?opponents(r):id);
  else if(id==='cave'){r.phase='cache';r.stop={story:'cave',finds:[]}}
  else{r.phase=id;if(id==='cache')prepareStop(s)}
@@ -207,6 +210,11 @@ function beginEncounter(s,id){
   const [profile,enemies]=duels[id];
   const b=startBout(s,profile,Math.floor(random(s)*4294967296));b.maxHp=r.maxHp;b.hp=r.hp;
   if(enemies)b.foes=enemies.map(([name,hp,block,moves])=>({name,hp,maxHp:hp,block,moves}));
+  if(id==='press'){
+   const witness=Boolean(episode(r,'receipt'));
+   if(witness)b.foes.pop();
+   b.log=[witness?'石生把領據攤開。教頭認出船工的花押，讓你進內。':'鐵衣令換來開門，教頭仍站在墨師傅身旁。兩人一前一後守住刻桌。','墨師傅放下刻刀：「接住這一掌，我把收勢那半句寫給你。」'];
+  }
   if(id==='banner'){
    b.foes[0].rallies=true;
    for(const e of b.foes.slice(1))e.scout=true;
@@ -273,6 +281,7 @@ export function finishFight(s){
   r.phase='reward';return true;
  }
  r.loot=victoryLoot(s,b.seed);
+ if(r.encounter==='press'&&b.proofTurn)r.loot.books=true;
  if(r.fightReport?.reason){
   r.fightReport.bonus=balance.insightXp;
   r.loot.xp+=r.fightReport.bonus;
@@ -299,6 +308,17 @@ export function finishFight(s){
  const token={elite1:'鐵衣令',elite2:'雙煞令'}[r.encounter??road[r.floor-1][r.path.at(-1)]];
  if(token){s.rewards.ticket=false;if(!s.relics.includes(token))s.relics.push(token);
   r.last='守擂得勝，獲贈'+token+'。'+wares[token].text+'另可挑一件守關信物。';
+ }
+ if(r.encounter==='press'){
+  const witnessed=Boolean(episode(r,'receipt')),proof=b.proofTurn||0;
+  remember(r,'woodblock',{witnessed,proof,turns:b.turn,links:b.record?.links||0,hp:r.hp});
+  r.last='你把兩張領據往燈前一疊，連斷墨的位置也一樣。背後是同一塊印版。';
+  if(proof){
+   const name='武當長拳',pages=[2,1,2,1,2,2];
+   s.offer=[name,...s.offer.filter(n=>n!==name)].slice(0,r.curriculum?.offer??3);
+   s.finds[name]=pages;s.drawInfo[name]={kind:'printer'};
+   r.last+=' 第 '+proof+' 回合，你接穩了試掌。墨師傅把《武當長拳》的收勢寫在親筆抄本上。可到書案領取。';
+  }
  }
  r.phase='reward';return true;
 }
@@ -420,6 +440,7 @@ export function buyAtStall(s,name){
 }
 export function leave(s){
  const r=s.route;
+ if(r.stop?.story==='crossing'&&r.phase==='cache')return confirmCrossing(s);
  if(!['cache','reward','school'].includes(r.phase))return false;
  if(r.phase==='cache'&&!r.last)r.last='你繼續趕路。';
  r.free=null;r.practiceBooks=[];r.phase='map';return true;

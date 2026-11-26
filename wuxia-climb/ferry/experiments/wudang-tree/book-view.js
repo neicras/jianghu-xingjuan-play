@@ -1,5 +1,5 @@
-import {chapters,qualities,collection} from './manuscripts.js?forms7';
-import {editionInfo} from './editions.js?forms7';
+import {chapters,qualities,collection} from './manuscripts.js?paper1';
+import {editionInfo} from './editions.js?paper1';
 
 export function shelves(s,a){
  const copies=collection(s,a.name);

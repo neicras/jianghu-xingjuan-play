@@ -1,9 +1,9 @@
 // Original six-line verses for the five opening manuscripts in the reading study.
-import {byName} from './catalogue.js';
-import {reviewJourney} from './review-frames.js?folio26';
-import {receive} from './journey.js?folio26';
-import {equip,mergedCopies,pickedBooks,picksLeft} from './rules.js?folio26';
-import {collection,collate} from './manuscripts.js';
+import {byName} from './catalogue.js?paper1';
+import {reviewJourney} from './review-frames.js?paper1';
+import {receive} from './journey.js?paper1';
+import {equip,mergedCopies,pickedBooks,picksLeft} from './rules.js?paper1';
+import {collection,collate} from './manuscripts.js?paper1';
 import {openingVerses as verses} from './manual-verses.js?readingtable4';
 export {verses};
 const readings={
