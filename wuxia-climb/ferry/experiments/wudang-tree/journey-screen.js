@@ -1,5 +1,5 @@
 import {trailTools,wallet,objectImage} from './trail-hud.js';
-import {cover} from './bound-book.js?forms7';
+import {cover} from './bound-book.js?readingtable3';
 import {atlas} from './route-scroll.js?folio26';
 import {supportArt} from './art-library/support-files.js?branch=1';
 import {newJourney,gift,enter,finishFight,receive,train,rest,innRecovery,leave,prepareJourney,lessons,drill,goods,spoils,pack,useItem,wares,apothecary,buyMedicine,purchaseLimit,bagCapacity,exploreCave,caveRisk,escort,storyAt,storyLimit,marketRanges,stockAt,buyAtStall} from './journey.js?folio26';
@@ -7,7 +7,7 @@ import {play,endRound,settleChoice} from './combat.js?folio26';
 import {manual,navigateRegister} from './manual.js?folio26';
 import {editionSheet} from './book-view.js?forms7';
 import {arena,paintBout,animateBout,pileSheet} from './arena.js?folio26';
-import {displayBookDialog} from './rewards-view.js?folio26';
+import {displayBookDialog} from './rewards-view.js?readingtable3';
 import {rehearsalResult} from './rehearsal.js?folio26';
 import {deck,picksLeft,attemptFee,claimReward,trainingChance,ready,equip} from './rules.js?folio26';
 import {estimate,reroll} from './manuscripts.js?forms7';
