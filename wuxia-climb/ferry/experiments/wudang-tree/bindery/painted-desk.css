@@ -119,3 +119,26 @@
  [data-mode=art] .decision-chance{padding:6px 19px}
  [data-mode=art] .judgment{min-height:40px}
 }
+
+/* The single-folio trial puts each movement beside its recoverable verse. */
+[data-mode=art][data-layout=verses] {
+  & .reading .paper:has(.verse-row){background-position:left center;background-size:200% 100%;padding:4.5% 9% 10% 13%}
+  & .paper ol{display:block}
+  & .paper ol li{border-top:1px solid #a5814c57}
+  & .verse-row{display:grid;grid-template-columns:1em minmax(0,1fr) clamp(38px,5vw,72px);gap:.45em;min-height:38px;padding:0;text-align:start}
+  & .verse-copy{grid-template-columns:max-content minmax(0,1fr);gap:.65em;align-items:center}
+  & .verse-copy b{color:#963a28;font-size:clamp(15px,1.4vw,23px);border:0}
+  & .verse-row .chapter-number,& .verse-row .stanza{display:block}
+  & .verse-row .stanza{font-size:clamp(14px,1.35vw,22px);line-height:1.4}
+  & li[data-mended=true] .verse-row::before{content:none}
+  & .verse-row .mended{background:#ffdfac;box-shadow:0 1px 1px #846a41}
+  & .verse-row .folio-figure{max-width:64px;width:100%}
+  & .judgment{max-width:none;padding:7px 4%;background:var(--art-journey-slip) center/100% 100%;justify-content:space-between}
+  & .judgment .decision-note,& .judgment [data-current-verse]{color:#523527}
+  & .judgment .decision-chance,& .judgment .decision-result{background:none;padding:4px 0}
+}
+@media(max-width:580px){
+  [data-mode=art][data-layout=verses] .verse-copy{grid-template-columns:1fr;gap:0}
+  [data-mode=art][data-layout=verses] .verse-row .stanza{font-size:13px}
+  [data-mode=art][data-layout=verses] .judgment{padding:8px 7%}
+}

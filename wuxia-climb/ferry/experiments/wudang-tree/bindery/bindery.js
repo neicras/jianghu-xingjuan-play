@@ -16,6 +16,8 @@ const specimens=[
  ['太乙雲拂功',[0,1,0,2,0,1],'雲房散葉',[['藏經抄本',[1,0,2,0,2,0]]]]
 ];
 const params=new URLSearchParams(location.search),stage=document.querySelector('#stage');
+const verseLayout=params.get('layout')==='verses';
+if(verseLayout)document.body.dataset.layout='verses';
 let mode=params.get('mode')==='wire'?'wire':'art',screen=params.get('screen')==='study'?'study':'shelf';
 let index=0,state,choices,logs,inspected,chosen;
 const beatMs=850;
@@ -151,7 +153,7 @@ function study(){
   return '<li data-q="'+read[i]+'" data-mended="'+(base<read[i])+'"><button class="verse-row" data-verse="'+i+'" '+(playback?'disabled':'')+' aria-label="翻看第'+n+'式：'+book.names[i]+'，'+conditionNames[read[i]]+'"><span class="chapter-number">'+n+'</span><span class="verse-copy"><b>'+book.names[i]+'</b><span class="stanza">'+instruction(a,i,read[i],base)+'</span></span>'+mark+'</button></li>';
  }).join('');
  const candidateList=sources.map(([label,p],i)=>'<div class="source-row"><button data-look="'+i+'" '+(playback?'disabled':'')+' class="little-copy" aria-label="翻閱原本：'+label+'">'+volume(a,p,i)+'</button><span class="source-caption"><small>'+(i===0?'本次拾得':'來自書囊')+'</small><b>'+label+'</b>'+leafStrip(book,p,i)+'</span><button class="use-copy" data-use="'+i+'" aria-pressed="'+chosen.has(i)+'" aria-label="'+(chosen.has(i)?'移出':'加入')+label+'" '+(rec?'disabled':'')+'>'+(chosen.has(i)?'已參校':'參校')+'</button></div>').join('');
- return title(identity(a),'校書案','<button data-do="shelf" class="return">‹ 回書攤</button>')+
+ return title(verseLayout?'校書案 · '+identity(a):identity(a),verseLayout?a.name:'校書案','<button data-do="shelf" class="return">‹ 回書攤</button>')+
  '<div class="workbench"><section class="payoff"><h2>'+(!playback&&rec?.failed===-1?'已加入牌組':'學成招式')+'</h2>'+card(a)+'<button class="refine-preview" data-do="refinement" '+(playback?'disabled':'')+'>翻看精煉眉批</button></section>'+
  '<section class="reading"><div class="paper"><div class="paper-head"><span class="chop">'+(seeOriginal?'原':'校')+'</span><div><small>'+a.name+'</small><h2>'+(seeOriginal?sources[inspected][0]:'合校稿')+'</h2></div><small class="reading-order">正練六式<br>點圖細讀</small></div><ol>'+chapterList+'</ol></div>'+
  (seeOriginal?'<button data-do="joined" class="read-back">看合校稿</button>':'')+'</section>'+
