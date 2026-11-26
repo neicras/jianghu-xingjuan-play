@@ -6,7 +6,7 @@ import {bindingState} from '../bound-book.js';
 import {manualVerses} from '../manual-verses.js';
 import {reviewJourney} from '../review-frames.js';
 
-import {figureBooks} from './figures.js';
+import {figureBooks} from './figures.js?desk=4';
 
 const specimens=[
  ['武當丹劍',[2,0,2,1,2,0],'渡口手記',[['隨身舊譜',[2,2,0,2,1,2]]]],
@@ -92,13 +92,19 @@ function card(a,star=false){
 function figure(book,i,q,pose='print',practice=false){
  return '<span class="folio-figure" '+(practice?'data-practice-row="'+i+'" ':'')+'style="--fig:url(art/figures/'+book.plate+'.webp);--row:'+i*20+'%" data-ink="'+q+'" data-pose="'+pose+'" role="img" aria-label="'+book.names[i]+'，'+conditionNames[q]+'"></span>';
 }
-function openLeaf(i){
+function openLeaf(i,source=inspected){
  const a=byName.get(specimens[index][0]),book=figureBooks[a.name];
- const p=inspected===null?selectedPages():copies()[inspected][1],q=p[i];
+ const p=source===null?selectedPages():copies()[source][1],q=p[i];
  const dialog=document.querySelector('#verse-leaf');
  const note=q===2?book.gloss[i]:q===1?'下半葉已佚。若有另一抄本，可以對讀。':'只餘裝訂處的紙根，招圖與口訣都已散失。';
  const marginal=q===2&&book.hinge===i?'<aside><b>旁批 · 論逆練</b>'+book.reverse+'</aside>':'';
- dialog.innerHTML='<article><small>'+a.name+'　／　'+(inspected===null?'合校稿':copies()[inspected][0])+'</small><h2 id="verse-title">第'+chapters[i]+'式　'+book.names[i]+'</h2>'+figure(book,i,q,q===2?'reading':'print')+'<p class="verse-quotation">'+instruction(a,i,q)+'</p><p>'+note+'</p>'+marginal+'<form method="dialog"><button>合回書頁</button></form></article>';
+ let join='';
+ if(source!==null&&!chosen.has(source)&&!logs.has(index)&&logs.size<2){
+  const after=collate([selectedPages(),p]);
+  const chance=trainingChance(state,a,after);
+  join='<button type="button" data-join="'+source+'" data-highlight="'+i+'">用此本參校 · '+chance+'%</button>';
+ }
+ dialog.innerHTML='<article><small>'+a.name+'　／　'+(source===null?'合校稿':copies()[source][0])+'</small><h2 id="verse-title">第'+chapters[i]+'式　'+book.names[i]+'</h2>'+figure(book,i,q,q===2?'reading':'print')+'<p class="verse-quotation">'+instruction(a,i,q)+'</p><p>'+note+'</p>'+marginal+'<form method="dialog"><button>合回書頁</button>'+join+'</form></article>';
  dialog.showModal();
 }
 function openRefinement(){
@@ -115,9 +121,12 @@ function instruction(a,line,q,base=q){
  return (base===0?patch(first):first)+(q===2?(base===1?patch(last):last):'<span class="lacuna half" aria-label="下半句缺失"></span>');
 }
 const conditionNames=['缺頁','殘頁','完整'];
-function leafStrip(book,pages){
- const desc=pages.map((q,i)=>'第'+chapters[i]+'式'+book.names[i]+'，'+conditionNames[q]).join('、');
- return '<span class="coverage" role="img" aria-label="'+desc+'" title="'+desc+'">'+pages.map((q,i)=>'<i data-q="'+q+'" aria-hidden="true">'+chapters[i]+'</i>').join('')+'</span>';
+function leafStrip(book,pages,source){
+ const buttons=pages.map((q,i)=>{
+  const label='第'+chapters[i]+'式 · '+book.names[i]+' · '+conditionNames[q];
+  return '<button data-source="'+source+'" data-leaf="'+i+'" title="'+label+'" aria-label="'+copies()[source][0]+'，'+label+'" '+(playback?'disabled':'')+'><i data-q="'+q+'" aria-hidden="true">'+chapters[i]+'</i></button>';
+ }).join('');
+ return '<span class="coverage" role="group" aria-label="翻看六式殘頁">'+buttons+'</span>';
 }
 function verdict(a,pages,odds,rec){
  const button=(action,text,disabled=false)=>'<button class="apply" data-do="'+action+'" '+(disabled?'disabled':'')+'>'+text+'</button>';
@@ -139,14 +148,14 @@ function study(){
  const chapterList=chapters.map((n,i)=>{
   const base=seeOriginal||!first?read[i]:first[1][i];
   const mark=figure(book,i,read[i],'print',!!rec&&!seeOriginal);
-  return '<li data-q="'+read[i]+'"><button class="verse-row" data-verse="'+i+'" '+(playback?'disabled':'')+' aria-label="翻看第'+n+'式：'+book.names[i]+'，'+conditionNames[read[i]]+'"><span class="chapter-number">'+n+'</span><span class="verse-copy"><b>'+book.names[i]+'</b><span class="stanza">'+instruction(a,i,read[i],base)+'</span></span>'+mark+'</button></li>';
+  return '<li data-q="'+read[i]+'" data-mended="'+(base<read[i])+'"><button class="verse-row" data-verse="'+i+'" '+(playback?'disabled':'')+' aria-label="翻看第'+n+'式：'+book.names[i]+'，'+conditionNames[read[i]]+'"><span class="chapter-number">'+n+'</span><span class="verse-copy"><b>'+book.names[i]+'</b><span class="stanza">'+instruction(a,i,read[i],base)+'</span></span>'+mark+'</button></li>';
  }).join('');
- const candidateList=sources.map(([label,p],i)=>'<div class="source-row"><button data-look="'+i+'" class="little-copy" aria-label="翻閱原本：'+label+'">'+volume(a,p,i)+'</button><span class="source-caption"><small>'+(i===0?'本次拾得':'來自書囊')+'</small><b>'+label+'</b>'+leafStrip(book,p)+'</span><button class="use-copy" data-use="'+i+'" aria-pressed="'+chosen.has(i)+'" aria-label="'+(chosen.has(i)?'移出':'加入')+label+'" '+(rec?'disabled':'')+'>'+(chosen.has(i)?'✓':'＋')+'</button></div>').join('');
- return title('校書案　／　'+identity(a),a.name,'<button data-do="shelf" class="return">‹ 回書攤</button>')+
+ const candidateList=sources.map(([label,p],i)=>'<div class="source-row"><button data-look="'+i+'" '+(playback?'disabled':'')+' class="little-copy" aria-label="翻閱原本：'+label+'">'+volume(a,p,i)+'</button><span class="source-caption"><small>'+(i===0?'本次拾得':'來自書囊')+'</small><b>'+label+'</b>'+leafStrip(book,p,i)+'</span><button class="use-copy" data-use="'+i+'" aria-pressed="'+chosen.has(i)+'" aria-label="'+(chosen.has(i)?'移出':'加入')+label+'" '+(rec?'disabled':'')+'>'+(chosen.has(i)?'已參校':'參校')+'</button></div>').join('');
+ return title(identity(a),'校書案','<button data-do="shelf" class="return">‹ 回書攤</button>')+
  '<div class="workbench"><section class="payoff"><h2>'+(!playback&&rec?.failed===-1?'已加入牌組':'學成招式')+'</h2>'+card(a)+'<button class="refine-preview" data-do="refinement" '+(playback?'disabled':'')+'>翻看精煉眉批</button></section>'+
  '<section class="reading"><div class="paper"><div class="paper-head"><span class="chop">'+(seeOriginal?'原':'校')+'</span><div><small>'+a.name+'</small><h2>'+(seeOriginal?sources[inspected][0]:'合校稿')+'</h2></div><small class="reading-order">正練六式<br>點圖細讀</small></div><ol>'+chapterList+'</ol></div>'+
  (seeOriginal?'<button data-do="joined" class="read-back">看合校稿</button>':'')+'</section>'+
- '<section class="sources"><h2>參校抄本 <small>'+chosen.size+'／'+sources.length+'</small></h2>'+candidateList+'<div class="leaf-key">'+conditionNames.map((text,q)=>'<span><i data-q="'+q+'"></i>'+text+'</span>').join('')+'</div><p>翻書看原文，繫繩來參校。</p></section></div>'+
+ '<section class="sources"><h2>參校抄本 <small>'+chosen.size+'／'+sources.length+'</small></h2>'+candidateList+'<div class="leaf-key">'+conditionNames.map((text,q)=>'<span><i data-q="'+q+'"></i>'+text+'</span>').join('')+'</div><p>點殘頁讀一式，繫紅繩合校全冊。</p></section></div>'+
  '<div class="judgment" aria-live="polite">'+verdict(a,pages,odds,rec)+'</div>';
 }
 function render(focus=false){
@@ -159,11 +168,21 @@ function render(focus=false){
 }
 document.addEventListener('click',e=>{
  const b=e.target.closest('button');if(!b||b.disabled)return;
+ const tools=b.closest('.review-tools');if(tools)tools.open=false;
  if(b.dataset.mode){mode=b.dataset.mode;render();return}
  if(b.dataset.open!=null){openBook(+b.dataset.open);return}
  if(b.dataset.do==='references'){document.querySelector('#references').showModal();return}
  if(b.dataset.do==='reset'){reset();screen='shelf';render(true);return}
  if(b.dataset.do==='shelf'){endPlayback();screen='shelf';render(true);return}
+ if(b.dataset.leaf!=null){openLeaf(+b.dataset.leaf,+b.dataset.source);return}
+ if(b.dataset.join!=null){
+  const verse=+b.dataset.highlight;
+  if(logs.has(index)||logs.size>=2)return;
+  chosen.add(+b.dataset.join);inspected=null;
+  document.querySelector('#verse-leaf').close();render();
+  const restored=stage.querySelector('[data-verse="'+verse+'"]');
+  restored.classList.add('rejoined');restored.focus({preventScroll:true});return;
+ }
  if(b.dataset.verse!=null){openLeaf(+b.dataset.verse);return}
  if(b.dataset.do==='refinement'){openRefinement();return}
  if(b.dataset.look!=null)inspected=+b.dataset.look;

@@ -2,7 +2,7 @@
 // its illustration, explanation or marginal note until another copy restores it.
 export const figureBooks={
  '武當丹劍':{
-  plate:'sword',names:['聽松','照影','承勢','穿雲','留鋒','歸鞘'],
+  plate:'sword-close',names:['聽松','照影','承勢','穿雲','留鋒','歸鞘'],
   gloss:['劍還在鞘裏。畫中人聽了一陣松聲，衣角先靜下來。','上一圖只見劍穗；翻到這一圖，紙上才有了第一道劍光。','這一式接的是上一手護身的餘勢。丹劍借勢的訣竅，就藏在兩圖之間。','直到此處，藏在袖下的那一點寒光才穿出雲影。','身形已定，穗子還在晃。畫師把一招的餘韻也留了下來。','劍已歸鞘。看最後一圖的肩背，與卷首聽松時正好相應。'],
   hinge:2,reverse:'有人在圖旁倒著題了一句：「鋒既出，還能借它護身麼？」',refinement:'精煉在「承勢」。先行護體或用過軟兵，接來的這一劍才更有力。'},
  '八卦步':{

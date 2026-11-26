@@ -1,0 +1,121 @@
+/* The six named woodcuts occupy the same spread as the screen study. Their
+   ink, missing leaves, repairs and outcomes are all resolved by the game. */
+[data-mode=art] #stage[data-screen=study] {
+  background:#211b36 url('art/desk-cloth.webp') center top / 100% 100% no-repeat;
+  padding-inline:clamp(14px,2.4vw,54px);
+}
+[data-mode=art] .workbench {
+  grid-template-columns:minmax(0, .94fr) minmax(0, 2.65fr) minmax(0, 1fr);
+  gap:clamp(6px,1.4vw,23px);
+}
+[data-mode=art] .payoff .target-card {width:min(100%,32vh);transform:rotate(-3deg)}
+[data-mode=art] .payoff h2 {font-size:14px;letter-spacing:.12em}
+[data-mode=art] .refine-preview {background:none;color:#e8c388;text-decoration:underline;text-underline-offset:4px}
+[data-mode=art] .return {background:var(--art-journey-slip) center/100% 100%;padding:10px 21px;color:#382637}
+[data-mode=art] .reading .paper:has(.verse-row) {
+  padding:6% 7% 9%;background-position:center;background-size:100% 100%;
+}
+[data-mode=art] .paper-head .chop {display:none}
+[data-mode=art] .paper-head {margin:0 2% 1%;border:0}
+[data-mode=art] .paper-head h2 {font-size:clamp(15px,1.6vw,25px)}
+[data-mode=art] .paper-head .reading-order {font-size:11px;line-height:1.4}
+[data-mode=art] .paper ol {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:2%}
+[data-mode=art] .paper ol li {border:0;min-width:0;position:relative}
+[data-mode=art] .verse-row {
+  position:relative;isolation:isolate;display:flex;flex-direction:column-reverse;
+  align-items:center;justify-content:center;gap:1px;padding:5% 0 3%;min-height:0;text-align:center;
+}
+[data-mode=art] .verse-row .chapter-number,[data-mode=art] .verse-row .stanza {display:none}
+[data-mode=art] .verse-row .folio-figure {width:100%;max-width:min(14vw,19vh);max-height:none}
+[data-mode=art] .verse-copy b {font-size:clamp(16px,1.6vw,25px);color:#39263c;letter-spacing:.1em;border-bottom:1px solid #705138}
+[data-mode=art] li[data-mended=true] .verse-row::before {
+  content:"";position:absolute;inset:12% 8% 15% 13%;z-index:-1;
+  background:linear-gradient(110deg,#d6ad73,#f8dfaf 6%,#ffe7b5 84%,#ceaa76);
+  clip-path:polygon(4% 14%,23% 11%,30% 2%,48% 7%,74% 3%,86% 9%,96% 2%,93% 33%,100% 39%,95% 62%,98% 82%,80% 91%,47% 88%,26% 97%,0 93%,6% 61%,1% 44%);
+}
+[data-mode=art] li:has([data-pose=moving],[data-pose=falling]) .verse-copy b {color:#a53526;border-bottom:3px solid}
+[data-mode=art] .verse-row.rejoined {outline:2px dotted #985c3f;outline-offset:-4px}
+[data-mode=art] .source-row {
+  display:grid;grid-template-columns:minmax(42px,32%) minmax(0,1fr);
+  gap:0 7px;padding:6px 0;border:0;
+}
+[data-mode=art] .source-row .little-copy {grid-column:1;grid-row:1/3}
+[data-mode=art] .little-copy .volume {width:auto;height:min(13vh,95px);max-width:100%}
+[data-mode=art] .source-caption {display:contents}
+[data-mode=art] .source-caption>small {align-self:end}
+[data-mode=art] .source-caption>b {font-size:clamp(15px,1.45vw,22px);align-self:start}
+[data-mode=art] .coverage {grid-column:1/-1;grid-row:3;justify-content:center;gap:0;background:linear-gradient(transparent 40%,#906e48 42% 46%,transparent 48% 55%,#785c40 57% 61%,transparent 63%);padding:0 2px}
+.coverage button {min-width:0;flex:1;line-height:0;position:relative;padding:3px 0}
+.coverage button:is(:hover,:focus-visible) {background:#eed19d38}
+[data-mode=art] .coverage i {width:100%;max-width:39px;height:clamp(30px,4.1vh,44px);pointer-events:none}
+[data-mode=art] .use-copy,[data-mode=art] .use-copy[aria-pressed=true] {
+  grid-column:2;grid-row:2;justify-self:end;align-self:end;transform:translateY(6px);
+  font-size:12px;line-height:1;border:0;min-width:45px;min-height:26px;padding:6px 4px;background:#302135;color:#edcf97;
+}
+[data-mode=art] .use-copy[aria-pressed=true]{background:transparent url('art/knot.webp') left center/contain no-repeat;padding-left:24px;color:#f4dcae}
+[data-mode=art] .sources h2 {font-size:clamp(18px,1.8vw,27px)}
+[data-mode=art] .sources>p {font-size:clamp(11px,1.1vw,15px)}
+[data-mode=art] .leaf-key {justify-content:center;gap:9px}
+[data-mode=art] .judgment {max-width:980px;background:none;justify-content:center;gap:2%;padding:0}
+[data-mode=art] .decision-chance,[data-mode=art] .decision-result {
+  background:var(--art-journey-slip) center/100% 100%;padding:12px 26px;
+}
+[data-mode=art] .judgment .decision-note {flex:0 1 auto;max-width:19em;color:var(--cream)}
+[data-mode=art] .judgment .apply {padding:14px 30px}
+[data-mode=art] .judgment [data-current-verse] {color:#ffda9b}
+[data-mode=art] .judgment>span:only-of-type {color:var(--cream)}
+#verse-leaf form {display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:6px}
+#verse-leaf form:has([data-join]) button:first-child {background:none;color:#673e32}
+@media(prefers-reduced-motion:no-preference) {
+  #verse-leaf[open] article {animation:unfold-leaf .24s ease-out;transform-origin:14% 48%}
+  @keyframes unfold-leaf {from{opacity:.45;transform:perspective(900px) rotateY(-17deg)}to{opacity:1;transform:none}}
+}
+@media(max-height:560px) and (min-width:781px) {
+  [data-mode=art] #stage[data-screen=study]{min-height:0;height:auto;min-height:calc(100svh - 43px);padding-block:8px;gap:4px}
+  [data-mode=art] .workbench{gap:1%}[data-mode=art] .source-row{padding:1px 0}
+  [data-mode=art] .sources:has(.source-row:nth-of-type(3)) .little-copy .volume {height:38px}
+  [data-mode=art] .judgment .apply{padding-block:8px}
+}
+@media(max-width:780px){
+  [data-mode=art] .workbench {grid-template-columns:minmax(90px,.8fr) minmax(0,1.4fr);gap:14px}
+  [data-mode=art] .reading{grid-column:1/-1;grid-row:1}
+  [data-mode=art] .sources{grid-column:2;grid-row:2}
+  [data-mode=art] .payoff{grid-column:1;grid-row:2}
+  [data-mode=art] .reading .paper:has(.verse-row){padding:6% 7% 10%}
+  [data-mode=art] .verse-row .folio-figure{max-width:min(23vw,115px)}
+  [data-mode=art] .source-row{margin:0}
+  [data-mode=art] .little-copy .volume{height:58px}
+  [data-mode=art] .coverage button {min-height:36px}
+  [data-mode=art] .coverage i {height:30px}
+  [data-mode=art] .judgment{flex-wrap:wrap}
+  [data-mode=art] .judgment .decision-note{order:3;max-width:none;text-align:center;flex-basis:100%;margin:.3em}
+  [data-mode=art] .judgment .apply{padding:11px 18px}
+}
+[data-mode=art] .source-row .little-copy {grid-row:1/4;height:auto;align-self:center}
+[data-mode=art] .source-caption>small {grid-column:2;grid-row:1}
+[data-mode=art] .source-caption>b {grid-column:2;grid-row:2}
+[data-mode=art] .source-row .use-copy {grid-column:2;grid-row:3;justify-self:start;align-self:center;transform:none}
+[data-mode=art] .coverage {grid-row:4}
+[data-mode=art] .reading .paper:has(.verse-row){padding-bottom:12%}
+@media(max-width:780px){[data-mode=art] #stage[data-screen=study]{background-size:auto 100%;background-position:center top}}
+#stage{height:100svh}.review-tools{position:fixed;z-index:8;inset:auto 8px 4px auto;color:#ead8b8;font:12px var(--serif)}
+.review-tools summary{cursor:pointer;text-align:end;padding:4px 8px;background:#241c30dc}
+.review-tools[open] .reviewbar{height:auto;max-width:90vw;flex-wrap:wrap;justify-content:flex-end;padding:6px}.review-tools .reviewbar>span{display:none}
+@media(max-width:780px){#stage{height:auto;min-height:100svh}.review-tools{position:relative;inset:auto;padding:4px}}
+#stage[data-screen=study]{height:auto;min-height:100svh;grid-template-rows:auto minmax(min-content,1fr) auto}
+#stage[data-screen=study] .workbench{min-height:min-content}
+@media (min-width:781px) and (max-height:650px){
+ [data-mode=art] #stage[data-screen=study]{padding-block:8px;gap:4px}
+ [data-mode=art] .room-title h1{font-size:29px}
+ [data-mode=art] .reading .paper:has(.verse-row){padding:3.5% 7% 8.5%}
+ [data-mode=art] .verse-row .folio-figure{width:min(100%,15vh)}
+ [data-mode=art] .source-row{padding:2px 0}
+ [data-mode=art] .source-row .little-copy .volume{height:42px}
+ [data-mode=art] .source-row .use-copy{min-height:23px;padding-block:2px}
+ [data-mode=art] .coverage i{height:23px}
+ [data-mode=art] .source-caption>small,[data-mode=art] .sources>p{font-size:10px}
+ [data-mode=art] .sources>p{margin:1px 0}
+ [data-mode=art] .sources .leaf-key{margin-top:2px}
+ [data-mode=art] .decision-chance{padding:6px 19px}
+ [data-mode=art] .judgment{min-height:40px}
+}
