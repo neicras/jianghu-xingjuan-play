@@ -1,0 +1,4 @@
+The small practice silhouettes derive from the project-owned unarmed combat fighter
+frames (palm, deflect, kick, guard, punch and defeat). Original clip provenance
+and model information are in app/remixdock/public/wuxia-engine/fighter/MEDIA-NOTICE.txt.
+Each strip preserves the source alpha, a constant crop and a common floor line.

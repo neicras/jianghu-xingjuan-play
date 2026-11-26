@@ -52,3 +52,19 @@ body[data-mode=wire]{--cream:#242b2f;--muted:#556166;--serif:system-ui,sans-seri
 [data-mode=art] .use-copy[aria-pressed=true]{font-size:0;border:0;background:transparent url('art/knot.webp') center/auto 92% no-repeat;transform:none}
 [data-mode=art] .chop{display:grid;place-content:center;width:35px;height:42px;font-size:0;color:transparent;border:0;transform:none;background:url('art/join.webp') center/contain no-repeat}
 [data-mode=art] .paper:has(+.read-back) .chop{font-size:22px;color:#934037;background:none;border:3px double #934037}
+
+.volume-foot{display:grid;justify-items:center;gap:3px;line-height:1.25;padding:4px 10px}
+.volume-foot b{font-weight:700;color:var(--cream)}.volume-foot small{font-size:.76em;color:var(--muted)}
+.paper li{grid-template-columns:1em minmax(0,1fr) clamp(29px,3.5vw,49px)}
+.practice-mark{justify-self:end;display:block;width:100%;max-width:48px;aspect-ratio:7/6;max-height:clamp(27px,4.9vh,42px);background:none}
+.practice-mark:is([data-pose=moving],[data-pose=passed],[data-pose=falling],[data-pose=fallen]){
+ background-image:url('art/practice-ink.webp');background-size:800% 600%;background-repeat:no-repeat;background-position:0 var(--strip-y)
+}
+.practice-mark[data-pose=fallen]{background-position-x:100%}
+.practice-mark[data-pose=passed]{background-position-x:57.14286%}
+@keyframes ink-form{from{background-position-x:0%}to{background-position-x:100%}}
+@media(prefers-reduced-motion:no-preference){
+ .practice-mark[data-pose=moving]{animation:ink-form .62s steps(7,end) both}
+ .practice-mark[data-pose=passed]{animation:ink-form 1.7s steps(7,end) infinite}
+ .practice-mark[data-pose=falling]{animation:ink-form .50s steps(7,end) both}
+}
