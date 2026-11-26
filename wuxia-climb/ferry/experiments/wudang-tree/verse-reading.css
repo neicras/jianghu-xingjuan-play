@@ -1,0 +1,85 @@
+*{box-sizing:border-box}
+body.verse-reading{margin:0;min-width:0;height:auto;background:#281e32;color:#f7e0af;font-family:var(--serif)}
+#desk{min-height:100svh}
+.verse-shelf,.verse-reader,.verse-bag{width:100%;min-height:100svh;background:linear-gradient(#241a2c66,#22152577),var(--art-books-table) center/cover;color:#f7e0af;padding:clamp(14px,3vw,42px) 5%}
+.verse-reading h1,.verse-reading h2,.verse-reading h3,.verse-reading p{margin:0;text-shadow:none;color:inherit}
+.verse-reading button{font:inherit;cursor:pointer}
+.verse-reading button:focus-visible{outline:3px solid #e69643;outline-offset:3px}
+.verse-shelf{display:grid;grid-template-rows:auto 1fr auto;gap:15px}
+.verse-shelf header p,.verse-shelf footer{font-size:clamp(15px,1.65vw,22px)}
+.verse-reading footer{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:5px 0 max(5px,env(safe-area-inset-bottom))}
+.verse-reading footer button,.ink-exercise button{min-height:44px;padding:8px 23px;border:0;border-radius:0;background:var(--art-journey-slip) center/100% 100%;color:#412b30;font-weight:bold}
+.verse-reader footer button:last-child:not(:first-child),.ink-exercise [data-act="ink"]{background:var(--art-journey-press) center/100% 100%;color:#ffedbc}
+.verse-reading button:disabled{cursor:default;filter:grayscale(.75);opacity:.62}
+.verse-rack{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));align-content:center;gap:clamp(5px,1vw,16px)}
+.verse-rack button{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px;padding:0;border:0;background:none;box-shadow:none;color:#ffe5aa;min-width:0}
+.verse-rack .copy-face{width:100%;max-width:min(200px,30vh)}
+.verse-rack .satchel img{width:96%;max-width:185px}
+.verse-rack strong,.verse-rack small{font-size:clamp(12px,1.3vw,19px);text-shadow:0 1px 3px #16101c}
+.verse-rack small{color:#e3c49a;font-size:clamp(11px,1.15vw,17px)}
+.verse-reader{display:grid;grid-template-rows:1fr auto;align-items:center;gap:8px}
+.binding{display:grid;grid-template-columns:1fr 1fr;align-content:center;background:var(--art-open-manuscript) center/100% 100%;color:#402831;min-height:min(77svh,760px);padding:6% 7% 8%;gap:11%}
+.card-leaf,.verse-leaf{align-self:center;min-width:0}
+.card-leaf{display:grid;justify-items:center;gap:8px}
+.learnt-card{width:min(100%,22vw,26vh);color:#372430}
+.learnt-card .print p{color:#332234;font:700 7.2cqw/1.17 var(--serif);margin:0;text-shadow:none}
+.card-leaf>p{font-size:clamp(13px,1.45vw,19px);max-width:30ch}
+.card-leaf>span{font-weight:bold}
+.verse-leaf h2{font:800 clamp(21px,3vw,43px)/1.12 var(--serif)}
+.verse-leaf nav{display:flex;gap:12px;margin:12px 0 6px}
+.verse-leaf nav button{border:0;background:transparent;color:#694a37;min-height:38px;padding:3px 4px}
+.verse-leaf nav [aria-pressed=true]{color:#8d3329;border-bottom:2px solid}
+.verse-leaf ol{list-style:none;padding:0;margin:6px 0 12px}
+.verse-leaf li{display:flex;gap:.6em;align-items:center;line-height:1.7;font-size:clamp(14px,1.75vw,24px)}
+.verse-leaf li small{color:#7b573c}
+.verse-leaf li i{font:700 .72em var(--serif);border:1px solid #8e3229;color:#8e3229;transform:rotate(-7deg)}
+.verdict{color:#812f26}
+.ink-exercise{padding:8px 0;color:#4e2d26}
+.ink-exercise h3{font-size:18px}
+.ink-exercise p{font-size:15px;margin:5px 0}
+.ink-exercise div{display:flex;gap:4px}
+.ink-exercise button{padding-inline:12px}
+.verse-bag h2{margin-top:22px}
+.bag-cards{display:flex;gap:10px;flex-wrap:wrap}
+@media(max-width:680px) and (orientation:portrait){
+ .verse-shelf,.verse-reader,.verse-bag{padding:10px 3%}
+ .verse-shelf{gap:4px}
+ .verse-rack{grid-template-columns:repeat(3,minmax(0,1fr));row-gap:18px}
+ .verse-rack .copy-face{max-width:119px}
+ .verse-rack strong,.verse-rack small{font-size:12px;line-height:1.2}
+ .verse-reader{display:flex;flex-direction:column;align-items:stretch;height:100dvh}
+ .binding{flex:1;min-height:0;display:block;overflow:auto;overscroll-behavior:contain;background-position:left center;background-size:200% 100%;padding:26px 8% 38px 11%}
+ .card-leaf{grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);column-gap:10px;align-items:start;justify-items:start}
+ .card-leaf .learnt-card{grid-column:1;grid-row:1/4;width:min(100%,144px)}
+ .card-leaf>span{grid-column:2;margin-top:8px;font-size:14px}
+ .card-leaf>p{grid-column:2;font-size:14px}
+ .verse-leaf{margin-top:12px}
+ .verse-leaf nav{margin:3px 0}
+ .verse-leaf li{line-height:1.55;font-size:16px}
+ .verse-leaf ol{margin:4px 0}
+ .verse-bag .learnt-card{width:128px}
+ .verse-reader footer{flex:none}
+}
+@media(orientation:landscape) and (max-height:500px){
+ .verse-reader{padding:4px 3%}
+ .binding{min-height:0;padding:24px 7% 30px}
+ .card-leaf{gap:3px}.learnt-card{width:110px}
+ .verse-leaf nav{margin:0}.verse-leaf ol{margin:2px 0}.verse-leaf li{line-height:1.4}
+}
+.verse-bag [data-act^="archive/"]{padding:.45em 1.2em;min-height:44px;color:#4b2c2d;border:0;background:var(--art-journey-slip) center/100% 100%}
+body.verse-reading {display:block;padding:0}
+.verse-reading main#desk {display:block;width:100%;max-width:none;margin:0;padding:0;border:0}
+.verse-reading header,.verse-reading footer{position:static;background:transparent;border:none;box-shadow:none}
+.verse-reading .verse-rack button:not(.satchel){display:grid;grid-template-rows:auto 2.5em 2.6em;align-items:center;justify-items:center;align-self:center;gap:0}
+.verse-reading .verse-rack strong,.verse-reading .verse-rack small {align-self:start}
+.verse-rack .copy-face{margin-bottom:4px}
+@media(orientation:portrait) and (max-width:680px){
+ .verse-reader .binding{position:relative;isolation:isolate;background:none;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-start;gap:0;padding:5.5svh 9% 9svh 12%}
+ .verse-reader .binding:before{content:"";position:absolute;inset:0;z-index:-1;background:var(--art-open-manuscript) left center/200% 100% no-repeat;pointer-events:none}
+ .verse-reader .card-leaf{width:100%;flex:none;grid-template-columns:minmax(0,.95fr) minmax(0,1.2fr)}
+ .verse-reader .card-leaf .learnt-card{max-width:min(128px,18svh)}
+ .verse-reader .verse-leaf{width:100%;min-height:0;overflow:auto;scrollbar-width:thin}
+ .verse-reader .verse-leaf h2{font-size:21px}
+ .verse-reader .verse-leaf nav button{min-height:36px}
+}
+.verse-leaf .binder-tip{font-size:15px;line-height:1.35;margin-top:4px;color:#644330}
