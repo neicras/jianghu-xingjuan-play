@@ -6,7 +6,6 @@ import {bindingState} from '../bound-book.js';
 import {manualVerses} from '../manual-verses.js';
 import {reviewJourney} from '../review-frames.js';
 
-const families={'劍法':'sword','身法':'step','拳掌':'palm','護體':'guard','內功':'breath','奇竅':'array','軟兵':'whisk'};
 const specimens=[
  ['武當丹劍',[2,0,2,1,2,0],'渡口手記',[['隨身舊譜',[2,2,0,2,1,2]]]],
  ['八卦步',[2,2,2,2,2,1],'師兄手抄',[['雨中散頁',[0,0,1,0,0,2]]]],
@@ -17,7 +16,7 @@ const specimens=[
 const params=new URLSearchParams(location.search),stage=document.querySelector('#stage');
 let mode=params.get('mode')==='wire'?'wire':'art',screen=params.get('screen')==='study'?'study':'shelf';
 let index=0,state,choices,logs,inspected,chosen;
-const beatMs=650;
+const beatMs=720;
 let playback=null,ticker=0;
 function endPlayback(){clearTimeout(ticker);playback=null}
 function advancePlayback(){
@@ -33,66 +32,101 @@ function startPlayback(){
   playback={step:0};ticker=setTimeout(advancePlayback,beatMs);
  }
 }
-// Each row reuses the same eight-frame ink strip after it has passed. The last
-// frame of the separate defeat strip holds a kneeling pose.
-const motionRows={'劍法':[0,1,4,0,1,3],'身法':[3,2,1,2,0,3],'拳掌':[3,0,1,4,0,3],'護體':[3,1,3,1,0,3],'軟兵':[1,0,1,4,1,3]};
+// Only the current verse moves. Finished verses hold a single ink pose.
+const motionStrip={'劍法':0,'身法':2,'拳掌':3,'護體':3,'軟兵':1};
 function updateMarks(record){
- const motions=motionRows[byName.get(specimens[index][0]).branch];
+ const strip=motionStrip[byName.get(specimens[index][0]).branch];
+ const live=stage.querySelector('[data-current-verse]');
+ if(live&&playback)live.textContent='第'+chapters[playback.step]+'式';
  stage.querySelectorAll('[data-practice-row]').forEach((mark,i)=>{
-  const last=i===record.failed;
-  const status=i>=record.rolls.length?'unreached':!playback||i<playback.step?(last?'fallen':'passed'):i===playback.step?(last?'falling':'moving'):'waiting';
+  const settled=!playback||i<playback.step;
+  const fallen=i===record.failed;
+  const status=settled?(i>=record.rolls.length?'unreached':fallen?'fallen':'passed')
+   :i===playback.step?(fallen?'falling':'moving'):'waiting';
   if(mark.dataset.pose===status)return;
   mark.dataset.pose=status;
-  mark.style.setProperty('--strip-y',((last?5:motions[i])/5*100)+'%');
+  mark.style.setProperty('--strip-y',((fallen&&['fallen','falling'].includes(status)?5:settled?3:strip)/5*100)+'%');
   mark.setAttribute('aria-label','第'+chapters[i]+'篇 · '+({waiting:'待演',unreached:'未練到',moving:'試演中',falling:'失手',passed:'已通',fallen:'失手'}[status]));
  });
 }
-function identity(a){return '武當派 · '+ranks[a.rank]+'品'}
+const category=a=>a.branch==='身法'?'輕功':a.branch;
+function identity(a){return '武當派 · '+category(a)+' · '+ranks[a.rank]+'品'}
 
 function reset(){endPlayback();state=reviewJourney('books');choices=new Map();logs=new Map();inspected=null;chosen=new Set([0]);index=0}
 reset();
 function copies(){const [,pages,title,owned]=specimens[index];return [[title,pages],...owned]}
 function openBook(i){endPlayback();index=i;screen='study';inspected=null;chosen=new Set(choices.get(i)||[0]);render(true)}
 function selectedPages(){return collate(copies().filter((_,i)=>chosen.has(i)).map(c=>c[1]))}
-function tint(a){return a.rank<=3?'-gold':a.rank<=6?'-jade':''}
-function volume(a,pages){
- const [wear,condition]=bindingState(pages);
- return '<span class="volume" data-wear="'+wear+'"><img alt="" class="binding" src="art/'+wear+tint(a)+'.webp"><img alt="" class="device" src="art/'+families[a.branch]+'.webp"><span class="wire-glyph">'+a.branch+'</span><span class="book-title">'+a.name+'</span><small class="wire-wear">'+condition+'</small></span>';
+// Each illustration has its own measured title slip. Coordinates are percentages
+// of the trimmed painting, so titles stay on the paper as the object resizes.
+const editions={
+ '武當丹劍':['sword-worn','sword-sound'],
+ '八卦步':['step-sound','step-torn'],
+ '太極拳':['palm-torn','palm-notes','palm-torn'],
+ '武當鐵布衫':['guard-worn'],
+ '太乙雲拂功':['whisk-torn','whisk-worn']
+};
+const materials={sound:'線裝秘笈',worn:'補綴抄本',torn:'散頁殘卷'};
+function volume(a,pages,source=0){
+ const [wear]=bindingState(pages),id=editions[a.name][source];
+ const label=id==='whisk-torn'?'<span>太乙</span><span>雲拂功</span>':'<span>'+a.name+'</span>';
+ return '<span class="volume edition edition-'+id+'" data-wear="'+wear+'"><img alt="" class="binding" src="art/editions/'+id+'.webp"><span class="wire-glyph">'+category(a)+'</span><span class="book-title">'+label+'<i class="sect-seal" aria-hidden="true">武當</i></span><small class="wire-wear">'+materials[wear]+'</small></span>';
 }
 function tag(text){return '<span class="small-tag">'+text+'</span>'}
 function title(hint,heading,aux=''){return '<div class="room-title"><div>'+tag(hint)+'<h1 tabindex="-1">'+heading+'</h1></div>'+aux+'</div>'}
 function shelf(){
  const budget=2-logs.size;
  const books=specimens.map(([name,pages,,owned],i)=>{
-  const a=byName.get(name),[,condition]=bindingState(pages);
-  return '<button class="shelf-item" data-open="'+i+'" aria-label="翻閱《'+name+'》，'+identity(a)+'，'+a.branch+'，'+condition+'，已有'+owned.length+'冊">'+volume(a,pages)+
-   '<span class="volume-foot"><b>'+identity(a)+'</b><small>'+(logs.has(i)?'已入囊':owned.length?'舊藏 '+owned.length+' 冊':'初見此譜')+'</small></span></button>';
+  const a=byName.get(name),[wear]=bindingState(pages);
+  const count=logs.has(i)?state.books[name].length:owned.length;
+  const ownership=count?'書囊已有 '+count+' 冊':'尚未收藏';
+  return '<button class="shelf-item" data-open="'+i+'" aria-label="翻閱《'+name+'》，'+identity(a)+'，'+materials[wear]+'，'+ownership+'">'+volume(a,pages)+
+   '<span class="volume-foot"><b>'+identity(a)+'</b><small>'+materials[wear]+' · '+ownership+'</small></span></button>';
  }).join('');
  return title('渡口 · 戰後拾遺','挑選秘笈','<p class="allowance">尚可取 <b>'+budget+'</b> 冊</p>')+
-  '<div class="shelf">'+books+'</div><div class="shelf-base"><span>翻起一冊，與舊藏對讀。</span><details><summary>辨認書衣</summary><div><b>品階</b>　靛青 · 下三品　玉綠 · 中三品　赭金 · 上三品<br><b>書況</b>　整齊線裝 → 補綴缺角 → 散頁斷線<br><b>書上印記</b>　'+Object.entries(families).map(([key,id])=>'<span class="legend-icon"><img alt="" src="art/'+id+'.webp">'+key+'</span>').join('')+'</div></details></div>';
+  '<div class="shelf">'+books+'</div><div class="shelf-base"><span>翻開一冊，可與書囊裡的同門抄本對讀。</span><details><summary>辨認書衣</summary><div class="dye-key"><span><i></i>靛青　下三品</span><span><i></i>玉綠　中三品</span><span><i></i>赭金　上三品</span></div></details></div>';
 }
 function card(a){return '<div class="target-card">'+cardFace(a)+'</div>'}
-function instruction(a,line,q){
+function instruction(a,line,q,base=q){
  const [start,end]=manualVerses[a.name][line];
- return q===0?'<span class="lacuna" aria-label="全句缺失"></span>':start+'，'+(q===2?end+'。':'<span class="lacuna half" aria-label="下半句缺失"></span>');
+ const patch=t=>'<span class="mended" title="這段由另一份抄本接回">'+t+'</span>';
+ if(!q)return '<span class="lacuna" aria-label="全句缺失"></span>';
+ const first=start+'，',last=end+'。';
+ if(q===2&&base===0)return patch(first+last);
+ return (base===0?patch(first):first)+(q===2?(base===1?patch(last):last):'<span class="lacuna half" aria-label="下半句缺失"></span>');
+}
+const conditionNames=['缺頁','殘頁','完整'];
+function leafStrip(pages){
+ const desc=pages.map((q,i)=>'第'+chapters[i]+'篇'+conditionNames[q]).join('、');
+ return '<span class="coverage" role="img" aria-label="'+desc+'" title="'+desc+'">'+pages.map((q,i)=>'<i data-q="'+q+'" aria-hidden="true">'+chapters[i]+'</i>').join('')+'</span>';
+}
+function verdict(a,pages,odds,rec){
+ const button=(action,text,disabled=false)=>'<button class="apply" data-do="'+action+'" '+(disabled?'disabled':'')+'>'+text+'</button>';
+ if(playback)return '<span class="decision-note">循譜試演</span><strong data-current-verse>第一式</strong>';
+ if(rec)return '<div class="decision-result"><strong>'+(rec.failed<0?'六式連成':'止於第'+chapters[rec.failed]+'式')+'</strong><span>'+(rec.failed<0?'《'+a.name+'》已加入牌組。':'這次未能學成，抄本已收入書囊。')+'</span></div>'+button('shelf','回書攤');
+ if(!chosen.size)return '<span>從手邊選一份抄本，攤開來對讀。</span>'+button('train','收下試演',true);
+ const weakest=odds.indexOf(Math.min(...odds));
+ const clue=pages[weakest]===0?'第'+chapters[weakest]+'篇失傳，這一式要自行推敲。':
+  pages[weakest]===1?'第'+chapters[weakest]+'篇只剩半句，這一式未有十足把握。':
+  odds[weakest]<100?'第'+chapters[weakest]+'式尚欠《'+a.parent+'》的根基。':'六篇口訣俱全，可以一氣練成。';
+ return '<div class="decision-chance"><small>練成把握</small><strong>'+trainingChance(state,a,pages)+'%</strong></div><span class="decision-note">'+clue+'</span>'+button('train',logs.size>=2?'本場已取兩冊':'收下試演',logs.size>=2);
 }
 function study(){
  const a=byName.get(specimens[index][0]),sources=copies(),pages=selectedPages(),odds=gateOdds(state,a,pages),rec=logs.get(index);
  const seeOriginal=inspected!==null,read=seeOriginal?sources[inspected][1]:pages;
+ const first=sources.find((_,i)=>chosen.has(i));
  const chapterList=chapters.map((n,i)=>{
-  const fixed=!seeOriginal&&chosen.has(0)&&chosen.size>1&&pages[i]>sources[0][1][i];
-  const mark=rec&&!seeOriginal?'<span class="practice-mark" data-practice-row="'+i+'" role="img"></span>':'<small class="impression">'+(fixed?'補':'')+'</small>';
-  return '<li data-q="'+read[i]+'"><span class="chapter-number">'+n+'</span><span class="stanza">'+instruction(a,i,read[i])+'</span>'+mark+'</li>';
+  const base=seeOriginal||!first?read[i]:first[1][i];
+  const mark=rec&&!seeOriginal?'<span class="practice-mark" data-practice-row="'+i+'" role="img"></span>':'';
+  return '<li data-q="'+read[i]+'"><span class="chapter-number">'+n+'</span><span class="stanza">'+instruction(a,i,read[i],base)+'</span>'+mark+'</li>';
  }).join('');
- const candidateList=sources.map(([label,p],i)=>'<div class="source-row"><button data-look="'+i+'" class="little-copy" aria-label="翻閱原本：'+label+'">'+volume(a,p)+'</button><span class="source-caption"><small>'+(i===0?'新得':'書囊')+'</small><b>'+label+'</b><span class="coverage" aria-label="'+p.map(v=>['缺','殘','全'][v]).join('、')+'">'+p.map(v=>'<i data-q="'+v+'"></i>').join('')+'</span></span><button class="use-copy" data-use="'+i+'" aria-pressed="'+chosen.has(i)+'" aria-label="'+(chosen.has(i)?'移出':'加入')+label+'" '+(rec?'disabled':'')+'>'+(chosen.has(i)?'✓':'＋')+'</button></div>').join('');
- const chance=rec?rec.odds.reduce((n,p)=>n*p/100,100):trainingChance(state,a,pages);
- const train=playback?'試演中…':rec?(rec.failed<0?'學成入牌組':'止於第'+chapters[rec.failed]+'篇'):logs.size>=2?'本場已取兩冊':!chosen.size?'先選參校本':'收下此冊，試演';
- return title('校書案　／　'+identity(a)+' · '+a.branch,a.name,'<button data-do="shelf" class="return">‹ 回書攤</button>')+
+ const candidateList=sources.map(([label,p],i)=>'<div class="source-row"><button data-look="'+i+'" class="little-copy" aria-label="翻閱原本：'+label+'">'+volume(a,p,i)+'</button><span class="source-caption"><small>'+(i===0?'本次拾得':'來自書囊')+'</small><b>'+label+'</b>'+leafStrip(p)+'</span><button class="use-copy" data-use="'+i+'" aria-pressed="'+chosen.has(i)+'" aria-label="'+(chosen.has(i)?'移出':'加入')+label+'" '+(rec?'disabled':'')+'>'+(chosen.has(i)?'✓':'＋')+'</button></div>').join('');
+ return title('校書案　／　'+identity(a),a.name,'<button data-do="shelf" class="return">‹ 回書攤</button>')+
  '<div class="workbench"><section class="payoff"><h2>'+(!playback&&rec?.failed===-1?'已加入牌組':'學成招式')+'</h2>'+card(a)+'</section>'+
  '<section class="reading"><div class="paper"><div class="paper-head"><span class="chop">'+(seeOriginal?'原':'校')+'</span><div><small>'+a.name+'</small><h2>'+(seeOriginal?sources[inspected][0]:'合校稿')+'</h2></div></div><ol>'+chapterList+'</ol></div>'+
  (seeOriginal?'<button data-do="joined" class="read-back">看合校稿</button>':'')+'</section>'+
- '<section class="sources"><h2>參校抄本 <small>'+chosen.size+'／'+sources.length+'</small></h2>'+candidateList+'<p>點書可翻閱，勾選即參校。</p></section></div>'+
- '<div class="judgment"><div><small>練成把握</small><strong>'+(chosen.size?Number(chance.toFixed(1))+'%':'—')+'</strong></div><div class="gates"><span>'+(playback?'依譜試演，逐式過關。':rec?(rec.failed<0?'六式連成，招式已入牌組。':'抄本仍在，今次試演已用。'):'六篇依次試演，全部通過即學成。')+'</span><div>'+odds.map((p,i)=>'<small>'+chapters[i]+'　'+(rec?rec.odds[i]:chosen.size?p:'—')+(chosen.size?'%':'')+'</small>').join('')+'</div></div><button class="apply" data-do="train" '+(rec||logs.size>=2||!chosen.size?'disabled':'')+'>'+train+'</button></div>';
+ '<section class="sources"><h2>參校抄本 <small>'+chosen.size+'／'+sources.length+'</small></h2>'+candidateList+'<div class="leaf-key">'+conditionNames.map((text,q)=>'<span><i data-q="'+q+'"></i>'+text+'</span>').join('')+'</div><p>翻書看原文，繫繩來參校。</p></section></div>'+
+ '<div class="judgment" aria-live="polite">'+verdict(a,pages,odds,rec)+'</div>';
 }
 function render(focus=false){
  document.body.dataset.mode=mode;stage.dataset.screen=screen;
