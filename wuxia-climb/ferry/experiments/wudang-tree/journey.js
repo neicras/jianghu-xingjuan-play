@@ -1,10 +1,10 @@
 import {duels,patterns,openingMoves} from './encounter-tables.js?v=1124f';
 import {companionFor,variationFor} from './book-pairings.js?forms7';
-import {balance} from './balance-settings.js?v=1124f';
-import {fresh,win,take,study,rehearse,equip,ready,deck,archiveCopy} from './rules.js?forms7';
-import {startBout} from './combat.js?forms7';
+import {balance} from './balance-settings.js?folio26';
+import {fresh,win,take,study,rehearse,equip,ready,deck,archiveCopy} from './rules.js?folio26';
+import {startBout} from './combat.js?folio26';
 import {arts,byName} from './catalogue.js?forms7';
-import {collection,estimate,rollCopy} from './manuscripts.js?forms7';
+import {collection,collate,chapters,estimate,rollCopy} from './manuscripts.js?forms7';
 
 export const road=[
  ['fighter'],['fighter','cache','inn'],['school','pair','guard'],['inn','school'],['elite1','bypass'],
@@ -193,7 +193,7 @@ export function drill(s){
 export function enter(s,lane){
  const r=s.route,floor=r.floor+1;
  if(r.phase!=='map'||!Number.isInteger(lane)||!road[floor-1]?.[lane]||!linked(floor,r.path.at(-1),lane))return false;
- const id=road[floor-1][lane];r.floor=floor;r.path.push(lane);r.free=null;r.last='';r.tookRelic=false;r.tookItem=false;delete r.loot;delete r.purchases;delete r.stop;
+ const id=road[floor-1][lane];r.floor=floor;r.path.push(lane);r.free=null;r.last='';r.tookRelic=false;r.tookItem=false;delete r.loot;delete r.fightReport;delete r.purchases;delete r.stop;
  delete r.encounter;
  if(id==='bypass'){r.phase='map';r.last='你沿擂台後的小徑繞行，保住氣血，放棄了這一擂的信物。'}
  else if(duels[id])beginEncounter(s,floor>1&&ordinaryRooms.includes(id)?opponents(r):id);
@@ -255,6 +255,12 @@ export function exploreCave(s,choice){
 export function finishFight(s){
  const r=s.route,b=s.bout;if(r.phase!=='fight'||!['won','lost'].includes(b?.phase))return false;
  r.hp=b.hp;
+ // Older bouts do not have complete observations. Leave their ordinary payout intact.
+ if(b.record?.casts||b.record?.hurt||b.record?.blocked){
+  const {guard,firstLink,hurt}=b.record;
+  const reason=firstLink?'link':guard?'guard':b.phase==='won'&&hurt===0?'clean':null;
+  r.fightReport={...b.record,turns:b.turn,reason,bonus:0};
+ }
  if(b.phase==='lost'){r.phase='lost';r.last=b.log.join(' ');delete s.bout;return true}
  if(s.relics.includes('藥葫蘆'))r.hp=Math.min(r.maxHp,r.hp+balance.gourdHeal);
  delete s.bout;
@@ -267,6 +273,10 @@ export function finishFight(s){
   r.phase='reward';return true;
  }
  r.loot=victoryLoot(s,b.seed);
+ if(r.fightReport?.reason){
+  r.fightReport.bonus=balance.insightXp;
+  r.loot.xp+=r.fightReport.bonus;
+ }
  if(s.wins===0){
   const count=r.curriculum?.offer??3;
   const palm=nextBookFight(r)?.kind==='guard'&&!s.learned.includes('武當綿掌')?'武當綿掌':'武當長拳';
@@ -294,6 +304,9 @@ export function finishFight(s){
 }
 export function receive(s,name){
  if(s.route.phase!=='reward'||!take(s,name))return false;
+ const prior=collate(s.before),after=collate(collection(s,name));
+ const improved=chapters.filter((_,i)=>after[i]>prior[i]);
+ s.route.last='《'+name+'》'+(!s.before.length?'已收入書囊。':improved.length?'補回第'+improved.join('、')+'篇，已可與舊本合讀。':'這冊所載的篇章，舊本已有了。');
  if(!s.learned.includes(name)){
   s.route.practiceBooks=[...fieldPractice(s),name];s.route.free=s.route.practiceBooks[0];
  }

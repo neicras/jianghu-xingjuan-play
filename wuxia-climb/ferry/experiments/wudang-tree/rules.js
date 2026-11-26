@@ -1,4 +1,4 @@
-import {balance} from './balance-settings.js?v=1124f';
+import {balance} from './balance-settings.js?folio26';
 import {arts, basics, byName} from "./catalogue.js?forms7";
 import {collection,collate,estimate,withCopy,deal,xpPerWin,pageOdds} from "./manuscripts.js?forms7";
 import {acquisition} from "./editions.js?forms7";
@@ -61,6 +61,7 @@ export function study(s,a,rng=Math.random){
   return rehearse(s,a,estimate(s,a),rng);
 }
 export function rehearse(s,a,price,rng){
+  const foundation=!a.parent||s.learned.includes(a.parent);
   const odds=gateOdds(s,a), rolls=[];
   for(const threshold of odds){
     const die=1+Math.floor(rng()*100);
@@ -75,7 +76,7 @@ export function rehearse(s,a,price,rng){
     s.gateNotes[a.name]??=odds.map(()=>0);
     s.gateNotes[a.name][failed]++;
   }
-  s.lastPractice={name:a.name,odds,rolls,failed,spent};
+  s.lastPractice={name:a.name,odds,rolls,failed,spent,foundation,sections:collate(collection(s,a.name))};
   return failed<0;
 }
 export function equip(s,a){

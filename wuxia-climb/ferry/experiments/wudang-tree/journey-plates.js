@@ -1,8 +1,8 @@
 import {supportArt} from './art-library/support-files.js';
 // These rooms use real journey state. The artwork carries no labels or quantities.
-import {teachers, mentorBasics, wares, spoils, fieldPractice, bagCapacity} from './journey.js?forms7';
+import {teachers, mentorBasics, wares, spoils, fieldPractice, bagCapacity} from './journey.js?folio26';
 import {byName,effect} from './catalogue.js?forms7';
-import {pickedBooks,picksLeft,rewardAmount,trainingChance} from './rules.js?forms7';
+import {pickedBooks,picksLeft,rewardAmount,trainingChance} from './rules.js?folio26';
 
 const art=(id,cls='')=>'<img alt="" draggable="false" class="'+cls+'" src="'+supportArt("journey-"+id)+'">';
 const ware=n=>'<img alt="" draggable="false" src="'+supportArt("item-"+wares[n].tile)+'">';
@@ -15,10 +15,20 @@ export function departure(selected,btn){
  return '<section class="jp-room jp-depart"><h2>臨行贈禮</h2><div class="jp-seats">'+seats+'</div><div class="jp-foot"><div class="jp-slip"><b>'+(teachers[id]||hosts[id])+'</b><p>'+notes+'</p></div>'+btn('gift/'+id,'啟程','jp-press')+'</div></section>';
 }
 
+function fightLine(report){
+ if(report.reason==='link')return '第 '+report.firstLink.turn+' 回合使出《'+report.firstLink.name+'》，接上了前招。';
+ if(report.reason==='guard')return '第 '+report.guard.turn+' 回合，'+report.guard.enemy+'的一擊被你盡數擋下，抵去 '+report.guard.amount+' 點傷害。';
+ if(report.reason==='clean')return '這場比武，你全身而退。';
+ return '交手 '+report.turns+' 回合，你的護體抵去 '+report.blocked+' 點傷害。';
+}
+export function fightNotes(report){
+ return '<h2>比武手記</h2><p>'+fightLine(report)+'</p><p>交手 '+report.turns+' 回合　·　抵去 '+report.blocked+' 點傷害　·　失去 '+report.hurt+' 點氣血　·　接招 '+report.links+' 次</p>'+
+ (report.bonus?'<p>從這一仗多領悟了一點功夫，戰後歷練多得 '+report.bonus+' 點。每場只計一次。</p>':'');
+}
 const resourceArt={gold:'coins',xp:'diary',ticket:'bookmark'};
 export function rewardPile(s,btn){
  const r=s.route,available=spoils(s),practice=fieldPractice(s),left=picksLeft(s),picked=pickedBooks(s);
- const resourceNames={gold:'銅錢 '+rewardAmount(s,'gold')+' 文',xp:'歷練 '+rewardAmount(s,'xp')+' 點',ticket:'校書籤 ×1'};
+ const resourceNames={gold:'銅錢 '+rewardAmount(s,'gold')+' 文',xp:'歷練 '+rewardAmount(s,'xp')+' 點'+(r.fightReport?.bonus?'（含心得 +'+r.fightReport.bonus+'）':''),ticket:'校書籤 ×1'};
  const resources=Object.keys(resourceNames).filter(k=>Object.hasOwn(s.rewards,k)).map(k=>{
   const claimed=s.rewards[k],label=resourceNames[k];
   return btn('claim/'+k,(claimed?'<i class="jp-taken">已領</i>':art(resourceArt[k]))+'<span>'+label+'</span>','jp-find',claimed);
@@ -33,7 +43,7 @@ export function rewardPile(s,btn){
  const learn=practice.map(n=>btn('train/'+n,'試演《'+n+'》 · '+trainingChance(s,byName.get(n))+'%','jp-study')).join('');
  const unclaimed=left||available.length||Object.values(s.rewards).includes(false);
  const message=escape(r.last)||((r.loot?.elite||[5,10].includes(r.floor))?'守關得勝，可挑一件守關信物。':!s.offer.length?'這回沒尋到抄本。下一場比武得勝，便可再挑秘笈。':'點選想帶走的戰利品。');
- return '<section class="jp-room jp-loot"><h2>戰後所得</h2><div class="jp-takings">'+resources+'</div>'+books+'<div class="jp-drops">'+bundles+'</div><div class="jp-drug">'+(drug?btn(s.bag.length>=bagCapacity?'swap/'+drug:'pack/'+drug,ware(drug)+'<span>'+drug+(s.bag.length>=bagCapacity?' · 換藥':'')+'</span>','jp-find'):'')+'</div><div class="jp-foot"><div class="jp-slip" aria-live="polite"><p>'+message+'</p>'+learn+'</div>'+btn('leave',unclaimed?'留下餘物上路':'繼續上路','jp-press')+'</div></section>';
+ return '<section class="jp-room jp-loot"><h2>戰後所得</h2><div class="jp-takings">'+resources+'</div>'+books+'<div class="jp-drops">'+bundles+'</div><div class="jp-drug">'+(drug?btn(s.bag.length>=bagCapacity?'swap/'+drug:'pack/'+drug,ware(drug)+'<span>'+drug+(s.bag.length>=bagCapacity?' · 換藥':'')+'</span>','jp-find'):'')+'</div><div class="jp-foot"><div class="jp-slip" aria-live="polite">'+learn+(r.fightReport?'<button class="bout-entry" data-action="boutNotes" aria-label="翻開比武手記"><b>比武手記 ›</b> '+(practice.length?'':escape(fightLine(r.fightReport)))+'</button>':'')+'<p>'+message+'</p>'+'</div>'+btn('leave',unclaimed?'留下餘物上路':'繼續上路','jp-press')+'</div></section>';
 }
 export function gearOffers(s,index,btn){
  const group=['戰後選裝','守關獎勵'][index];
@@ -46,5 +56,5 @@ export function ending(s,btn){
  const path=points.map(p=>p.join(',')).join(' ');
  const trail='<svg class="jp-trail" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><polyline points="'+path+'" fill="none" stroke="#deb567" stroke-width="3" vector-effect="non-scaling-stroke"/>'+points.map(([x,y])=>'<circle cx="'+x+'" cy="'+y+'" r=".72" fill="#ffe2a0"/>').join('')+'</svg>';
  const label=won?'守壇告捷':'此行止步';
- return '<section class="jp-room jp-ending"><div class="jp-scroll">'+art('scroll','jp-roll')+trail+'<strong class="jp-result '+(won?'won':'lost')+'">'+label+'</strong>'+btn('deck','牌組','jp-tab')+'</div><div class="jp-endnote"><b>第 '+r.floor+' 站　·　'+s.wins+' 場勝仗　·　學成 '+s.learned.length+' 門</b><p>'+(won?'守壇劍宗收劍認輸。尚餘 '+r.hp+' 點氣血。':escape(r.last)+' 氣血耗盡。')+'</p></div>'+btn('retry','重新出發','jp-press')+'</section>';
+ return '<section class="jp-room jp-ending"><div class="jp-scroll">'+art('scroll','jp-roll')+trail+'<strong class="jp-result '+(won?'won':'lost')+'">'+label+'</strong>'+btn('deck','牌組','jp-tab')+'</div><div class="jp-endnote"><b>第 '+r.floor+' 站　·　'+s.wins+' 場勝仗　·　學成 '+s.learned.length+' 門</b><p>'+(won?'守壇劍宗收劍認輸。尚餘 '+r.hp+' 點氣血。':escape(r.last)+' 氣血耗盡。')+'</p>'+(r.fightReport?btn('boutNotes','翻看此戰手記','bout-entry'):'')+'</div>'+btn('retry','重新出發','jp-press')+'</section>';
 }

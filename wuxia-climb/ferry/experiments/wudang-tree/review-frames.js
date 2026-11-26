@@ -1,4 +1,5 @@
-import {newJourney,gift,enter,finishFight,receive,train,leave} from './journey.js?forms7';
+import {play,endRound} from './combat.js?folio26';
+import {newJourney,gift,enter,finishFight,receive,train,leave} from './journey.js?folio26';
 
 export const frames=[
  ['gift','餞行席'],['map','江湖路線'],['fight','比武出招'],['reward','戰後所得'],
@@ -10,6 +11,14 @@ export const frames=[
 // Fixed examples used only by the frame viewer. Build rooms with the same
 // entry and reward functions as a run, then allow normal interaction in memory.
 export function reviewJourney(id,sample){
+ // A recorded opening. Resolve the cards through combat so the receipt and loot match.
+ if(id==='reward'){
+  const s=newJourney(1);gift(s,'sword');enter(s,0);
+  for(const card of ['連環劍0','橫劍當胸1','橫劍當胸2','吐納0',null,'連環劍1','一線穿雲1',null,'白虹劍法']){
+   if(card===null)endRound(s.bout);else play(s.bout,card);
+  }
+  finishFight(s);return s;
+ }
  // A regular opening draw for replaying the tassel and exposed damage calculation.
  if(id==='fight'&&sample==='exposed'){
   const s=newJourney(5);gift(s,'sword');enter(s,0);return s;

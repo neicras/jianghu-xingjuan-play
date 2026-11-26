@@ -42,3 +42,6 @@ body.jp-active{background:#211d30;display:flex;flex-direction:column;height:100d
 .jp-room button:hover:enabled:not(:focus-visible){outline:none}
 .jp-room .jp-find:hover:enabled span,.jp-room .jp-press:hover:enabled{filter:brightness(1.09)}
 .jp-taken{background:transparent var(--art-journey-won) center/100% 100% no-repeat;border:0;padding:.32em .6em}
+
+.jp-slip .bout-entry{display:block;max-width:100%;margin:0;padding:.18em 0;background:transparent;border:0;border-bottom:1px dashed #916546;border-radius:0;box-shadow:none;color:#402b26;text-align:left;font:inherit;cursor:pointer}
+.jp-slip .bout-entry b{color:#842e22}

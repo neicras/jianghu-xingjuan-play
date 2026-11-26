@@ -28,7 +28,16 @@ export function rehearsalResult(a,last){
     const status=die==null?'未練到':die<=p?'過關':'失手';
     return '<tr><th>第'+chapters[i]+'篇　'+names[i]+'</th><td>'+p+'%</td><td>'+(die??'—')+'</td><td>'+glyph(die==null?'waiting':die<=p?'pass':'fail')+status+'</td></tr>';
   }).join('');
-  return '<h2>'+ (passed?'學成《'+a.name+'》':'《'+a.name+'》未能練成')+'</h2><p>'+
-    (passed?'六篇一氣呵成，可以把這門招式放入牌組。':'練到「'+names[last.failed]+'」時，'+setbacks[a.branch][last.failed]+'。你停下翻看這一篇。抄本保留，下次從第一篇重新演練，這一關的把握提高至 '+Math.min(100,last.odds[last.failed]+10)+'%。')+
-    '</p><p>'+(last.spent?'這次耗去 '+last.spent+' 點歷練。':'趁著招意尚在，這一遍未耗歷練。')+'</p><table class="roll-log"><caption>逐關擲百分骰，點數不高於把握便過關</caption><thead><tr><th>篇目</th><th>把握</th><th>骰點</th><th>結果</th></tr></thead><tbody>'+rows+'</tbody></table>';
+  const traces=names.map((name,i)=>{
+    const state=i>=last.rolls.length?'waiting':i===last.failed?'fail':'pass';
+    const quality=last.sections?['缺頁','殘頁','全篇'][last.sections[i]]+' · ':'';
+    return '<li class="gate-'+state+'" style="--beat:'+i+'"><small>'+chapters[i]+'</small><b>'+name+'</b><span>'+quality+last.odds[i]+'%</span><strong>'+({pass:'已通',fail:'受阻',waiting:'未至'}[state])+'</strong></li>';
+  }).join('');
+  const i=last.failed,sections=last.sections;
+  const cause=i<0?'':last.foundation===false&&(i===2||i===5)?'此處承接《'+a.parent+'》；未學前功，這一式較難接上。':sections&&sections[i]<2?'手上各冊的第'+chapters[i]+'篇'+(sections[i]===0?'都是缺頁':'仍有缺字')+'，值得另找一冊參照。':'';
+  const feedback=passed?'六篇首尾相接，這門功夫練成了。':
+    '演到「'+names[last.failed]+'」，'+setbacks[a.branch][last.failed]+'。'+cause+'抄本仍在。再練從第一篇起，這一關的把握會由 '+last.odds[last.failed]+'% 提至 '+Math.min(100,last.odds[last.failed]+10)+'%。';
+  return '<section class="practice-reading"><h2>試演《'+a.name+'》</h2><ol class="practice-trace" aria-label="六篇試演結果">'+traces+'</ol>'+
+    '<p>'+feedback+'</p><small>'+(last.spent?'此番用了 '+last.spent+' 點歷練。':'趁記憶猶新，當場試演，未耗歷練。')+'</small>'+
+    '<details><summary>翻看逐篇骰點</summary><table class="roll-log"><caption>骰點不高於該篇把握，即可接演下一篇。</caption><thead><tr><th>篇目</th><th>把握</th><th>骰點</th><th>結果</th></tr></thead><tbody>'+rows+'</tbody></table></details></section>';
 }

@@ -1,24 +1,24 @@
 import {trailTools,wallet,objectImage} from './trail-hud.js';
 import {cover} from './bound-book.js?forms7';
-import {atlas} from './route-scroll.js?forms7';
+import {atlas} from './route-scroll.js?folio26';
 import {supportArt} from './art-library/support-files.js?branch=1';
-import {newJourney,gift,enter,finishFight,receive,train,rest,innRecovery,leave,prepareJourney,lessons,drill,goods,spoils,pack,useItem,wares,apothecary,buyMedicine,purchaseLimit,bagCapacity,exploreCave,caveRisk,escort,storyAt,storyLimit,marketRanges,stockAt,buyAtStall} from './journey.js?forms7';
-import {play,endRound,settleChoice} from './combat.js?forms7';
-import {manual,navigateRegister} from './manual.js?forms7';
+import {newJourney,gift,enter,finishFight,receive,train,rest,innRecovery,leave,prepareJourney,lessons,drill,goods,spoils,pack,useItem,wares,apothecary,buyMedicine,purchaseLimit,bagCapacity,exploreCave,caveRisk,escort,storyAt,storyLimit,marketRanges,stockAt,buyAtStall} from './journey.js?folio26';
+import {play,endRound,settleChoice} from './combat.js?folio26';
+import {manual,navigateRegister} from './manual.js?folio26';
 import {editionSheet} from './book-view.js?forms7';
-import {arena,paintBout,animateBout,pileSheet} from './arena.js?forms7';
-import {displayBookDialog} from './rewards-view.js?forms7';
-import {rehearsalResult} from './rehearsal.js?forms7';
-import {deck,picksLeft,attemptFee,claimReward,trainingChance,ready,equip} from './rules.js?forms7';
+import {arena,paintBout,animateBout,pileSheet} from './arena.js?folio26';
+import {displayBookDialog} from './rewards-view.js?folio26';
+import {rehearsalResult} from './rehearsal.js?folio26';
+import {deck,picksLeft,attemptFee,claimReward,trainingChance,ready,equip} from './rules.js?folio26';
 import {estimate,reroll} from './manuscripts.js?forms7';
-import {frames,reviewJourney} from './review-frames.js?forms7';
+import {frames,reviewJourney} from './review-frames.js?folio26';
 import {descriptions} from './annotations.js?forms7';
 import {effect,byName} from './catalogue.js?forms7';
 import {keywords,statuses,marked,glyph} from './vocabulary.js';
 import {cardFace} from './card-face.js?forms7';
 
-import {merchant} from './merchant.js?forms7';
-import {departure,rewardPile,gearOffers,ending} from './journey-plates.js?forms7';
+import {merchant} from './merchant.js?folio26';
+import {fightNotes,departure,rewardPile,gearOffers,ending} from './journey-plates.js?folio26';
 let heldWare=null, seat='sword';
 
 const key='wudang-journey-15-v1',$=id=>document.getElementById(id);
@@ -320,6 +320,7 @@ document.addEventListener('click',async e=>{
  }
  if(action==='edition'){modal(editionSheet(s,byName.get(v),Number(i)));return}
  if(action==='preview'){modal('<div class="full-card">'+cardFace(byName.get(v),s.stars.includes(v))+'</div>');return}
+ if(action==='boutNotes'&&r.fightReport){modal(fightNotes(r.fightReport));return}
  if(action==='record'){modal(rehearsalResult(byName.get(v),s.lastPractice));return}
  if(action==='toggle'&&['map','inn','school','reward','cache'].includes(r.phase))equip(s,byName.get(v));
  if(action==='map'){modal(atlas(r));return}

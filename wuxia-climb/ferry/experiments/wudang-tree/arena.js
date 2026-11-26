@@ -2,7 +2,7 @@ import {supportArt} from './art-library/support-files.js';
 import {activeStates,glyph} from './vocabulary.js';
 import {cardFace} from './card-face.js?forms7';
 import {byName} from './catalogue.js?forms7';
-import {encounters,forecast,intent,price,readPenalty,followupReady} from './combat.js?forms7';
+import {encounters,forecast,intent,price,readPenalty,followupReady} from './combat.js?folio26';
 import {drawScene,loadScene,DURATION} from '../../altar-duel/scene.js?fixedLight=1';
 import {frame,neutral} from '../../altar-duel/action-frame.js';
 

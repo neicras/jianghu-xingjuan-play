@@ -1,8 +1,8 @@
 // Original six-line verses for the five opening manuscripts in the reading study.
 import {byName} from './catalogue.js';
-import {reviewJourney} from './review-frames.js';
-import {receive} from './journey.js';
-import {equip,mergedCopies,pickedBooks,picksLeft} from './rules.js';
+import {reviewJourney} from './review-frames.js?folio26';
+import {receive} from './journey.js?folio26';
+import {equip,mergedCopies,pickedBooks,picksLeft} from './rules.js?folio26';
 import {collection,collate} from './manuscripts.js';
 export const verses={
  太極劍法:[

@@ -1,7 +1,7 @@
-import {balance} from './balance-settings.js?v=1124f';
+import {balance} from './balance-settings.js?folio26';
 // A bout snapshots this exact library deck, including refinement of individual copies.
 import {byName,hasKeyword} from './catalogue.js?forms7';
-import {deck} from './rules.js?forms7';
+import {deck} from './rules.js?folio26';
 import {profiles} from './encounter-tables.js?v=1124f';
 export const encounters=profiles.map(p=>p.title);
 export function intent(b,e){
@@ -56,7 +56,7 @@ function draw(b,n){
 export function startBout(s,profile=0,seed=Date.now()){
  const b={profile,seed:seed>>>0,turn:0,hp:40,maxHp:40,block:0,energy:3,draw:[],discard:[],exhaust:[],hand:[],target:0,
   foes:profiles[profile].enemies.map(([name,hp,block,moves])=>({name,hp,maxHp:hp,block,moves})),
-  powers:{},nextEnergy:0,nextDraw:0,carry:false,discount:{},attackBonus:0,palmBonus:0,phase:'playing',pending:null,log:[]};
+  record:{casts:0,blocked:0,hurt:0,links:0},powers:{},nextEnergy:0,nextDraw:0,carry:false,discount:{},attackBonus:0,palmBonus:0,phase:'playing',pending:null,log:[]};
  b.draw=shuffle(b,deck(s).map(c=>({...c,star:s.stars.includes(c.id)})));
  // Draw pops from the end. Keep the shuffled order within both groups.
  b.draw=b.draw.filter(c=>!hasKeyword(c,'起手')).concat(b.draw.filter(c=>hasKeyword(c,'起手')));
@@ -107,6 +107,13 @@ export function settleChoice(b,id=null){
 }
 // Record the two visible meters immediately after each resolved contact.
 function contact(b,emit,e,move){
+ const record=b.record;
+ if(record&&move.who==='foe'&&move.kind==='strike'){
+  record.blocked+=move.absorbed;record.hurt+=move.lost;
+  if(move.absorbed>0&&!move.lost&&(!record.guard||move.absorbed>record.guard.amount)){
+   record.guard={enemy:e.name,amount:move.absorbed,turn:b.turn};
+  }
+ }
  if(!emit)return;
  emit({...move,index:b.foes.indexOf(e),heroHP:b.hp,heroBlock:b.block,foeHP:e.hp,foeBlock:e.block});
 }
@@ -120,6 +127,10 @@ export function play(b,id,onMove){
  if(a.branch==='傷勢'){b.exhaust.push(c);b.log=['針灸匣生效，消耗《'+name+'》。'];return true}
  const pair=a.rule.match(/\[(\d+)\|(\d+)\]/),v=Number(pair[c.star?2:1]);
  const prev=b.seen[family]||0,p=b.powers,linked=followupReady(b,name);
+ if(b.record){
+  b.record.casts++;
+  if(linked){b.record.links++;b.record.firstLink??={name,turn:b.turn}}
+ }
  const priorHP=b.foes.reduce((n,f)=>n+f.hp,0), oldBlock=b.block;
  const recognized=readPenalty(e,name);
  const openings=[];
