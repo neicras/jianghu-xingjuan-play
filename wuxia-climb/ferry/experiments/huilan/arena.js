@@ -155,7 +155,7 @@ function showContact(stage,b,move){
 }
 
 // Resolve once. Animate the original, still-visible board before drawing the next hand or result.
-export async function animateBout(b,resolve,save,action){
+export async function animateBout(b,resolve,save,action,presentation){
  const view=structuredClone(b),moves=[];
  if(!resolve(move=>moves.push(move)))return;
  cue((action??(moves[0]?.who==='foe'?'endRound':'cast'))==='endRound'?'end':'paper');
@@ -171,7 +171,13 @@ export async function animateBout(b,resolve,save,action){
  played?.classList.add('casting');
  board.querySelector('.arena-log').textContent=first.who==='hero'?'斗篷客使出《'+first.name+'》。':view.foes[first.index].name+'準備出招。';
  board.inert=true;
- try{await paintBout(view,moves,true)}finally{board.inert=false}
+ try{
+  const standard=(remaining=moves)=>paintBout(view,remaining,true);
+  if(presentation){
+   const stage=board.querySelector('.arena-stage');
+   await presentation(stage,moves,move=>showContact(stage,view,move),standard);
+  }else await standard();
+ }finally{board.inert=false}
 }
 export async function paintBout(b,action,playback=false){
  const canvas=document.querySelector('.arena-stage canvas');if(!canvas)return;

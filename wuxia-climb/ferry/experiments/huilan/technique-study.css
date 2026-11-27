@@ -1,0 +1,16 @@
+body.technique-study {margin:0;min-height:100svh;display:flex;flex-direction:column}
+#study-tools {display:flex;align-items:center;gap:.55rem;padding:.3rem max(2vw,env(safe-area-inset-left));background:#2a1c33;color:#f6e2b2;border-bottom:2px solid #be9658}
+#study-tools h1 {margin:0 auto 0 0;font:700 clamp(16px,2.5vw,25px)/1.3 var(--serif)}
+#study-tools button {padding:.3rem .8rem;color:#f6e2b2;background:#493549;border:1px solid #ad8956;font:inherit;cursor:pointer}
+.technique-study #room {position:relative;inset:auto;flex:1;display:block;overflow:auto;min-height:0}
+.technique-study .arena-picture {position:relative;overflow:hidden}
+.technique-study .technique-film {display:block;position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#19131f;opacity:0;pointer-events:none;z-index:1}
+.technique-study .technique-film.visible {opacity:1}
+.technique-study .arena-hero,.technique-study .arena-foes {z-index:2}
+@media(max-width:650px) and (orientation:portrait){
+ .technique-study #room {height:auto}
+ .technique-study .arena-picture {display:block;position:relative}
+}
+
+.technique-study .film-atlas {container-type:size;display:grid;place-items:center}
+.technique-study .film-atlas i {display:block;width:min(100cqw,185.71cqh);aspect-ratio:13/7;background-size:600% 400%;background-repeat:no-repeat}
