@@ -1,0 +1,17 @@
+body.wire{background:#f6f6f3;color:#222}.wire #draft{height:100dvh;width:100%;max-width:1440px;margin:auto;padding:0}
+.wire .itinerary,.wire .map-land,.wire .scroll-title,.wire .route-reading,.wire .map-tools,.wire .way-option,.wire .depart-seal,.wire .map-tools summary,.wire .route-key,.wire .map-note p,.wire .map-restart{background:#f5f5f2!important;border-color:#888!important;color:#222!important;box-shadow:none}
+.wire .scroll-title *,.wire .route-reading *{color:#222!important;text-shadow:none!important}
+.wire .scroll-title,.wire .route-reading,.wire .map-tools{border:1px solid #aaa}
+.wire .map-land{background-image:none}.wire .map-margin{background:#444;color:white}
+.wire .way-print{display:none}.wire .route-reading:before{content:"所選地點插圖";display:grid;place-items:center;min-height:26%;color:#777;border-bottom:1px dashed #999;background:repeating-linear-gradient(135deg,#ddd 0 1px,transparent 1px 16px)}
+.wire .way-option,.wire .depart-seal{border:1px solid #777}.wire .route-stamp{background:none!important;clip-path:none!important;font:700 15px/1 sans-serif;display:inline-grid;place-items:center}
+.wire .route-stamp:before{content:attr(data-symbol)}
+.wire .trail-field .map-seal{border:1px solid #777;background:#f0f0ed;box-shadow:none}.wire .trail-field .available{border:3px double black;box-shadow:0 0 0 2px white}.wire .trail-field .here{background:#333;color:white}
+.wire .trail-field .pinned-goal{outline:3px dashed black}.wire .trail-field .on-plan{background:#ddd}.wire .trail-field path{stroke:#777}.wire .trail-field path.open-trail,.wire .trail-field path.planned{stroke:#111}
+.wire .trail-field .map-seal span,.wire .station-number{background:#efefed;color:#333}.wire .station-number[aria-current]{color:white;background:#333}
+.wire .scroll-title>div,.wire nav,.wire nav button{background:none;color:#222}.wire .map-restart{clip-path:none;border:1px solid #555}
+.wire .arrival{margin:auto;height:100%;display:grid;align-content:center;justify-items:center;gap:14px}.wire .arrival button{color:#111;border:1px solid #777}
+@media(max-width:760px) and (orientation:portrait){.wire .route-reading:before{min-height:0;flex:0 0 22%;border-right:1px dashed #888;font-size:12px}}
+.wire .itinerary .trail-field .on-plan:not(.available):not(.here){background:#deded9}
+.wire .scroll-country,.wire .scroll-fringe,.wire .trail-field .map-seal:before,.wire .trail-field .path-paper{display:none}
+.wire .trail-field .map-seal .route-stamp{transform:none;filter:none}

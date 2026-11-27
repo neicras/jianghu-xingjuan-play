@@ -1,0 +1,70 @@
+.journey header{display:flex;justify-content:space-between}.journey header strong,.journey header span{color:#ead8b3}.journey main{max-width:1100px}
+.way-room,.map-leg,.road-head{background:linear-gradient(100deg,#152523ed,#233b36ed),var(--art-ridge) center/cover;color:#f2e6c8;border:1px solid #b394625e}
+.way-room{max-width:780px;margin:5vh auto;padding:clamp(16px,3.5vw,48px)}.way-room>p{margin:12px 0 18px}.way-room button{margin:3px}
+.map-leg{display:flex;align-items:center;margin:5px 0;padding:0 3%;gap:2vw}.map-leg h3{writing-mode:vertical-rl;font:600 clamp(16px,2vw,25px) var(--serif);letter-spacing:.2em;color:#d9ba88}
+.road-head{padding:9px 3%;border:0}.road-head h2{font-size:26px}.map-graph{position:relative;flex:1;height:clamp(85px,17svh,142px)}
+.map-graph svg{position:absolute;width:100%;height:100%;inset:0}.map-graph line{stroke:#ad9a74;stroke-width:1.5;stroke-dasharray:3 3}.map-graph .travelled{stroke:#e2bf76;stroke-dasharray:none}
+.map-graph small,.way-node{position:absolute;transform:translate(-50%,-50%)}.map-graph small{top:10%;color:#d6c296}
+.way-node{background:#22312e;border-color:#aa9571;color:#d6c7a8;white-space:nowrap;padding:3px 7px;font:600 clamp(11px,1.5vw,17px) var(--serif)}.way-node:disabled{opacity:.82}.way-node.chief{color:#f2bb91;border-color:#b27051}.way-node.visited{background:#61573d}.way-node.next{background:#e5c98a;color:#23291f;outline:2px solid #d0ab74;outline-offset:2px}
+#folio{width:min(850px,94vw);max-width:none}.travel-deck{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px}.travel-deck small{display:block;text-align:center}.free-scroll{display:flex;align-items:center;gap:14px;margin-top:10px}.free-scroll .print{width:84px;flex:none}
+@media(max-height:540px) and (orientation:landscape){.map-graph{height:75px}.road-head h2{font-size:18px}.road-head{padding:2px 12px}.way-room{margin:2vh auto;padding:12px}.journey main{padding-top:5px}}
+@media(max-width:600px){.map-leg{padding:0 2px;gap:3px}.map-leg h3{font-size:13px}.way-node{padding:3px;font-size:11px}.journey header{gap:4px}}
+
+#sync{display:block;text-align:right;margin:2px 2vw;color:#c4bea8;font-size:11px}
+.lesson{display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid #96805a77;padding:10px 0}
+.lesson small,.lesson strong{display:block}.lesson small{color:#cfbd9f}.lesson p{margin:3px 0}.drops,.belt{margin:8px 0}.belt{display:flex;justify-content:center;gap:8px}.belt button{font-size:13px}
+.journey .arena-foes{max-width:48%}.journey .arena-foes small{white-space:normal;max-width:32ch}.journey .way-room{max-height:76svh;overflow:auto}
+@media(max-height:540px){#sync{position:absolute;bottom:1px;right:2px;z-index:1;pointer-events:none}.journey .arena-stage{height:clamp(98px,30vh,170px)}.journey header nav button{padding:3px 5px}}
+
+.wares{display:grid;grid-template-columns:repeat(auto-fit,minmax(225px,1fr));gap:6px;list-style:none;padding:0}.wares li{display:flex;gap:8px;align-items:center;border-bottom:1px solid #9a815a60;padding:6px}.wares img{width:46px;height:46px;object-fit:cover;border:1px solid #8c7759}.wares .owned{background:#738b6029}.wares strong,.rule-word,.state-mark{color:#e4c887}.wares small{color:#c9c4af}.wares p{font-size:14px}.guide-cols,.injury-cards{display:flex;gap:18px;flex-wrap:wrap}.guide-cols section{flex:1;min-width:190px}.guide-cols dt{font-weight:bold;color:#e1c793}.guide-cols dd{margin:0 0 6px}.injury-cards .print{width:98px}.injury-cards small{display:block}.print .rule-word{color:inherit;text-decoration:underline;text-decoration-color:#8b693a}.print.傷勢{filter:saturate(.45)}.state-mark{white-space:nowrap}.journey dialog{max-height:90svh;overflow:auto}
+
+.reading-rule{background:#92783a55;outline:1px solid #b29a66}
+.wares [data-grade="精良"] strong{color:#9ed0c2}.wares [data-grade="稀有"] strong{color:#f4ce82}
+
+
+#travel-strip {display:flex;justify-content:space-between;align-items:center;padding:3px max(12px,calc((100vw - 1050px)/2));background:#182821;color:#eddcb7}
+#travel-strip #sync {position:static;margin:0;line-height:1}
+.studying #travel-strip {display:none}
+#potion-belt,.item-detail,.item-offer {display:flex;align-items:center;gap:8px}
+#potion-belt {gap:3px;font:600 12px var(--serif)}
+#potion-belt b {margin-right:4px}
+.item-icon {display:inline-block;flex:none;width:44px;aspect-ratio:1;background-image:none;background-size:300% 300%;border:1px solid #96784d;border-radius:4px}
+.vial-slot {width:30px;height:30px;display:grid;place-items:center;padding:0;border:1px solid #a4885d;background:#173334;border-radius:4px;color:#bba884}
+.vial-slot .item-icon {width:100%;height:100%;border:0}
+.vial-slot.vacant {border:1px dashed #89744f;color:#b1a484;font-size:10px}
+.item-offer {display:inline-flex;vertical-align:middle;text-align:left;padding:5px 9px;margin:3px}
+.item-offer span small {display:block;font-size:12px;line-height:1.35}
+.item-offer .item-icon {width:36px}
+.item-detail .item-icon {width:56px}
+.inn-room{max-width:920px;margin:2vh auto;padding:clamp(12px,2vw,26px)}
+.inn-choices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.inn-choices .inn-choice{display:grid;align-content:start;gap:5px;margin:0;padding:0 0 9px;overflow:hidden;color:#f2e2be;background:#1f302b;border:1px solid #ae9061;text-align:left}
+.inn-choice img{width:100%;height:clamp(58px,15svh,134px);object-fit:cover}
+.inn-choice strong,.inn-choice small{padding:0 8px}.inn-choice strong{font:700 clamp(16px,2vw,23px) var(--serif)}
+.practice-shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(95px,1fr));gap:9px;margin-top:8px}
+.shelf-card{display:block;min-width:0;padding:2px;border:1px solid #807052;background:#20312b;color:#eddbbd}
+.shelf-card>small{display:block;margin-top:3px}
+.practice-pair{display:flex;justify-content:center;align-items:center;gap:clamp(8px,3vw,22px)}
+.practice-pair figure{margin:0;width:clamp(90px,21vh,168px)}.practice-pair figcaption{font-weight:bold;text-align:center}
+.practice-layout .upgrade-change{color:#174b25;background:#c5e1a9;border-bottom:2px solid #357242;font-weight:900;padding:0 1px}
+.practice-layout .upgrade-change .rule-word{color:inherit}
+.practice-heading,.practice-actions{display:flex;gap:12px;align-items:center;justify-content:center}
+.practice-actions{margin:8px 0 2px}.practice-heading h2{font-size:22px}
+.road-story{display:grid;grid-template-columns:minmax(80px,32%) 1fr;gap:15px;align-items:center}
+.road-story img{width:100%;max-height:40vh;object-fit:cover}.road-story p{margin:8px 0}.story-choice small{display:block}
+@media(orientation:landscape) and (max-height:545px){
+ .practice-pair figure{width:clamp(109px,37svh,148px)}
+ .inn-room>p{margin:3px 0 8px}.inn-choices{gap:5px}
+}
+.practice-layout{display:flex;align-items:center;justify-content:center;gap:clamp(10px,3vw,28px)}
+.practice-notes{max-width:245px;color:#302417}.practice-notes p{margin:8px 0;font-size:16px}.practice-notes p>b:first-child{display:block;font-size:12px;color:#655132}.practice-notes .rule-word{color:inherit}.practice-notes .practice-actions{justify-content:start;flex-wrap:wrap}
+@media(max-width:580px){.practice-layout{flex-direction:column}.practice-notes{max-width:none}}
+#folio:has(.practice-layout)>form{display:none}.practice-heading button{margin-left:auto}.practice-heading{justify-content:start}
+
+.route-heading{display:flex;align-items:center;justify-content:space-between;gap:1em}.route-heading h2{margin:0}
+
+#potion-belt{min-width:0;overflow-x:auto}.worn-label{margin-left:8px;border-left:1px solid #8d805a;padding-left:8px}
+#potion-belt>*{flex-shrink:0}
+
+#folio .travel-deck .deck-leaf{display:block;width:100%;padding:0;border:0;background:transparent;color:inherit;font:inherit}
+#folio .travel-deck .deck-leaf:focus-visible{outline:2px solid #87622d}

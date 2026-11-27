@@ -1,0 +1,154 @@
+import {balance} from './balance-settings.js';
+import {arts, basics, byName, inheritsForm} from "./catalogue.js";
+import {collection,collate,estimate,withCopy,deal,xpPerWin,pageOdds} from "./manuscripts.js";
+import {acquisition} from "./editions.js";
+export const purse=8, fee=24;
+export function fresh(rng=Math.random){
+  const s={version:4,editions:{"分水劍":[{kind:"primer"}]},gateNotes:{},wins:1,gold:0,xp:6,tickets:0,rewards:{xp:false,gold:false,ticket:false},drawInfo:{},books:{"分水劍":[[2,2,0,2,1,2]]},learned:[],equipped:[],stars:[],focus:null,
+    offer:["分水劍","聽潮吐納功","白虹劍法"],claimed:null};
+  for(const name of s.offer)s.drawInfo[name]={kind:"opening"};
+  deal(s,rng);s.finds["分水劍"]=[2,0,2,1,2,0];s.finds["白虹劍法"]=[2,2,2,1,2,2];return s;
+}
+export const learned=(s,a)=>s.learned.includes(a.name);
+export const ready=(s,a)=>!learned(s,a)&&collection(s,a.name).length>0&&s.xp>=estimate(s,a);
+export const refineCost=(s,a)=>estimate(s,a)+4;
+export function pairedForms(s){
+ return s.equipped.filter(name=>{
+  const art=byName.get(name);
+  return inheritsForm(art)&&s.equipped.includes(art.parent);
+ });
+}
+export function deck(s){
+  return [...basics.flatMap(a=>Array.from({length:a.copies},(_,i)=>({name:a.name,id:a.name+i}))),
+    ...s.equipped.map(name=>({name,id:name}))];
+}
+export const mergedCopies=(s,a,incoming)=>withCopy(a,collection(s,a.name),incoming,sections=>combinedOdds(gateOdds(s,a,sections)));
+export function pickedBooks(s){return s.route?.pickedBooks??(s.claimed?[s.claimed]:[])}
+export function picksLeft(s){
+ return Math.max(0,Math.min(s.offer.length,s.route?.curriculum?.keep??1)-pickedBooks(s).length);
+}
+export function take(s,name){
+  const picked=pickedBooks(s);
+  if(!picksLeft(s)||picked.includes(name)||!s.offer.includes(name))return false;
+  if(!s.finds[name])return false;
+  s.before=collection(s,name);
+  archiveCopy(s,name,s.finds[name],acquisition(s,name));
+  if(s.route)s.route.pickedBooks=[...picked,name];
+  s.claimed=name;
+  return true;
+}
+export function archiveCopy(s,name,incoming,source){
+  const owned=collection(s,name),kept=mergedCopies(s,byName.get(name),incoming);
+  s.editions??={};
+  const previous=s.editions[name]||[];
+  s.editions[name]=kept.map(copy=>copy===incoming?source:previous[owned.indexOf(copy)]||{kind:'old'});
+  s.books[name]=kept;
+  return kept;
+}
+// On the journey a grounded novice can work through gaps in grades nine to seven.
+const foundationPageOdds=[80,94,100];
+export function hasNoviceFoundation(s,a,grounded=!a.parent||s.learned.includes(a.parent)){
+  return Boolean(s.route && a.rank>=7 && grounded);
+}
+export function gateOdds(s,a,sections=collate(collection(s,a.name)),grounded=!a.parent||s.learned.includes(a.parent)){
+  const odds=hasNoviceFoundation(s,a,grounded)?foundationPageOdds:pageOdds;
+  return sections.map((q,i)=>{
+    const needsFoundation=!grounded&&(i===2||i===5);
+    const base=Math.round(odds[q]*(needsFoundation ? balance.foundationMultiplier : 1));
+    return Math.min(100,base+10*(s.gateNotes?.[a.name]?.[i]||0));
+  });
+}
+export const combinedOdds=odds=>odds.reduce((chance,p)=>chance*p/100,100);
+export const percent=chance=>Number(chance.toFixed(1));
+export const trainingChance=(s,a,sections)=>percent(combinedOdds(gateOdds(s,a,sections)));
+export const attemptFee=price=>Math.min(4,Math.ceil(price/3));
+export function study(s,a,rng=Math.random){
+  if(!ready(s,a))return false;
+  return rehearse(s,a,estimate(s,a),rng);
+}
+export function rehearse(s,a,price,rng){
+  const foundation=!a.parent||s.learned.includes(a.parent);
+  const odds=gateOdds(s,a), rolls=[];
+  for(const threshold of odds){
+    const die=1+Math.floor(rng()*100);
+    rolls.push(die);
+    if(die>threshold)break;
+  }
+  const failed=rolls.findIndex((die,i)=>die>odds[i]);
+  const spent=failed<0?price:attemptFee(price);
+  s.xp-=spent;
+  if(failed<0)s.learned.push(a.name);
+  else{
+    s.gateNotes[a.name]??=odds.map(()=>0);
+    s.gateNotes[a.name][failed]++;
+  }
+  s.lastPractice={name:a.name,odds,rolls,failed,spent,foundation,sections:collate(collection(s,a.name))};
+  return failed<0;
+}
+export function equip(s,a){
+  if(!learned(s,a))return false;
+  if(s.equipped.includes(a.name))s.equipped=s.equipped.filter(n=>n!==a.name);
+  else s.equipped.push(a.name);
+  return true;
+}
+export function refine(s,id){
+  if(s.stars.includes(id))return false;
+  const a=byName.get(id);
+  if(a?.rank){
+    if(!learned(s,a)||s.xp<refineCost(s,a))return false;
+    s.xp-=refineCost(s,a);
+  }else{
+    if(s.gold<fee||!deck(s).some(c=>c.id===id))return false;
+    s.gold-=fee;
+  }
+  s.stars.push(id);return true;
+}
+function useful(s,a){return !s.stars.includes(a.name)&&!collate(collection(s,a.name)).every(q=>q===2)}
+function focusDrop(s){
+  const a=byName.get(s.focus);
+  return a&&useful(s,a)?a:null;
+}
+function weight(s,a){
+  const gap=a.parent&&!s.learned.includes(a.parent);
+  const owned=collection(s,a.name).length>0;
+  let copyWeight=owned?2:1;
+  if(s.route&&owned)copyWeight=s.learned.includes(a.name)?0.5:3;
+  return (gap?Math.pow(.68,9-a.rank):5)*copyWeight;
+}
+export const band=a=>a.rank>=7?'下三品':a.rank>=4?'中三品':'上三品';
+export const rewardAmount=(s,key)=>s.route?.loot?.[key]??({xp:xpPerWin,gold:purse,ticket:1})[key];
+export function claimReward(s,key){
+  if(!Object.hasOwn(s.rewards,key)||s.rewards[key]!==false)return false;
+  if(key==='xp')s.xp+=rewardAmount(s,key);
+  else if(key==='gold')s.gold+=rewardAmount(s,key);
+  else if(key==='ticket')s.tickets++;
+  else return false;
+  s.rewards[key]=true;
+  return true;
+}
+export function win(s,rng=Math.random,companion=null){
+  s.wins++;s.claimed=null;s.before=null;s.drawInfo={};
+  s.rewards={xp:false,gold:false};
+  if(rng()<.25)s.rewards.ticket=false;
+  const pool=arts.filter(a=>useful(s,a));
+  const offered=[];
+  const focus=focusDrop(s);
+  if(focus){offered.push(focus);s.drawInfo[focus.name]={kind:'focus'}}
+  const count=s.route?.curriculum?.offer??3;
+  const partner=pool.find(a=>a.name===companion);
+  if(partner&&!offered.includes(partner)&&offered.length<count){
+    offered.push(partner);s.drawInfo[partner.name]={kind:'companion'};
+  }
+  while(offered.length<count){
+    const candidates=pool.filter(a=>!offered.includes(a));
+    if(!candidates.length)break;
+    const total=candidates.reduce((n,a)=>n+weight(s,a),0);
+    let roll=rng()*total;
+    const picked=candidates.find(a=>(roll-=weight(s,a))<0)||candidates.at(-1);
+    const bandWeight=candidates.reduce((n,a)=>n+(band(a)===band(picked)?weight(s,a):0),0);
+    s.drawInfo[picked.name]={kind:'random',bandChance:bandWeight/total,nameChance:weight(s,picked)/total};
+    offered.push(picked);
+  }
+  s.offer=offered.map(a=>a.name);deal(s,rng);
+  return true;
+}

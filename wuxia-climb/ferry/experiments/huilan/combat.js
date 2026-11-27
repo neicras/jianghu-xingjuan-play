@@ -1,0 +1,354 @@
+import {balance} from './balance-settings.js';
+// A bout snapshots this exact library deck, including refinement of individual copies.
+import {byName,hasKeyword} from './catalogue.js';
+import {deck,pairedForms} from './rules.js';
+import {profiles} from './encounter-tables.js';
+export const encounters=profiles.map(p=>p.title);
+export function intent(b,e){
+ if(e.rallies&&b.foes.some(f=>f.scout&&f.hp<=0))return [0,0,0,'rally'];
+ return e.moves[(b.turn-1)%e.moves.length]}
+function attackValue(base,attacker,target){
+ return Math.floor((base+(attacker.strength||0))*(attacker.weak?0.75:1)*(target.exposed?1.5:1));
+}
+export function incoming(b,e){
+ return attackValue(intent(b,e)[0]+(e.force||0),e,b);
+}
+function injury(b,name,pile){
+ b.injurySerial=(b.injurySerial||0)+1;
+ pile.push({name,id:'傷'+b.injurySerial});
+}
+export function forecast(b,e){
+ const [,hits,guard,stance]=intent(b,e);
+ if(stance==='proof')return '試掌 '+Math.max(0,incoming(b,e)-(e.weaken||0))+' · 擋盡這一掌，他下回合露出破綻。'+(!b.proofTurn?'勝後贈長拳抄本。':'');
+ if(stance==='rally')return '鳴哨增援 · 喚來 '+b.foes.filter(f=>f.scout&&f.hp<=0).length+' 名哨兵。旗主本回合停手，新兵下回合才出招。';
+ if(stance==='charge'&&e.name==='鐵衣客'&&guard){
+  const left=Math.max(0,8-(e.pressure||0));
+  return (left?'再打掉 '+left+' 氣血可打斷蓄勁，否則下次每擊 +5。':'蓄勁已被打斷。')+'收勢時他仍添 '+guard+' 護體。';
+ }
+ if(stance==='charge'&&e.pressure>=8)return e.sealsBreath?'封脈劍勢已被打斷。劍宗接下來兩回合露出破綻。':'蓄勁已被打斷 · 本回合不會出手。';
+ if(stance==='charge')return '蓄勁中 · 再打掉 '+Math.max(0,8-(e.pressure||0))+' 氣血可破招。下次每擊 +5'+(e.sealsBreath?'，並令你氣短、抽到《岔氣》。若打斷，劍宗接下來兩回合露出破綻':'')+'。';
+ if(stance==='counter')return '聽勁反打 · 此時每打中他一下，他便還手 3 點。收勢後他得 '+guard+' 護體。';
+ if(stance==='feint')return '虛晃一招 · 令你露出破綻，下回合受擊加重一半。';
+ if(stance==='disrupt')return '截脈 · 下回合你會氣短，並抽到一張《岔氣》。'+(guard?'對手得 '+guard+' 護體。':'');
+ if(!hits)return '將架起 '+guard+' 護體';
+ const damage=incoming(b,e),primary=Math.max(0,damage-(e.weaken||0));
+ return '將攻 '+(primary!==damage&&hits>1?primary+'、'+damage:primary+(hits>1?' × '+hits:''))+(guard?'，再得 '+guard+' 護體':'')+(stance==='wound'?' · 每一擊穿過護體，添一張《劍傷》入棄牌堆。':'');
+}
+const living=b=>b.foes.filter(e=>e.hp>0);
+function scatterScouts(b){
+ if(!b.foes.some(e=>e.rallies&&e.hp<=0))return;
+ const remaining=living(b).filter(e=>e.scout);
+ for(const e of remaining){e.hp=0;e.fled=true}
+ if(remaining.length)b.log.push('旗主倒下，'+remaining.map(e=>e.name).join('、')+'棄旗逃走。');
+}
+function shuffle(b,cards){
+ for(let i=cards.length-1;i>0;i--){
+  b.seed=(Math.imul(b.seed,1664525)+1013904223)>>>0;
+  const j=Math.floor(b.seed/4294967296*(i+1));[cards[i],cards[j]]=[cards[j],cards[i]];
+ }
+ return cards;
+}
+function draw(b,n){
+ while(n-->0&&b.hand.length<10){
+  if(!b.draw.length)b.draw=shuffle(b,b.discard.splice(0));
+  if(!b.draw.length)break;b.hand.push(b.draw.pop());
+ }
+}
+export function startBout(s,profile=0,seed=Date.now()){
+ const b={profile,seed:seed>>>0,turn:0,hp:40,maxHp:40,block:0,energy:3,draw:[],discard:[],exhaust:[],hand:[],target:0,
+  foes:profiles[profile].enemies.map(([name,hp,block,moves])=>({name,hp,maxHp:hp,block,moves})),
+  record:{casts:0,blocked:0,hurt:0,links:0},powers:{},nextEnergy:0,nextDraw:0,carry:false,discount:{},attackBonus:0,palmBonus:0,phase:'playing',pending:null,log:[]};
+ b.pairedForms=pairedForms(s);
+ b.draw=shuffle(b,deck(s).map(c=>({...c,star:s.stars.includes(c.id)})));
+ // Draw pops from the end. Keep the shuffled order within both groups.
+ b.draw=b.draw.filter(c=>!hasKeyword(c,'起手')).concat(b.draw.filter(c=>hasKeyword(c,'起手')));
+ openTurn(b);return b;
+}
+function openTurn(b){
+ b.turn++;b.energy=balance.energyPerTurn+b.nextEnergy+(b.powers.元始先天功?1:0);b.nextEnergy=0;
+ b.block=(b.carry?b.block:0)+(b.powers.元始先天功||0);b.carry=false;
+ b.lastTurnStep=Boolean(b.seen?.身法);
+ b.seen={};b.retain=[];b.attacks=0;b.riposte=0;b.onBlock=0;b.cleanDraw=0;b.aura=0;b.yinyang=false;b.triad=false;b.savedBlock=b.blocked||0;b.blocked=0;
+ draw(b,balance.drawPerTurn+b.nextDraw);b.nextDraw=0;
+}
+const branch=a=>a.branch==='輕功'?'身法':a.branch;
+export const canLinkStep=b=>Boolean(b.seen?.身法||b.lastTurnStep);
+export function followupReady(b,name){
+ switch(name){
+ case '太乙玄門劍':return Boolean(b.seen.內功);
+ case '真武遊龍劍':return Boolean(b.seen.身法);
+ case '撐篙長拳':return b.savedBlock>0;
+ case '分水劍':return Boolean(b.seen.護體||b.seen.軟兵);
+ case '白虹劍法':return Boolean(b.seen.劍法);
+ case '遊身八卦掌':return canLinkStep(b);
+ case '三才守中式':return b.hand.some(c=>c.name!==name&&(hasKeyword(c,'保留')||b.retain.includes(c.id)));
+ case '周天回元式':return Boolean(b.seen.軟兵);
+ default:return false;
+ }
+}
+function basePrice(b,c){
+ if(hasKeyword(c,'無法打出'))return c.name==='劍傷'&&b.relics?.includes('針灸匣')?0:Infinity;
+ const a=byName.get(c.name);
+ const linkedStep=c.name==='遊身八卦掌'&&canLinkStep(b)?1:0;
+ return Math.max(0,a.cost-(b.discount[branch(a)]||0)-linkedStep);
+}
+export function inheritanceDiscount(b,c,base=basePrice(b,c)){
+ return Number(base>0&&Boolean(b.pairedForms?.includes(c.name))&&!b.inherited?.[c.name]);
+}
+export function price(b,c){
+ const base=basePrice(b,c);
+ return base-inheritanceDiscount(b,c,base);
+}
+export const readPenalty=(enemy,name)=>Math.min(3,enemy?.reads?.[name]||0);
+function harm(e,n,bypass=false){
+ const guard=bypass?0:Math.min(n,e.block);e.block-=guard;const prev=e.hp;e.hp=Math.max(0,e.hp-n+guard);e.pressure=(e.pressure||0)+prev-e.hp;
+}
+export function settleChoice(b,id=null){
+ if(!b.pending)return false;
+ const i=b.hand.findIndex(c=>c.id===id);
+ if(i<0&&(id!==null||b.pending==='必留'))return false;
+ if(i>=0){
+  if(['換牌','精練換牌'].includes(b.pending)){
+   const [c]=b.hand.splice(i,1),remove=b.pending==='精練換牌'&&byName.get(c.name).branch==='傷勢';
+   (remove?b.exhaust:b.discard).push(c);draw(b,1);
+   b.log=[(remove?'消耗':'棄掉')+'《'+c.name+'》，再抽一張。'];
+  }
+  else{
+   b.retain.push(id);
+   if(b.pending==='藏鋒'&&byName.get(b.hand[i].name).branch==='劍法'){
+    const guard=6+(b.dexterity||0);b.block+=guard;b.log=['留下《'+b.hand[i].name+'》，劍勢未盡，護體增加 '+guard+'。'];
+   }
+  }
+ }
+ b.pending=null;return true;
+}
+// Record the two visible meters immediately after each resolved contact.
+function contact(b,emit,e,move){
+ const record=b.record;
+ if(record&&move.who==='foe'&&move.kind==='strike'){
+  record.blocked+=move.absorbed;record.hurt+=move.lost;
+  if(move.absorbed>0&&!move.lost&&(!record.guard||move.absorbed>record.guard.amount)){
+   record.guard={enemy:e.name,amount:move.absorbed,turn:b.turn};
+  }
+ }
+ if(!emit)return;
+ emit({...move,index:b.foes.indexOf(e),heroHP:b.hp,heroBlock:b.block,foeHP:e.hp,foeBlock:e.block});
+}
+export function play(b,id,onMove){
+ const i=b.hand.findIndex(c=>c.id===id);
+ if(b.phase!=='playing'||b.pending||i<0)return false;
+ const c=b.hand[i],a=byName.get(c.name),cost=price(b,c),family=branch(a),name=c.name;
+ if(cost>b.energy)return false;
+ const e=b.foes[b.target];if(!e||e.hp<=0)return false;
+ const inherited=inheritanceDiscount(b,c);
+ if(inherited)(b.inherited??={})[name]=true;
+ b.energy-=cost;delete b.discount[family];b.hand.splice(i,1);
+ if(a.branch==='傷勢'){b.exhaust.push(c);b.log=['針灸匣生效，消耗《'+name+'》。'];return true}
+ const pair=a.rule.match(/\[(\d+)\|(\d+)\]/),v=Number(pair[c.star?2:1]);
+ const prev=b.seen[family]||0,p=b.powers,linked=followupReady(b,name);
+ if(b.record){
+  b.record.casts++;
+  if(linked){b.record.links++;b.record.firstLink??={name,turn:b.turn}}
+ }
+ const priorHP=b.foes.reduce((n,f)=>n+f.hp,0), oldBlock=b.block;
+ const recognized=readPenalty(e,name);
+ const openings=[];
+ let attacked=false,reflected=0,counters=0;
+ function hit(base,count=1,{pierce=false,all=false}={}){
+  attacked=true;
+  const bonus=(a.rank?(p.聽潮吐納功||0):0)+b.attackBonus+
+   (family==='劍法'?(p.純陽劍意||0)+(prev===0?(p.純陽無極功||0):0):0)+(family==='拳掌'?b.palmBonus:0);
+  const force=b.relics?.includes('劍穗')&&!b.attacks?2:0;
+  b.attacks=(b.attacks||0)+1;
+  for(const target of all?living(b):[e]){
+   const penalty=readPenalty(target,name);
+   if(target.reads)target.reads[name]=Math.min(3,(target.reads[name]||0)+1);
+   const power=Math.max(0,base+bonus+force-penalty),impact=attackValue(power,b,target);
+   if(target.exposed&&target.hp>0&&b.hp>0){
+    const terms=[String(base)];
+    if(bonus)terms.push('招式加成 '+bonus);
+    if(force)terms.push('劍穗 '+force);
+    let sum=terms.join(' + ')+(penalty?' − 識招 '+penalty:'');
+    if(base+bonus+force<penalty)sum='0';
+    if(b.strength)sum+=(b.strength>0?' + 勁力 ':' − 勁力 ')+Math.abs(b.strength);
+    openings.push(target.name+'每擊：（'+sum+'）'+(b.weak?' × 氣短 0.75':'')+' × 破綻 1.5 → '+impact+' 傷害。');
+   }
+   for(let j=0;j<count&&target.hp>0&&b.hp>0;j++){
+   const beforeHP=target.hp,beforeBlock=target.block;
+   harm(target,impact,pierce);
+   contact(b,onMove,target,{who:'hero',kind:'strike',name,slash:family==='劍法'&&j%2===1,
+    ordinal:count>1?j+1:0,lost:beforeHP-target.hp,absorbed:beforeBlock-target.block,blocked:target.hp===beforeHP&&target.block<beforeBlock});
+   if(target.hp>0&&intent(b,target)[3]==='counter'){
+    counters++;const blocked=Math.min(3,b.block);b.block-=blocked;b.blocked+=blocked;
+    const loss=Math.min(3-blocked,b.hp);b.hp-=loss;reflected+=loss;
+    contact(b,onMove,target,{who:'foe',name:'反打',kind:'strike',blocked:blocked===3,lost:loss,absorbed:blocked});
+   }
+  }
+  }
+  if(b.attacks%3===0&&b.relics?.includes('三才玉環'))b.dexterity=(b.dexterity||0)+1;
+  b.attackBonus=0;if(family==='拳掌')b.palmBonus=0;
+ }
+ const blockFromCard=n=>{b.block+=n+(b.dexterity||0)};
+ // These triggers apply only to cards following the setup card.
+ if(a.rank&&b.aura){
+  const hp=e.hp,block=e.block;harm(e,b.aura);
+  contact(b,onMove,e,{who:'hero',kind:'breath',name:'真武蕩魔陣',lost:hp-e.hp,absorbed:block-e.block});
+ }
+ if(family==='內功')b.attackBonus+=p.繫舟混元功||0;
+ if(family==='護體'&&!prev)b.block+=p.一字混元樁||0;
+ if(family==='劍法'&&!prev&&p.純陽劍意)blockFromCard(3);
+ if(family==='劍法'&&prev===2)b.block+=p.三才劍陣||0;
+
+ switch(name){
+ case '聽潮吐納功':blockFromCard(3);p[name]=v;break;
+ case '一字混元樁':case '繫舟混元功':case '純陽無極功':case '元始先天功':
+ case '三才劍陣':case '陰陽周天法':case '三華聚頂':
+  p[name]=v;break;
+ case '純陽劍意':blockFromCard(5);p[name]=v;break;
+ case '三才守中式':blockFromCard(v);if(linked)draw(b,1);break;
+ case '周天回元式':draw(b,v);if(linked)b.energy++;break;
+ case '抱元守一':blockFromCard(v);b.nextEnergy++;break;
+ case '羅天真訣十二樁':draw(b,v);if(b.hand.length)b.pending='必留';break;
+ case '洗髓金經':b.hp=Math.min(b.maxHp,b.hp+v);break;
+ case '太乙神功':b.energy+=v;break;
+ case '五步梅花樁':blockFromCard(v);b.onBlock=1;break;
+ case '八卦步':blockFromCard(v);if(b.hand.length)b.pending=c.star?'精練換牌':'換牌';break;
+ case '雲環步':draw(b,v);blockFromCard(3);break;
+ case '天罡北斗步':blockFromCard(v);b.carry=true;break;
+ case '踏浪步':e.exposed=(e.exposed||0)+v;break;
+ case '太乙九宮步':draw(b,v);if(b.hand.length)b.pending='可留';break;
+ case '上天梯':b.nextEnergy++;b.nextDraw+=v;break;
+ case '凌雲飛渡':e.weak=(e.weak||0)+2;draw(b,v);break;
+ case '護纜鐵衣':blockFromCard(v);b.riposte=Math.max(b.riposte,living(b).length>1?8:4);break;
+ case '橫劍當胸':blockFromCard(v);break;
+ case '雲床九練':blockFromCard(v);b.carry=true;break;
+ case '五氣朝元功':blockFromCard(v);b.cleanDraw++;break;
+ case '無極勁':blockFromCard(v);b.riposte=Math.max(b.riposte,6);break;
+ case '真武蕩魔陣':b.aura+=v;break;
+ case '撐篙長拳':hit(v+Math.min(4,b.savedBlock));blockFromCard(1);break;
+ case '追風雲環掌':case '連環劍':hit(v,2);break;
+ case '回浪綿掌':case '先天少陽劍氣':hit(v,1,{pierce:true});break;
+ case '遊身八卦掌':hit(v);if(linked)draw(b,1);break;
+ case '太乙逍遙掌':hit(v);b.discount.身法=1;break;
+ case '玄功神拳':hit(v+2*b.hand.filter(x=>byName.get(x.name).branch==='內功').length);break;
+ case '曬網拳':hit(v);b.palmBonus+=3;break;
+ case '紫陽正氣拳':hit(v);blockFromCard(6);break;
+ case '太極拳':hit(v+Math.min(8,b.savedBlock));break;
+ case '分水劍':hit(linked?v:6);break;
+ case '踏舟劍':hit(v);if(b.hand.length)b.pending='藏鋒';break;
+ case '白虹劍法':{const parry=!linked&&intent(b,e)[1]>0;hit(v+(linked?3:0),2);if(parry)blockFromCard(7);break}
+ case '太乙玄門劍':hit(v);b.discount.內功=1;if(linked)blockFromCard(6);break;
+ case '真武遊龍劍':hit(v+(linked?2:0),3);break;
+ case '太極劍法':hit(v);blockFromCard(6);break;
+ case '無極劍式':hit(v+3*prev);break;
+ case '拂塵功':{const surrounded=living(b).length>=2;hit(v);blockFromCard(surrounded?6:3);break}
+ case '沉錨拂':{const strip=e.block>0&&e.block<=v;e.block=Math.max(0,e.block-v);hit(4);if(strip)b.discount.劍法=1;break}
+ case '兩儀拂塵功':{const defended=e.block>0;hit(v);if(defended)draw(b,1);break}
+ case '老君拂塵功':blockFromCard(v);e.weaken=(e.weaken||0)+2;break;
+ case '錯倒陰陽拂塵':{const removed=Math.min(v,e.block);e.block-=removed;if(removed)blockFromCard(removed);break}
+ case '太乙雲拂功':hit(v,2);break;
+ case '無量掃塵功':hit(v,1,{all:true});break;
+ case '玄空神拂':e.block=0;hit(v);break;
+ case '一線穿雲':hit(v);break;
+ case '吐納':draw(b,v);break;
+ default:throw Error('缺少招式規則 '+name);
+ }
+ if(!attacked||b.block>oldBlock){
+  const kind=attacked?'guard':({內功:'breath',奇竅:'breath',護體:'guard',身法:'step'})[family]||'guard';
+  contact(b,onMove,e,{who:'hero',kind,name,gained:Math.max(0,b.block-oldBlock)});
+ }
+ if(attacked&&p.陰陽周天法&&b.seen.護體&&!b.yinyang){draw(b,p.陰陽周天法);b.yinyang=true}
+ b.seen[family]=prev+1;
+ if(p.三華聚頂&&Object.keys(b.seen).length>=3&&!b.triad){b.energy+=p.三華聚頂;b.triad=true}
+ const permanent=hasKeyword(c,'運功');
+ (permanent||hasKeyword(c,'消耗')?b.exhaust:b.discard).push(c);
+ const damage=priorHP-b.foes.reduce((n,f)=>n+f.hp,0);b.log=['使出《'+name+'》。'+(attacked||damage?'對手失去 '+damage+' 氣血。':'')+(b.block>oldBlock?'護體增加 '+(b.block-oldBlock)+'。':'')];
+ if(inherited)b.log.push('承接前式，這一招少用一點內力。');
+ if(openings.length)b.log.unshift(...openings);
+ if(hasKeyword(c,'穿勁')&&e.block>0)b.log.push('勁力穿過護體，'+e.name+'仍有 '+e.block+' 點護體。');
+ if(attacked&&b.attacks%3===0&&b.relics?.includes('三才玉環'))b.log.push('三才玉環生效，守勁增加 1。');
+ if(attacked&&recognized)b.log.push(e.name+'已認得《'+name+'》，此招每擊減去 '+recognized+' 點力道。');
+ if(name==='遊身八卦掌'&&canLinkStep(b))b.log.push('循著步勢出掌，此掌少耗內力，並可補牌。');
+ if(name==='分水劍'&&b.seen.軟兵)b.log.push('趁拂塵架開對手，分水劍順勢刺入。');
+ if(name==='踏浪步')b.log.push(e.name+'露出破綻 '+e.exposed+' 回合，受攻擊時傷害增加一半。');
+ if(counters)b.log.push('對手反打 '+counters+' 次，'+(reflected?'你失去 '+reflected+' 氣血。':'護體盡數擋下。'));
+ scatterScouts(b);
+ if(!b.hp){b.phase='lost';b.pending=null}
+ else if(!living(b).length){b.phase='won';b.pending=null}
+ else if(e.hp<=0)b.target=b.foes.findIndex(f=>f.hp>0);
+ return true;
+}
+export function endRound(b,onMove){
+ if(b.phase!=='playing'||b.pending)return false;
+ const oldHP=b.hp;b.log=[];let feinted=false,disrupted=false;
+ for(const e of living(b)){
+  if(!b.hp||e.hp<=0)break;
+  const [,hits,guard,stance]=intent(b,e);
+  if(stance==='rally'){
+   const arrived=[];
+   for(const [i,slot] of b.foes.entries())if(slot.scout&&slot.hp<=0){
+    b.foes[i]={name:slot.name,scout:true,hp:slot.maxHp,maxHp:slot.maxHp,block:0,moves:slot.moves};
+    arrived.push(slot.name);
+   }
+   b.log.push('旗主鳴哨，'+arrived.join('、')+'趕到。新兵本回合只站位。');
+  }
+  if(stance==='charge'){const broken=e.pressure>=8;
+   if(broken&&e.sealsBreath)e.exposed=Math.max(e.exposed||0,3);
+   if(broken&&b.relics?.includes('鐵衣令')){b.nextEnergy++;b.log.push('鐵衣令：你截住來勢，下回合多 1 點內力。')}
+   if(!broken){
+   e.force=(e.force||0)+5;
+   if(e.sealsBreath){disrupted=true;injury(b,'岔氣',b.draw);b.log.push('劍宗封住氣口，《岔氣》置於抽牌堆頂。')}
+  }b.log.push(e.name+(broken?'被你打斷，這一口勁沒能蓄成。':'蓄勁已成，下次每擊加重 5 點。'))}
+  if(stance==='disrupt'){disrupted=true;injury(b,'岔氣',b.draw);b.log.push(e.name+'截住氣脈，《岔氣》置於抽牌堆頂。')}
+  if(stance==='feint'){feinted=true;b.log.push(e.name+'虛晃一招，你下回合露出破綻。')}
+  e.block+=guard;if(guard)b.log.push(e.name+'架勢穩固，護體增加 '+guard+'。');
+  if(!hits||guard)contact(b,onMove,e,{who:'foe',kind:'guard',name:stance==='rally'?'鳴哨增援':guard?'架勢護身':'變招',gained:guard});
+  for(let j=0;j<hits&&b.hp>0&&e.hp>0;j++){
+   const damage=Math.max(0,incoming(b,e)-(e.weaken||0));e.weaken=0;
+   const blocked=Math.min(b.block,damage);b.block-=blocked;b.blocked+=blocked;
+   const beforeHP=b.hp;b.hp=Math.max(0,b.hp-damage+blocked);b.log.push(e.name+'出招，護體抵去 '+blocked+'，你失去 '+(damage-blocked)+' 氣血。');
+   contact(b,onMove,e,{who:'foe',kind:'strike',name:'來招',ordinal:hits>1?j+1:0,blocked:blocked===damage,lost:beforeHP-b.hp,absorbed:blocked});
+   if(stance==='proof'&&damage>0&&blocked===damage){
+    b.proofTurn??=b.turn;e.exposed=Math.max(e.exposed||0,2);
+    b.log.push('你接住試掌，墨師傅收手露出破綻。「記得這半句。比完我寫給你。」');
+   }
+   if(stance==='wound'&&damage>blocked){injury(b,'劍傷',b.discard);b.log.push('《劍傷》入棄牌堆。')}
+   if(b.onBlock){if(blocked===damage)b.nextDraw++;b.onBlock=0}
+   if(b.riposte&&blocked===damage){
+    const before=e.hp,priorGuard=e.block;harm(e,b.riposte);
+    contact(b,onMove,e,{who:'hero',kind:'strike',name:'順勢還擊',lost:before-e.hp,absorbed:priorGuard-e.block,blocked:e.hp===before&&priorGuard>e.block});
+    b.log.push('你擋盡來招，順勢還擊。'+e.name+'失去 '+(before-e.hp)+' 氣血。');b.riposte=0
+   }
+  }
+  scatterScouts(b);
+  if(hits)e.force=0;
+  e.weak=Math.max(0,(e.weak||0)-1);e.exposed=Math.max(0,(e.exposed||0)-1);e.pressure=0;
+ }
+ b.exposed=Math.max(0,(b.exposed||0)-1)+Number(feinted);
+ b.weak=Math.max(0,(b.weak||0)-1)+Number(disrupted);
+ if(b.hp===0)b.phase='lost';
+ else if(!living(b).length)b.phase='won';
+ else{
+  if(oldHP===b.hp)b.nextDraw+=b.cleanDraw;
+  const held=[];
+  for(const c of b.hand){
+   if(hasKeyword(c,'虛無')){b.exhaust.push(c);b.log.push('《'+c.name+'》因虛無而消耗。')}
+   else if(b.retain.includes(c.id)||hasKeyword(c,'保留'))held.push(c);
+   else b.discard.push(c);
+  }
+  b.hand=held;
+  if(b.foes[b.target].hp<=0)b.target=b.foes.findIndex(e=>e.hp>0);
+  openTurn(b);
+ }
+ return true;
+}
+
+// A loan is isolated from the saved art tree. One card is guaranteed in the
+// opening hand so the two editions can be compared on the same shuffle.
+export function borrowedBout(s,a,star,profile){
+ const copy={...s,equipped:[...new Set([...s.equipped,a.name])],stars:s.stars.filter(n=>n!==a.name)};
+ if(star)copy.stars.push(a.name);
+ const b=startBout(copy,profile,73),i=b.draw.findIndex(c=>c.name===a.name);
+ if(i>=0)[b.hand[0],b.draw[i]]=[b.draw[i],b.hand[0]];
+ b.loan=a.name;return b;
+}

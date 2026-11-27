@@ -1,0 +1,36 @@
+Unarmed combat fighter — provenance and permissions
+
+REFERENCE / CONTACT GUIDE MEDIA
+The existing original earth-brown commoner from wuxia-duel-foes is the sole
+character identity. Its original reference and all old sprite files are preserved.
+Two selected exact contact-pose guides (body punch and low open palm) were made
+with the built-in imagegen service. A first higher palm guide was edited once to
+lower the hand; that initial higher guide is not selected. Exact prompts/source
+hashes and uniform alignment are in combat-motion-guides/ evidence.
+
+ANIMATED MEDIA
+Eight local LTX-2.5 Q8 takes were generated: six initial takes and two guided
+attack retries. Seven takes contribute final frames. The initial high punch is
+excluded entirely; the initial non-striking palm contributes only defensive
+redirection. The initial forward part of the retreat take is excluded. Existing
+walk and hurt frames are reused for walk, flinch and kneeling defeat.
+Model: dgrauet/ltx-2.5-mlx-q8, revision
+746ca9aacb697d2c739f544d68b584214dedcc75; cached locally, no new weight download.
+Model license: LTX-2.x Community License; weights are not redistributed here.
+https://huggingface.co/dgrauet/ltx-2.5-mlx-q8/blob/746ca9aacb697d2c739f544d68b584214dedcc75/LICENSE
+Generated art, video and derived sprites retain applicable provider/model terms.
+They are not relabeled CC0 or MIT. This notice is provenance, not an independent
+rights clearance or a warranty about generated output.
+
+CODE
+Inference used the existing dgrauet/ltx-2-mlx 0.18.0 runtime (MIT code), recorded
+runtime revision 747b30ef10e92a011e85b2aa0f6c4ee86ced5218. Runtime/weights are not
+bundled. The packer and postproduction scripts were authored for this workspace.
+Code provenance is separate from generated-media permissions.
+
+POSTPRODUCTION
+FFmpeg chroma key/despill, original-reference palette, reviewed actual source
+poses, uniform half-scale packing, root stabilization on the backward segment,
+authored preparation/contact/recovery and editorial support-loop closure.
+No limb deformation, fabricated reversed forward gait, or generated audio is
+integrated. PNGs use straight alpha; preview GIF/JPEG backgrounds are opaque.

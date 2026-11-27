@@ -1,0 +1,113 @@
+/* The northbound map occupies its own sheet; choosing a seal opens the field notes beside it. */
+.route-scroll.itinerary{display:grid;grid-template:"title title" auto "land reading" minmax(0,1fr) "legend reading" auto / minmax(0,1fr) clamp(234px,24%,350px);gap:0;padding:0;background:#272033;color:#f6dfa9;border:0}
+.itinerary .scroll-title{grid-area:title;align-items:center;background:#282235 var(--art-journey-cloth) center/900px;padding:9px 2.5%;gap:2%;border-bottom:3px double #b58b51}
+.itinerary .scroll-title>div{padding:0;background:none;color:#ffe2a8;text-shadow:none;flex:none}
+.itinerary .scroll-title h2{font-size:clamp(21px,2.4vw,34px);margin:0}.itinerary .scroll-title small{font-size:12px}
+.itinerary .scroll-title nav{padding:0;gap:0;display:flex;margin:auto;border:0}
+.itinerary .scroll-title nav button{color:#f6dfaf;border:0;background:none;padding:5px 15px;display:grid;text-align:center}
+.itinerary nav button small{color:#dcbe8e;font-size:11px;letter-spacing:.06em}.itinerary .map-restart{font-size:13px}
+.map-land{grid-area:land;position:relative;min-width:0;min-height:0;background:#edcd8d url(route-art/river-atlas-v2.webp) center/100% 100% no-repeat;isolation:isolate}
+.map-margin{position:absolute;top:3%;left:2%;writing-mode:vertical-rl;letter-spacing:.15em;background:#302334;color:#f5da9a;padding:10px 5px;font:700 13px var(--serif);z-index:1}
+.itinerary .trail-window{position:absolute;inset:4% 5% 5% 7%;overflow:hidden auto;background:none;scrollbar-width:thin}
+.itinerary .trail-sheet{width:100%;min-width:0;height:2070px}
+.itinerary .trail-field{position:absolute;inset:0 2% 0 24px;max-height:none;margin:0}.itinerary .trail-field svg.vertical-ink{display:block;position:absolute;inset:0;width:100%;height:100%}
+.itinerary .station-ruler{inset:0 auto 0 0;width:24px;height:100%;border:0}
+.itinerary .station-number{left:0;top:calc(100% - var(--forward));transform:translateY(-50%);background:#e8c990;color:#593c38;border-radius:0;clip-path:polygon(0 0,85% 0,100% 50%,85% 100%,0 100%)}
+.itinerary .station-number[aria-current]{background:#903e34;color:#fff2c1}
+.itinerary .trail-field .map-seal{left:var(--lane);top:calc(100% - var(--forward));width:42px;background-color:#edd39d;box-shadow:0 1px 1px #4e3539}
+.itinerary .trail-field .available{width:52px;box-shadow:0 0 0 3px #a23929,0 0 0 6px #ffe4a1}
+.itinerary .trail-field .here{outline:2px solid #342c39}.itinerary .trail-field .map-seal span{top:100%;left:50%;right:auto;transform:translateX(-50%);font-size:14px;color:#422936;background:#f3d798eb}
+.itinerary .trail-field path{stroke:#503746;opacity:.69;stroke-width:1.6}
+.itinerary .trail-field path.open-trail{stroke:#9d3c29;opacity:1;stroke-width:3}.itinerary .trail-field path.planned{stroke:#155e55;opacity:1;stroke-width:3}
+.itinerary .route-reading{grid-area:reading;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:0;min-height:0;overflow:auto;padding:0;background:#392c3d var(--art-journey-cloth) center/900px;color:#f3dfb2;border-left:3px double #aa8955}
+.way-print{object-fit:cover;object-position:center;width:100%;height:32%;min-height:68px;max-height:230px;border-bottom:3px double #b99460}
+.itinerary .way-copy{padding:clamp(12px,1.7vw,25px);flex:none}
+.way-copy>small{letter-spacing:.1em;font-size:12px;color:#dfbd88}.itinerary .way-copy h3,.itinerary .way-copy>div>b{font:800 clamp(20px,2.1vw,30px)/1.3 var(--serif);color:#ffe4aa;display:block;margin:6px 0 10px}
+.itinerary .way-copy p{font-size:clamp(14px,1.25vw,18px);line-height:1.6;margin:9px 0}
+.way-options{display:grid;gap:5px}.itinerary .way-option{display:flex;gap:8px;align-items:center;color:#332738;text-align:left;background:var(--art-journey-slip) center/100% 100%;padding:5px 13px;border:0}
+.way-option .route-stamp{width:29px;height:29px}.itinerary .route-reading [data-map-clear],.itinerary .route-reading [data-map-fork]{color:#f2d598;text-decoration:underline}
+.itinerary .map-tools{grid-area:legend;display:flex;padding:3px 10px;min-height:39px;background:#302537;justify-content:space-between}
+.itinerary .route-key{gap:8px}.itinerary .route-key i{width:19px;height:19px}
+@media(max-width:760px) and (orientation:portrait){
+ .journey.jp-active:has(#room>.itinerary){height:100dvh;min-height:0}.journey.jp-active #room:has(>.itinerary){height:auto;min-height:0;flex:1}
+ .route-scroll.itinerary{grid-template:"title" auto "land" minmax(0,1fr) "reading" auto "legend" auto/1fr}
+ .itinerary .scroll-title{padding:5px 8px;gap:4px}.itinerary .scroll-title nav button{padding:4px 6px}.itinerary .scroll-title nav small{display:none}.itinerary .scroll-title small{font-size:10px}.itinerary .map-restart{font-size:12px}
+ .itinerary .trail-sheet{height:1590px}.itinerary .trail-window{inset:1% 1% 1% 2%}.map-margin{display:none}
+ .itinerary .trail-field{inset:0 1% 0 18px}.itinerary .trail-field .map-seal{width:31px}.itinerary .trail-field .available{width:39px}.itinerary .map-seal:after{position:absolute;content:"";inset:-6px}.itinerary .trail-field .map-seal span{font-size:11px}
+ .itinerary .route-reading{flex-direction:row;border-left:none;border-top:2px solid #a7895c;max-height:29dvh}.way-print{width:24%;height:auto;min-height:0;max-height:none;align-self:stretch;border:0}.itinerary .way-copy{flex:1;padding:7px 10px}
+ .itinerary .way-copy p{margin:4px 0;font-size:13px}.itinerary .way-copy h3,.itinerary .way-copy>div>b{font-size:18px;margin:0}.way-options{display:flex;flex-wrap:wrap;gap:2px}.itinerary .way-option{font-size:13px;padding:2px 7px}.way-option .route-stamp{width:18px;height:18px}
+ .itinerary .map-tools{min-height:28px}.itinerary .map-tools summary{min-height:30px}
+}
+@media(max-height:500px) and (orientation:landscape){.itinerary .scroll-title{padding:2px 2%}.itinerary .way-print{height:25%}.itinerary .way-copy{padding:6px 12px}.itinerary .trail-sheet{height:1500px}}
+.way-onward{border-top:1px solid #b9995a7a;margin-top:18px;padding-top:12px}.way-onward small{color:#e3c083;letter-spacing:.12em}.itinerary .way-onward p{font-size:14px;line-height:1.5}
+@media(max-width:760px) and (orientation:portrait){.way-onward{display:none}}
+
+/* Three registers of a single woodcut. Edges and seals keep the route's native coordinates. */
+.itinerary .map-land{overflow:hidden;background:#dfba7e}
+.itinerary .scroll-country,.itinerary .scroll-fringe{position:absolute;inset:0;pointer-events:none}
+.itinerary .scroll-country{height:100%;background:#e3c185 url(route-art/ascent-v1.webp) center/100% 100% no-repeat;will-change:transform}
+.itinerary .scroll-fringe{z-index:2;overflow:hidden}
+.scroll-fringe i{position:absolute;inset:-5% -1%;opacity:0;background-size:100% 100%;background-repeat:no-repeat;pointer-events:none}
+.scroll-fringe .fringe-river{background-image:var(--art-wharf-reeds);mask-image:linear-gradient(90deg,#000 0%,transparent 14%,transparent 90%,#000)}
+.scroll-fringe .fringe-bamboo{background-image:var(--art-bamboo-branches);mask-image:linear-gradient(90deg,#000 0%,transparent 17%,transparent 84%,#000)}
+.scroll-fringe .fringe-summit{inset:-2% -4% auto;height:41%;background-image:var(--art-lanterns)}
+.itinerary .trail-window{inset:0;scrollbar-width:thin;scrollbar-color:#735339 #d9b979;background:none}
+.itinerary .trail-sheet{height:clamp(2700px,400cqh,3900px)}
+.itinerary .trail-field{inset:0 5% 0 7%}
+.itinerary .station-ruler{z-index:1;left:1%;width:24px;pointer-events:none}
+.itinerary .station-number{box-shadow:0 1px #c39d69;background:#f3daa8;color:#593c38}
+.itinerary .trail-field path{stroke:#855f41;stroke-width:2.3;opacity:.88;stroke-dasharray:none}
+.itinerary .trail-field path.path-paper{stroke:#fae1ad;stroke-width:5.8;opacity:.92}
+.itinerary .trail-field path.travelled{stroke:#403048;stroke-width:3.3;opacity:1}
+.itinerary .trail-field path.open-trail{stroke:#a33b29;stroke-width:3.6;stroke-dasharray:none}
+.itinerary .trail-field path.planned{stroke:#116553;stroke-width:4;stroke-dasharray:none}
+.itinerary.tracing .trail-field path.path-paper{opacity:.68}
+.itinerary .trail-field .map-seal{width:clamp(50px,6.5cqw,83px);padding:2px;min-height:0;border:0;border-radius:50%;background:none;box-shadow:none;perspective:240px;isolation:isolate}
+.itinerary .trail-field .map-seal:before{content:"";position:absolute;z-index:-1;inset:38% -2% 2%;border-radius:50%;background:radial-gradient(ellipse,#79583a9e,transparent 69%);transform:rotate(-7deg)}
+.itinerary .trail-field .map-seal .route-stamp{position:relative;transform-origin:50% 92%;transform:rotateX(20deg);filter:drop-shadow(0 1px 0 #ffe5b4) drop-shadow(0 2px 1px #765133);transition:transform .34s cubic-bezier(.18,.86,.28,1.22),filter .28s ease-out}
+.itinerary .trail-field .map-seal:is(.unfolded,.pinned-goal,:focus-visible,:hover):not(:disabled) .route-stamp,.itinerary .trail-field .map-seal.unfolded:disabled .route-stamp{transform:translateY(-4px) rotateX(-9deg);filter:drop-shadow(0 1px 0 #ffe5b4) drop-shadow(1px 5px 2px #735239a6)}
+.itinerary .trail-field .available{width:clamp(58px,7.5cqw,92px)}
+.itinerary .trail-field .map-seal:is(.available,.here,.pinned-goal):before{inset:16% -6% -2%;border:3px solid #9a3928;border-radius:49% 46% 51% 44%;background:#f8dea770;box-shadow:inset 0 0 0 1px #ffe4ae,0 0 0 1px #ffe4ae}
+.itinerary .trail-field .map-seal.here:before{border-color:#453343}
+.itinerary .trail-field .map-seal.pinned-goal:before{border-color:#155e55}
+.itinerary .trail-field .map-seal:is(.here,.pinned-goal,.ahead:hover){outline:none}
+.itinerary .trail-field .map-seal:focus-visible{outline:3px solid #155e55;outline-offset:4px}
+.itinerary .trail-field .map-seal.on-plan{background:none}
+.itinerary .trail-field .map-seal.missed{opacity:.55;filter:saturate(.55)}
+.itinerary .trail-field .map-seal span{top:101%;padding:2px 8px 3px;clip-path:polygon(3% 3%,99% 0,97% 38%,100% 91%,4% 100%,0 74%);background:#f7dfaf;color:#442b2c}
+.itinerary .scroll-title nav button[aria-current=location]{color:#ffdf9c;box-shadow:inset 0 -2px #d59152}
+.itinerary [data-map-home]{position:relative;margin-left:auto;flex:none;padding:6px 13px;background:#3a2a39;color:#ffe1ad;border:1px solid #b39165;font:700 14px var(--serif);cursor:pointer;clip-path:polygon(3% 1%,100% 0,98% 93%,2% 100%,0 21%)}
+@media(max-width:760px) and (orientation:portrait){
+ .itinerary .trail-sheet{height:2450px}.itinerary .trail-field{inset:0 1% 0 4%}
+ .itinerary .station-number{width:18px;font-size:11px}.itinerary .station-ruler{left:0}
+ .itinerary .trail-field .map-seal{width:min(54px,calc(79cqw / var(--lanes)))}
+ .itinerary .trail-field .available{width:min(61px,calc(82cqw / var(--lanes)))}
+ .itinerary .trail-field .map-seal span{font-size:11px;padding:1px 3px}
+ .itinerary [data-map-home]{font-size:12px}
+}
+@media(max-height:500px) and (orientation:landscape){.itinerary .trail-sheet{height:2050px}.itinerary .trail-field .map-seal{width:44px}.itinerary .trail-field .available{width:51px}}
+@media(prefers-reduced-motion:reduce){
+ .itinerary .scroll-fringe{display:none}.itinerary .trail-field .map-seal .route-stamp{transition:none!important;transform:none!important}
+}
+.itinerary .scroll-country::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 5%,#f7dca642 27%,#f6dba64d 68%,transparent 96%)}
+.itinerary .trail-field .map-seal.on-plan:not(.available):not(.here){background:transparent}
+.itinerary[data-volume="2"] .scroll-country{background-image:url(route-art/paper-v1.webp)}
+.itinerary[data-volume="3"] .scroll-country{background-image:url(route-art/silver-v1.webp)}
+.fold-stage{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.fold-place{position:absolute;top:0;left:-2.3%;width:23%;perspective:420px;line-height:0;will-change:transform}
+.fold-place:nth-child(even){left:auto;right:-3%;width:26%}
+.fold-place img{width:100%;height:auto;transform-origin:center 95%;transform:rotateX(var(--fold,0deg));filter:drop-shadow(0 1px #ffdfa4) drop-shadow(2px var(--cast,3px) 1px #49283388)}
+.wire .fold-stage{display:none}
+@media(max-width:760px) and (orientation:portrait){.fold-place{width:28%;left:-4.5%}.fold-place:nth-child(even){width:32%;right:-5%}}
+.jp-ending:has(.volume-provisions){display:grid;grid-template-rows:minmax(58px,1fr) auto auto;padding:2% 4%;gap:6px;align-items:center}
+.jp-ending:has(.volume-provisions) .jp-scroll{position:relative;inset:auto;width:100%;height:100%;max-height:42cqh}
+.jp-ending:has(.volume-provisions) .jp-endnote{position:static;height:auto;max-height:36cqh;padding:12px 6%;font-size:clamp(14px,1.4cqw,21px);overflow:auto}
+.volume-provisions{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:5px 16px;color:#ffe0a4;padding:4px}
+.volume-provisions button{font:700 clamp(14px,1.45cqw,21px) var(--serif);background:var(--art-journey-slip) center/100% 100%;color:#412b31;border:0;padding:11px 18px;cursor:pointer}
+@media(max-width:760px) and (orientation:portrait){.volume-provisions strong{flex-basis:100%}.volume-provisions{gap:4px}.volume-provisions button{padding:12px 9px}}
+.ridge-place{position:absolute;left:var(--side);right:var(--other);top:0;width:22%;opacity:.74;pointer-events:none}
+.ridge-place img{width:100%;height:auto;display:block;filter:sepia(.24) drop-shadow(1px 2px 0 #e9c58c)}
+.paper-fold{position:absolute;left:0;right:0;height:2.15%;pointer-events:none;opacity:var(--edge,0);transform-origin:center bottom;transform:perspective(540px) rotateX(var(--turn,0deg));background:linear-gradient(to bottom,transparent 30%,#97744229 77%,#68472363 94%,#ffebb8b3 96%,transparent);clip-path:polygon(0 3%,100% 0,100% 86%,76% 88%,49% 95%,26% 90%,0 100%)}
+.wire .paper-fold{display:none}
+.jp-ending:has(.volume-provisions) .jp-endnote{padding-block:clamp(18px,3cqh,30px)}
+@media(max-width:760px) and (orientation:portrait){.jp-ending:has(.volume-provisions) .jp-endnote{padding:20px 8% 24px;max-height:38dvh}.ridge-place{width:28%}}
