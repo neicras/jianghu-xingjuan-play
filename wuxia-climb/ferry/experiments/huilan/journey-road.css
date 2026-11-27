@@ -1,0 +1,18 @@
+body.journey:has(journey-road){height:100dvh;min-height:0;overflow:hidden;display:flex;flex-direction:column}
+body.journey:has(journey-road) main#room{min-height:0;flex:1;width:100%;height:auto;max-width:none;padding:0;margin:0}
+journey-road{position:relative;display:block;width:100%;height:100%;overflow:hidden;isolation:isolate;background:#38293e;color:#ffedc7;font-family:var(--serif)}
+journey-road canvas{width:100%;height:100%;display:block}
+.jr-heading,.jr-atlas,.jr-banks,.jr-note{position:absolute;z-index:2}
+.jr-heading{top:0;left:0;padding:clamp(12px,3vw,34px);text-shadow:0 2px 4px #231329;background:radial-gradient(at left top,#25132dcd,transparent 74%)}
+.jr-heading h2{font-size:clamp(24px,4vw,48px);line-height:1.1;margin:3px 0;color:#ffe6ba}
+.jr-heading small,.jr-note small{color:#ffe6ba}
+journey-road button{font-family:inherit;font-weight:bold;touch-action:manipulation;min-height:44px;color:#ffe8ba;background:#442939;border:1px solid #ccab75;border-radius:2px;padding:6px 14px}
+.jr-atlas{top:12px;right:12px}.jr-signs button{position:absolute;transform:translate(-50%,0);max-width:31%;min-width:10%;line-height:1.2;background:#522f38;box-shadow:0 3px 0 #221423;font-size:clamp(14px,2vw,24px)}
+.jr-signs button[aria-pressed=true],journey-road button:focus-visible{background:#8c4035;outline:2px solid #ffe6a3}
+.jr-banks{right:12px;top:65px}
+.jr-note:not(:empty){inset:auto 0 0;padding:12px max(16px,4vw) max(12px,env(safe-area-inset-bottom));display:flex;align-items:center;gap:16px;justify-content:space-between;background:linear-gradient(110deg,#2c1e30fa,#402838f5);border-top:2px solid #b79a6e;max-height:36%;overflow:auto}
+.jr-note p{margin:3px 0;font-size:clamp(13px,1.6vw,18px);line-height:1.4}.jr-note button{flex:none;background:#8a4132}
+journey-road[data-travelling] :is(button,.jr-note){visibility:hidden}
+@media(max-width:600px){.jr-signs button{font-size:15px;padding:5px 7px}.jr-note:not(:empty){gap:8px}.jr-note small{font-size:12px}}
+
+.jr-signs button::before{content:"";position:absolute;bottom:100%;left:0;right:0;height:var(--figure-height)}

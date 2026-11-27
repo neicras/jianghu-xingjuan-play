@@ -1,9 +1,10 @@
 import {installDeckInput} from './deck-input.js';
 import {installSound,soundButton,cue,scoreScene} from './game-sound.js';
+import {mountJourneyRoad} from './journey-road.js';
 import {mountRouteMotion} from './route-motion.js';
 import {trailTools,wallet,objectImage} from './trail-hud.js';
 import {cover} from './bound-book.js';
-import {atlas,readTrail,routeIntro} from './route-scroll.js?branch=1';
+import {atlas,readTrail,routeIntro} from './route-scroll.js?map=2';
 import {supportArt} from './art-library/support-files.js?branch=1';
 import {newJourney,gift,enter,finishFight,receive,train,rest,innRecovery,leave,prepareJourney,lessons,drill,goods,spoils,pack,useItem,wares,apothecary,buyMedicine,purchaseLimit,bagCapacity,exploreCave,caveRisk,escort,storyAt,storyLimit,marketRanges,stockAt,buyAtStall} from './journey.js?branch=1';
 import {play,endRound,settleChoice} from './combat.js?branch=1';
@@ -241,7 +242,7 @@ function render(){
  let html='';
  switch(r.phase){
  case 'gift':html=departure(seat,btn);if(paperTrial)html=html.replace('回瀾門餞行','夜渡 · 紙坊試玩').replace('啟程</button>','前往第五站</button>');break;
- case 'map':html=paperTrial&&chapterOf(r)===1&&[4,5].includes(r.floor)?forkMap(r):atlas(r);break;
+ case 'map':html=paperTrial&&chapterOf(r)===1&&[4,5].includes(r.floor)?forkMap(r):'<journey-road></journey-road>';break;
  case 'paperEnd':html=paperRecap(s,btn);break;
  case 'fight':html=arena(s,btn);break;
  case 'reward':html=rewardPile(s,btn);break;
@@ -257,7 +258,7 @@ function render(){
  }
  $('room').innerHTML=html;
  if(r.phase==='map'){
-  locateTrail($('room'));
+  mountJourneyRoad($('room'),s,btn);
   if(chapterOf(r)===1&&r.floor===0)warmOpening();
  }
  if(r.phase==='fight')paintBout(b);
@@ -369,7 +370,15 @@ document.addEventListener('click',async e=>{
  if(action==='continueRun'){$('folio').close();return}
  if(action==='deck'){deckDialog();return}
  if(action==='equip'&&!['fight','won','lost','gift'].includes(r.phase)){equip(s,byName.get(v));deckDialog()}
- if(action==='enter'&&enter(s,Number(v))){reading=false;if($('folio').open)$('folio').close()}
+ if(action==='enter'){
+  const road=$('room').querySelector('journey-road');
+  if($('folio').open)$('folio').close();
+  if(road){
+   animating=true;
+   try{await road.travel(Number(v))}finally{animating=false}
+  }
+  if(enter(s,Number(v)))reading=false;
+ }
  if(action==='seat'&&r.phase==='gift'){seat=v;render();$('room').querySelector('.jp-seat[aria-pressed=true]')?.focus({preventScroll:true});return}
  const receivedGift=action==='gift'&&gift(s,v);
  if(receivedGift)cue('win');

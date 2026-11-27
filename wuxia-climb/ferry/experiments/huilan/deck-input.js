@@ -8,7 +8,7 @@ function available(root){
  return [...root.querySelectorAll(controls)].filter(enabled);
 }
 function first(root){
- const button=root.querySelector('.battle-card:not(:disabled),.map-seal.available,.jp-seat[aria-pressed=true],.shelf-volume,.study-return');
+ const button=root.querySelector('.battle-card:not(:disabled),.jr-signs button,.map-seal.available,.jp-seat[aria-pressed=true],.shelf-volume,.study-return');
  return enabled(button)?button:available(root).find(el=>el.closest('#room,dialog'))||available(root)[0];
 }
 function focus(el){

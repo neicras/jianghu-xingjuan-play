@@ -45,6 +45,14 @@ export function passageLayers(s,add){
  }
 }
 export function destination(s,w,d,add){
+ if(d.art){
+  const sprite=s.inks?.[d.art], height=d.type==='boss'?3.65:d.art.startsWith('way-')?2.95:2.7;
+  if(sprite)add(d.art,d.x,d.z,height*sprite.width/sprite.height,0,height,false);
+  if(d.type==='elite2'||d.type==='convoy')add(d.type==='elite2'?'way-white-fiend':'way-iron-guard',d.x+.8,d.z+1.5,1.65,0,2.7,true);
+  if(d.type==='inn')add('sailcloth',d.x+.25,d.z+1,3.4,1.8,1.85,false);
+  if(d.type==='boss')add('gate-shrine',d.x,d.z+2,4.5,0,4.5,false);
+  return;
+ }
  const id=rooms[w.i][d.j],Z=d.z;
  // Approach the working prop and pass beside it. Its silhouette is the destination.
  const width=id==='clerk'?2.65:id==='sailcloth'?3.3:3.12;

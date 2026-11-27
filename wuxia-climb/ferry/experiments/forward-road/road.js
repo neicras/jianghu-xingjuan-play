@@ -33,7 +33,7 @@ $('look').onclick=()=>{
 const campaign=new URLSearchParams(location.search).get('campaign');
 const returnURL='../huilan/journey.html';
 function continueJourney(){localStorage.setItem('jianghu.ferry.intro.v2','seen');location.replace(returnURL)}
-if(campaign==='launch'&&localStorage.getItem('jianghu.ferry.intro.v2')==='seen')location.replace(returnURL);
+if(campaign==='launch')location.replace(returnURL);
 const audio=new Audio();audio.preload='none';audio.volume=.48;
 let audible=true,track='',stageMode='intro',st=0,worlds=[],choices=[],token=-1,z=0,x=0,trip=null,focusIndex=-1,lastStory='',priorMode='intro';
 const motion=matchMedia('(prefers-reduced-motion: reduce)');

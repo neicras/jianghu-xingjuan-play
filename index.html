@@ -1,5 +1,4 @@
 <!doctype html><html lang="zh-Hant"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>江湖行卷</title><script>
-const query=new URLSearchParams(location.search);
 try {
  const old=localStorage.getItem('wudang-journey-15-v1');
  if(old&&!localStorage.getItem('huilan-volume-one-v1')&&JSON.parse(old)?.route){
@@ -8,8 +7,7 @@ try {
   localStorage.setItem('huilan-volume-one-v1',saved);
  }
 } catch {}
-const target=new URL(query.has('preview')||query.has('trial')?"wuxia-climb/ferry/experiments/huilan/journey.html":"wuxia-climb/ferry/experiments/forward-road/index.html",location.href);
+const target=new URL("wuxia-climb/ferry/experiments/huilan/journey.html",location.href);
 target.search=location.search;target.hash=location.hash;
-if(target.pathname.endsWith('/index.html')){target.searchParams.set('look','ink');target.searchParams.set('campaign','launch')}
 location.replace(target);
 </script></html>

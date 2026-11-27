@@ -1,4 +1,4 @@
-import {passageLayers,destination} from './passage.js';
+import {passageLayers,destination} from './passage.js?map=2';
 import {tone,riverSurface,plankSurface} from "./inks.js";
 // Each cutout is anchored to a fixed world depth. Solid doorways have front, inner and side faces.
 const clamp=(n,lo,hi)=>Math.min(hi,Math.max(lo,n));

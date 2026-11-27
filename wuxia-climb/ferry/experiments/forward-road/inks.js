@@ -17,9 +17,9 @@ for(const [material,stops] of Object.entries(ramps)){
  });
 }
 export function tone(material,shade){return palette[material][Math.min(255,Math.max(0,Math.round(shade)))]}
-export function loadInks(redraw){
+export function loadInks(redraw,extra=[]){
  const loaded={};
- for(const id of [...props,'valley','water','plank','stone','earth','gate-ferry','gate-inn','gate-fight','gate-shrine']){
+ for(const id of [...extra,...props,'valley','water','plank','stone','earth','gate-ferry','gate-inn','gate-fight','gate-shrine']){
   const img=new Image();img.onload=()=>{
    loaded[id]=img;
    if(['willow','reeds','sailcloth','fishing-net','grain'].includes(id)){
@@ -35,7 +35,7 @@ export function loadInks(redraw){
     g.fillStyle='#372537cf';g.fillRect(0,0,side.width,side.height);loaded[id+'-side']=side;
    }
    redraw();
-  };img.src='media/'+id+'.webp';
+  };img.src=new URL('./media/'+id+'.webp',import.meta.url).href;
  }
  return loaded;
 }
